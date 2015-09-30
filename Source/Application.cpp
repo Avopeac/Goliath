@@ -107,7 +107,7 @@ void Application::Run() {
 	t5.generate(128, glm::rotate(-glm::half_pi<double>(), glm::dvec3(1.0, 0.0, 0.0)), glm::translate(glm::dvec3(0.0, 0.0, 0.5)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Near
 	t6.generate(128, glm::rotate(glm::half_pi<double>(), glm::dvec3(1.0, 0.0, 0.0)), glm::translate(glm::dvec3(0.0, 0.0, -0.5)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Far
 
-	Shader shader("E:\\Code\\Berg\\Shaders\\terrain.vert", "E:\\Code\\Berg\\Shaders\\terrain.frag");
+	Shader shader("Shaders\\terrain.vert", "Shaders\\terrain.frag");
 
 	glm::vec3 l(0, 1, 0);
 	

@@ -19,11 +19,17 @@ void Tile::generate(int resolution, glm::dmat4 &rotation, glm::dmat4 &translatio
 			double dj = delta * j;
 
 			glm::dvec4 temp(di - bias, 0, dj - bias, 1);
+
+			
+
 			temp = translation * rotation * temp;
 
 			if (normalize) {
 				temp = temp + scale * glm::normalize(glm::dvec4(temp.x, temp.y, temp.z, 0));
+			} else {
+				temp = temp * scale;
 			}
+			
 
 			float xp, xl, yp, yl, zp, zl;
 			MathHelp::doubleToTwoFloats(temp.x, xp, xl);

@@ -83,6 +83,9 @@
     <ClCompile Include="Source\QuadTree\QuadTree.cpp">
       <Filter>Source Files\QuadTree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\QuadTree\FractalHeightFunction.cpp">
+      <Filter>Source Files\QuadTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -146,6 +149,12 @@
       <Filter>Source Files\QuadTree</Filter>
     </ClInclude>
     <ClInclude Include="Source\QuadTree\Tile.h">
+      <Filter>Source Files\QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\QuadTree\HeightFunction.h">
+      <Filter>Source Files\QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\QuadTree\FractalHeightFunction.h">
       <Filter>Source Files\QuadTree</Filter>
     </ClInclude>
   </ItemGroup>

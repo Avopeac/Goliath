@@ -169,6 +169,7 @@
     <ClCompile Include="Source\Model\Model.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Model\Texture.cpp" />
+    <ClCompile Include="Source\QuadTree\FractalHeightFunction.cpp" />
     <ClCompile Include="Source\QuadTree\QuadTree.cpp" />
     <ClCompile Include="Source\QuadTree\Tile.cpp" />
     <ClCompile Include="Source\Visibility\Camera.cpp" />
@@ -192,6 +193,8 @@
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
+    <ClInclude Include="Source\QuadTree\FractalHeightFunction.h" />
+    <ClInclude Include="Source\QuadTree\HeightFunction.h" />
     <ClInclude Include="Source\QuadTree\QuadTree.h" />
     <ClInclude Include="Source\QuadTree\Tile.h" />
     <ClInclude Include="Source\Visibility\Camera.h" />

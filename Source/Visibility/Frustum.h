@@ -32,13 +32,16 @@ public:
 
 	void DebugDraw(Shader &shader);
 
-protected:
-
 	// Plane array indices
-	enum { TOP = 0, BOTTOM, LEFT, RIGHT, FAR, NEAR }; 
+	enum { TOP = 0, BOTTOM, LEFT, RIGHT, FAR, NEAR };
 	// Point array indices
-	enum { NTL = 0, NTR, NBL, NBR, FTL, FTR, FBL, FBR};
-	
+	enum { NTL = 0, NTR, NBL, NBR, FTL, FTR, FBL, FBR };
+
+	const Plane<float> &GetPlane(int plane) const { if (plane > 0 && plane < 6) { return planes[plane]; } }
+	const glm::vec3 &GetPoint(int point) const { if (point > 0 && point < 8) { return points[point]; } }
+
+protected:
+		
 	float fovy;
 	float aspect;
 	float zNear;

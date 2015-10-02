@@ -51,7 +51,7 @@ public:
 	const glm::dmat4 &GetProjectionMatrix() const { return projection; }
 	const glm::dmat4 &GetViewMatrix() const { return view; }
 
-	Frustum &GetFrustum() { return cameraFrustum; }
+	const Frustum &GetFrustum() const { return cameraFrustum; }
 
 protected:
 
@@ -75,7 +75,7 @@ protected:
 	double pitch = .0;
 	double roll = .0;
 
-	double translationSpeed = 100000.0;
+	double translationSpeed = 999999.0;
 	double directionSpeed = 0.5;
 
 };

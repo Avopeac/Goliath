@@ -1,8 +1,14 @@
 #include <GLM\gtc\matrix_transform.hpp>
+#include <limits>
+#include <memory>
 #include "Tile.h"
 #include "..\Math\MathHelp.h"
 
 void Tile::generate(int resolution, glm::dmat4 &rotation, glm::dmat4 &translation, glm::dmat4 scale, bool normalize, bool genNormals) {
+	generate(resolution, nullptr, rotation, translation, scale, normalize, genNormals);
+}
+
+void Tile::generate(int resolution, std::shared_ptr<HeightFunction> function, glm::dmat4 &rotation, glm::dmat4 &translation, glm::dmat4 scale, bool normalize, bool genNormals) {
 
 	_currentResolution = resolution;
 	_possibleDecimations = (int)glm::log2((double)resolution);
@@ -11,6 +17,9 @@ void Tile::generate(int resolution, glm::dmat4 &rotation, glm::dmat4 &translatio
 	double delta = 1.0 / resolution;
 	double bias = 0.5;
 
+	double minHeight = std::numeric_limits<double>().max();
+	double maxHeight = std::numeric_limits<double>().min();
+
 	//Generate vertex buffer for tile mesh
 	for (j = 0; j <= resolution; ++j) {
 		for (i = 0; i <= resolution; ++i) {
@@ -18,18 +27,29 @@ void Tile::generate(int resolution, glm::dmat4 &rotation, glm::dmat4 &translatio
 			double di = delta * i;
 			double dj = delta * j;
 
-			glm::dvec4 temp(di - bias, 0, dj - bias, 1);
+			glm::highp_dvec4 temp(di - bias, 0, dj - bias, 0.0);
 
-			
-
-			temp = translation * rotation * temp;
-
+			//Apply scale afterwards
 			if (normalize) {
-				temp = temp + scale * glm::normalize(glm::dvec4(temp.x, temp.y, temp.z, 0));
-			} else {
-				temp = temp * scale;
+				temp = translation * rotation * temp;
+				temp = temp + scale * glm::normalize(glm::highp_dvec4(temp.x, temp.y, temp.z, 0.0));
 			}
-			
+			else {
+				temp = translation * rotation * scale * temp;
+			}
+
+			//Apply height function
+			if (function != nullptr) {
+				temp.y += function->get_value(glm::highp_dvec3(temp.x, temp.y, temp.z));
+
+				if (temp.y > maxHeight) {
+					maxHeight = temp.y;
+				}
+
+				if (temp.y < minHeight) {
+					minHeight = temp.y;
+				}
+			}
 
 			float xp, xl, yp, yl, zp, zl;
 			MathHelp::doubleToTwoFloats(temp.x, xp, xl);
@@ -37,13 +57,16 @@ void Tile::generate(int resolution, glm::dmat4 &rotation, glm::dmat4 &translatio
 			MathHelp::doubleToTwoFloats(temp.z, zp, zl);
 
 			Vertex v;
-			v.positionHigh = glm::vec3(xp, yp, zp);
-			v.positionLow = glm::vec3(xl, yl, zl);
+			v.positionHigh = glm::highp_vec3(xp, yp, zp);
+			v.positionLow = glm::highp_vec3(xl, yl, zl);
 			v.texcoord = { di, dj };
 			v.normal = { 0, 0, 0 };
 
 			_tileMesh.vertices.push_back(v);
 		}
+
+		_minHeight = minHeight;
+		_maxHeight = maxHeight;
 	}
 
 	//Generate index buffer for tile mesh

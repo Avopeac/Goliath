@@ -6,12 +6,12 @@ template <typename T> class AABB : public Primitive<T> {
 
 public:
 
-	AABB(const glm::vec3 &center, const T extent) : center(center), extent(extent) {};
+	AABB(const glm::highp_dvec3 &center, const T extent) : center(center), extent(extent) {};
 	AABB(const AABB &aabb) = default;
 	AABB() = default;
 	~AABB() override = default;
 
-	const glm::vec3 &GetCenter() const { return center; }
+	const glm::highp_dvec3 &GetCenter() const { return center; }
 	const T &GetExtent() const { return extent; }
 	
 	T ComputeArea() override { return static_cast<T>(glm::pow((static_cast<T>(2) * extent), static_cast<T>(2))); }
@@ -25,6 +25,6 @@ public:
 
 protected:
 
-	glm::vec3 center;
+	glm::highp_dvec3 center;
 	T extent;
 };

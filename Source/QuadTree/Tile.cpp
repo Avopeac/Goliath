@@ -4,11 +4,11 @@
 #include "Tile.h"
 #include "..\Math\MathHelp.h"
 
-void Tile::generate(int resolution, glm::dmat4 &rotation, glm::dmat4 &translation, glm::dmat4 scale, bool normalize, bool genNormals) {
+void Tile::generate(int resolution, const glm::dmat4 &rotation, const glm::highp_dvec3 &translation, const glm::dmat4 &scale, bool normalize, bool genNormals) {
 	generate(resolution, nullptr, rotation, translation, scale, normalize, genNormals);
 }
 
-void Tile::generate(int resolution, std::shared_ptr<HeightFunction> function, glm::dmat4 &rotation, glm::dmat4 &translation, glm::dmat4 scale, bool normalize, bool genNormals) {
+void Tile::generate(int resolution, std::shared_ptr<HeightFunction> function, const glm::dmat4 &rotation, const glm::highp_dvec3 &translation, const glm::dmat4 &scale, bool normalize, bool genNormals) {
 
 	_currentResolution = resolution;
 	_possibleDecimations = (int)glm::log2((double)resolution);
@@ -31,12 +31,16 @@ void Tile::generate(int resolution, std::shared_ptr<HeightFunction> function, gl
 
 			//Apply scale afterwards
 			if (normalize) {
-				temp = translation * rotation * temp;
+				temp = rotation * temp;
 				temp = temp + scale * glm::normalize(glm::highp_dvec4(temp.x, temp.y, temp.z, 0.0));
 			}
 			else {
-				temp = translation * rotation * scale * temp;
+				temp = rotation * scale * temp;
 			}
+
+			temp.x += translation.x;
+			temp.y += translation.y;
+			temp.z += translation.z;
 
 			//Apply height function
 			if (function != nullptr) {
@@ -90,7 +94,7 @@ void Tile::generate(int resolution, std::shared_ptr<HeightFunction> function, gl
 		generateNormals();
 	}
 
-	_tileMesh.SetupMesh();
+	//_tileMesh.SetupMesh();
 }
 
 void Tile::generateNormals() {

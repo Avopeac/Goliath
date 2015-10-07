@@ -1,96 +1,141 @@
+#include <thread>
+#include <limits>
 #include "QuadTree.h"
 #include "FractalHeightFunction.h"
 
-QuadTree::QuadTree(int level, int maxlevel, const AABB<double> &box) : _box(box), _level(level), _maxlevel(maxlevel) {
-	if (level < _maxlevel) {
-		generate();
-	}
+int QuadTree::_id_counter = 0;
+
+QuadTree::QuadTree(int level, int max_deviations, const AABB<double> &box) : _box(box), _level(level), _max_deviations(max_deviations) {
+	_this_id = _id_counter++;
+	generate();
+	_tile->_tileMesh.SetupMesh();
 };
 
-QuadTree::QuadTree(const AABB<double> &box) : _box(box), _maxlevel((int)glm::log2(2.0 * box.GetExtent())) {
-	generate();
-};
+QuadTree::QuadTree(const AABB<double> &box) : QuadTree(0, DEFAULT_DEVATIONS_ZERO, box) {};
 
 void QuadTree::generate() {
-	double size = 2.0 * _box.GetExtent();
-	std::shared_ptr<FractalHeightFunction> height_func = std::make_shared<FractalHeightFunction>();
-	tile = std::make_shared<Tile>();
-	tile->generate(glm::pow(2.0, _level), height_func, glm::dmat4(1), glm::translate(_box.GetCenter()), glm::dmat4(size), false, true);
-	_contains_mesh = true;
-
-	std::cout << tile->_minHeight << " " << tile->_maxHeight << std::endl;
+	_tile = std::make_shared<Tile>();
+	glm::dmat4 rotation(1);
+	glm::dmat4 scale(2.0 * _box.GetExtent());
+	_tile->generate(DEFAULT_TILE_SIZE, rotation, _box.GetCenter(), scale, false, true);
 }
 
-void QuadTree::draw(Shader &shader) {
-	if (_contains_mesh) {
-		tile->_tileMesh.DrawWireframe(shader);
-	}
-	else {
-		_northwest->draw(shader);
-		_northeast->draw(shader);
-		_southwest->draw(shader);
-		_southeast->draw(shader);
-	}
+bool QuadTree::has_children() {
+	return _northwest != nullptr && _northeast != nullptr && _southwest != nullptr && _southeast != nullptr;
 }
 
-void QuadTree::update(const Camera &camera) {
+bool QuadTree::has_leaf() {
+	return _tile != nullptr;
+}
 
-	double distance = glm::distance(camera.GetEyeVector(), _box.GetCenter());
+bool QuadTree::child_data_resident() {
+	return _northwest->has_leaf() && _northeast->has_leaf() && _southwest->has_leaf() && _southeast->has_leaf();
+}
 
-	//std::cout << "LEVEL = " << _level << " DIST = " << distance << std::endl;
+double QuadTree::distance_nearest_corner(const Camera &camera) {
+	vec3 eye = camera.GetEyeVector();
+	vec3 c = _box.GetCenter();
+	double o = _box.GetExtent();
 
-	if (!_splitted) {
-		if (distance < (3189068.5) && _level < 1) {
-			this->tile = nullptr;
-			this->_contains_mesh = false;
-			this->split();
+	std::vector<vec3> corners;
+	corners.push_back(eye - vec3(c.x - o, c.y, c.z + o));
+	corners.push_back(eye - vec3(c.x + o, c.y, c.z + o));
+	corners.push_back(eye - vec3(c.x - o, c.y, c.z - o));
+	corners.push_back(eye - vec3(c.x + o, c.y, c.z - o));
+	corners.push_back(eye - c);
+
+	double max = std::numeric_limits<double>().max();
+	vec3 min(max, max, max);
+	for (auto it = corners.begin(); it != corners.end(); ++it) {
+		vec3 elem = *it;
+		if (glm::dot(elem, elem), glm::dot(min, min)) {
+			min = elem;
 		}
 	}
 
-	if (_northwest != nullptr)
-		_northwest->update(camera);
+	return glm::dot(min,min);
+}
 
-	if (_northeast != nullptr)
-		_northeast->update(camera);
+void QuadTree::draw(Shader &shader, const Camera &camera) {
+	double rho = compute_level_metric(camera, distance_nearest_corner(camera));
 
-	if (_southwest != nullptr)
-		_southwest->update(camera);
+	std::cout << rho << std::endl;
 
-	if (_southeast != nullptr)
-		_southeast->update(camera);
+	//bool children = has_children();
+	//bool children_ready = children ? child_data_resident() : false;
+
+	/*if (rho <= DEFAULT_SCREEN_SPACE_ERROR || (children && !children_ready)) {
+		if (has_leaf()) {
+			_tile->_tileMesh.DrawWireframe(shader);
+		}
+		else {
+			generate();
+			_tile->_tileMesh.SetupMesh();
+		}
+	}
+	else {
+
+		if (has_children()) {
+			_northwest->draw(shader, camera);
+			_northeast->draw(shader, camera);
+			_southwest->draw(shader, camera);
+			_southeast->draw(shader, camera);
+		}
+		else {
+			std::cout << "Splitting at level " << _level << std::endl;
+			_tile = nullptr;
+			split();
+		}
+	}*/
+
+	if (rho <= DEFAULT_SCREEN_SPACE_ERROR) {
+		if (has_leaf()) {
+			_tile->_tileMesh.DrawWireframe(shader);
+		}
+		else {
+			generate();
+			_tile->_tileMesh.SetupMesh();
+		}
+	}
+	else {
+
+		if (has_children()) {
+			_northwest->draw(shader, camera);
+			_northeast->draw(shader, camera);
+			_southwest->draw(shader, camera);
+			_southeast->draw(shader, camera);
+		}
+		else {
+			//std::cout << "Splitting at level " << _level << std::endl;
+			_tile = nullptr;
+			split();
+		}
+	}
 }
 
 void QuadTree::merge() {
-	//Implement..
+	_northwest = nullptr;
+	_northeast = nullptr;
+	_southwest = nullptr;
+	_southeast = nullptr;
+	generate();
 }
 
-void QuadTree::compute_level_metric(const Camera &camera) {
-	double t = 2.0 * _pixel_error / Application::GetWindowHeight();
-	double a = camera.GetNear() / glm::tan(glm::radians(camera.GetFovy() * 0.5));
-	double c = a / t;
-	double metric = glm::max(glm::abs(this->tile->_maxHeight), glm::abs(this->tile->_minHeight)) * c;
+double QuadTree::compute_level_metric(const Camera &camera, double distance) {
+	double kappa = Application::GetWindowWidth() / (2.0 * glm::tan(glm::radians(camera.GetFovx() * 0.5)));
+	double rho = (_max_deviations * _max_deviations * kappa * kappa) / distance;
+	return rho;
 }
 
 void QuadTree::split() {
-
-	//Center of the parent AABB
-	glm::highp_dvec3 center = _box.GetCenter();
-
-	//Offset from midpoint to a child quad 
-	double offset = _box.GetExtent();
-
-	//Create 4 sub-quadtrees
-	_northwest = std::make_shared<QuadTree>(_level + 1, _maxlevel, AABB<double>(glm::highp_dvec3(center.x - offset, center.y, center.z + offset), offset));
+	vec3 center = _box.GetCenter();
+	double offset = 0.5 * _box.GetExtent();
+	_northwest = std::make_shared<QuadTree>(_level + 1, _max_deviations / 2, AABB<double>(vec3(center.x - offset, center.y, center.z + offset), offset));
 	_northwest->parent = this;
-
-	_northeast = std::make_shared<QuadTree>(_level + 1, _maxlevel, AABB<double>(glm::highp_dvec3(center.x + offset, center.y, center.z + offset), offset));
+	_northeast = std::make_shared<QuadTree>(_level + 1, _max_deviations / 2, AABB<double>(vec3(center.x + offset, center.y, center.z + offset), offset));
 	_northeast->parent = this;
-
-	_southwest = std::make_shared<QuadTree>(_level + 1, _maxlevel, AABB<double>(glm::highp_dvec3(center.x - offset, center.y, center.z - offset), offset));
+	_southwest = std::make_shared<QuadTree>(_level + 1, _max_deviations / 2, AABB<double>(vec3(center.x - offset, center.y, center.z - offset), offset));
 	_southwest->parent = this;
-
-	_southeast = std::make_shared<QuadTree>(_level + 1, _maxlevel, AABB<double>(glm::highp_dvec3(center.x + offset, center.y, center.z - offset), offset));
+	_southeast = std::make_shared<QuadTree>(_level + 1, _max_deviations / 2, AABB<double>(vec3(center.x + offset, center.y, center.z - offset), offset));
 	_southeast->parent = this;
-
-	_splitted = true;
 }

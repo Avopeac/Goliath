@@ -13,10 +13,10 @@ void Camera::SetPosition(glm::dvec3 position) { eye = position; }
 void Camera::SetPosition(double x, double y, double z) { eye = glm::dvec3(x, y, z); }
 
 void Camera::SetPerspective(double fovy, double aspect, double zNear, double zFar) {
-
+	this->fovx = glm::degrees(glm::atan(glm::tan(glm::radians(fovy) * 0.5) * aspect) * 2.0);
 	this->fovy = fovy;
 	this->aspect = aspect;
-
+	
 	near = zNear;
 	far = zFar;
 

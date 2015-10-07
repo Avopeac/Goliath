@@ -35,6 +35,7 @@ public:
 	void Update(float deltaTime);
 
 	const double GetFovy() const { return fovy; }
+	const double GetFovx() const { return fovx; }
 	const double GetAspect() const { return aspect; }
 	const double GetNear() const { return near; }
 	const double GetFar() const { return far; }
@@ -62,6 +63,7 @@ protected:
 	glm::dmat4 view;
 
 	double fovy = .0;
+	double fovx = .0;
 	double aspect = .0;
 	double near = .0;
 	double far = .0;

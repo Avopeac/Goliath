@@ -6,6 +6,7 @@
 #include "Controller\Controller.h"
 #include "Visibility\Camera.h"
 #include "QuadTree\Tile.h"
+#include "QuadTree\QuadTree.h"
 #include "Model\Shader.h"
 #include "Math\MathHelp.h"
 
@@ -90,22 +91,13 @@ void Application::Run() {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_DEPTH_CLAMP);
-	glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 
-	Camera camera(6378137.0, 0, 0);
+	double radius = 6378137.0 * 0.5;
+	Camera camera(0, radius, 0);
 	camera.SetPerspective(45.0, (double)Application::WINDOW_WIDTH / Application::WINDOW_HEIGHT, 0.01, 27000000.0);
-
-	double radius = 6378137.0;
-	Tile t1,t2,t3,t4,t5,t6;
-	bool normalize = true;
-	bool generateNormals = true;
-	t1.generate(128, glm::rotate(glm::pi<double>(), glm::dvec3(1.0, 0.0, 0.0)), glm::translate(glm::dvec3(0.0, 0.5, 0.0)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Top
-	t2.generate(128, glm::rotate(0.0, glm::dvec3(1.0, 0.0, 0.0)), glm::translate(glm::dvec3(0.0, -0.5, 0.0)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Bot
-	t3.generate(128, glm::rotate(-glm::half_pi<double>(), glm::dvec3(0.0, 0.0, 1.0)), glm::translate(glm::dvec3(-0.5, 0.0, 0.0)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Left
-	t4.generate(128, glm::rotate(glm::half_pi<double>(), glm::dvec3(0.0, 0.0, 1.0)), glm::translate(glm::dvec3(0.5, 0.0, 0.0)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Right
-	t5.generate(128, glm::rotate(-glm::half_pi<double>(), glm::dvec3(1.0, 0.0, 0.0)), glm::translate(glm::dvec3(0.0, 0.0, 0.5)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Near
-	t6.generate(128, glm::rotate(glm::half_pi<double>(), glm::dvec3(1.0, 0.0, 0.0)), glm::translate(glm::dvec3(0.0, 0.0, -0.5)), glm::scale(glm::dvec3(radius, radius, radius)), normalize, generateNormals); //Far
+	QuadTree tree(AABB<double>(glm::highp_vec3(0,0,0), radius));
 
 	Shader shader("Shaders\\terrain.vert", "Shaders\\terrain.frag");
 
@@ -179,12 +171,7 @@ void Application::Run() {
 		glUniformMatrix4fv(glGetUniformLocation(shader.program, "view"), 1, GL_FALSE, value_ptr(v));
 		glUniformMatrix4fv(glGetUniformLocation(shader.program, "proj"), 1, GL_FALSE, value_ptr(p));
 
-		t1._tileMesh.Draw(shader);
-		t2._tileMesh.Draw(shader);
-		t3._tileMesh.Draw(shader);
-		t4._tileMesh.Draw(shader);
-		t5._tileMesh.Draw(shader);
-		t6._tileMesh.Draw(shader);
+		tree.draw(shader, camera);
 	
 		glfwSwapBuffers(window);
 	}

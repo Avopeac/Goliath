@@ -1,9 +1,14 @@
 #pragma once
 #include <memory>
+#include <thread>
 #include <GLM\glm.hpp>
 #include "../Math/AABB.h"
 #include "../Visibility/Camera.h"
 #include "Tile.h"
+
+#define DEFAULT_TILE_SIZE 32
+#define DEFAULT_SCREEN_SPACE_ERROR 4
+#define DEFAULT_DEVATIONS_ZERO 16384
 
 class QuadTree {
 public:
@@ -12,15 +17,20 @@ public:
 	QuadTree(const AABB<double> &box);
 	~QuadTree() = default;
 	const AABB<double> &getBoundingBox() const { return _box; }
-	void update(const Camera &camera);
-	void draw(Shader &shader);
+	void draw(Shader &shader, const Camera &camera);
 
 private:
+	
+	typedef glm::highp_dvec3 vec3;
 
 	void merge();
 	void split();
 	void generate();
-	void compute_level_metric(const Camera &camera);
+	bool has_children();
+	bool has_leaf();
+	bool child_data_resident();
+	double compute_level_metric(const Camera &camera, double distance);
+	double distance_nearest_corner(const Camera &camera);
 
 	const AABB<double> _box;
 	
@@ -39,13 +49,11 @@ private:
 	std::shared_ptr<QuadTree> _southwest;
 	std::shared_ptr<QuadTree> _southeast;
 
-	const int _maxlevel = 0;
+	const int _max_deviations = 0;
+	static int _id_counter;
 	int _level = 0;
-	bool _splitted = false;
-	bool _contains_mesh = false;
-
-	const unsigned int _pixel_error = 4; //4 pixels is too noticable of a screen space error
+	int _this_id;
 	
 	//Terrain data
-	std::shared_ptr<Tile> tile;
+	std::shared_ptr<Tile> _tile;
 };

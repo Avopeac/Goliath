@@ -52,7 +52,7 @@ public:
 	const glm::dmat4 &GetProjectionMatrix() const { return projection; }
 	const glm::dmat4 &GetViewMatrix() const { return view; }
 
-	const Frustum &GetFrustum() const { return cameraFrustum; }
+	Frustum &GetFrustum() { return cameraFrustum; }
 
 protected:
 

@@ -16,11 +16,11 @@ public:
 	Plane() = default;
 	~Plane() override = default;
 
-	float GetDistanceToPoint(const glm::vec3 &point) {
+	float GetDistanceToPoint(const glm::vec3 &point) const {
 		return abs(a * point.x + b * point.y + c * point.z + d);
 	}
 
-	float GetSignedDistanceToPoint(const glm::vec3 &point) {
+	float GetSignedDistanceToPoint(const glm::vec3 &point) const {
 		return a * point.x + b * point.y + c * point.z + d;
 	}
 

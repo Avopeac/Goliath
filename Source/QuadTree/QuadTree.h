@@ -8,7 +8,7 @@
 
 #define DEFAULT_TILE_SIZE 32
 #define DEFAULT_SCREEN_SPACE_ERROR 4
-#define DEFAULT_DEVATIONS_ZERO 16384
+#define DEFAULT_DEVATIONS_ZERO 32768
 
 class QuadTree {
 public:
@@ -17,7 +17,7 @@ public:
 	QuadTree(const AABB<double> &box);
 	~QuadTree() = default;
 	const AABB<double> &getBoundingBox() const { return _box; }
-	void draw(Shader &shader, const Camera &camera);
+	void draw(Shader &shader, Camera &camera);
 
 private:
 	
@@ -26,6 +26,7 @@ private:
 	void merge();
 	void split();
 	void generate();
+	void generate_threaded();
 	bool has_children();
 	bool has_leaf();
 	bool child_data_resident();
@@ -53,7 +54,12 @@ private:
 	static int _id_counter;
 	int _level = 0;
 	int _this_id;
-	
-	//Terrain data
+
+	std::thread _thread;
+	bool _thread_work_complete = false;
+
 	std::shared_ptr<Tile> _tile;
+	bool _tile_setup_complete = false;
+
+	static std::shared_ptr<HeightFunction> height_function;
 };

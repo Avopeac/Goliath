@@ -67,13 +67,13 @@ void Camera::Update(float deltaTime) {
 			deltaPosition += up; changed = true;
 		}
 		if (t == KeyAction::ActionType::INCREASE_SPEED) {
-			translationSpeed += 100; changed = true;
+			translationSpeed += 1000; changed = true;
 		}
 		if (t == KeyAction::ActionType::DECREASE_SPEED) {
-			translationSpeed -= 100; changed = true;
+			translationSpeed -= 1000; changed = true;
 		}
 
-		//std::cout << translationSpeed << std::endl;
+		std::cout << translationSpeed << std::endl;
 
 		if (changed) {
 			c.ConsumeAction();
@@ -84,11 +84,11 @@ void Camera::Update(float deltaTime) {
 	//TODO: Something is not right here, movement stops in right direction when maximum pitch is reached
 	if (pitch > MAX_Y_ROTATION_DEGREES) { pitch = MAX_Y_ROTATION_DEGREES; }
 	else if (pitch < MIN_Y_ROTATION_DEGREES) { pitch = MIN_Y_ROTATION_DEGREES; }
-	look = glm::vec3(glm::sin(glm::radians(-yaw)) * glm::cos(glm::radians(pitch)),
+	look = glm::highp_dvec3(glm::sin(glm::radians(-yaw)) * glm::cos(glm::radians(pitch)),
 		glm::sin(glm::radians(pitch)),
 		glm::cos(glm::radians(-yaw)) * glm::cos(glm::radians(pitch)));
 	look = glm::normalize(look);
 	right = cross(look, up);
 	view = lookAt(eye, eye + look, up);
-	//cameraFrustum.Update(eye, eye + look, up);
+	cameraFrustum.Update(eye, eye + look, up);
 }

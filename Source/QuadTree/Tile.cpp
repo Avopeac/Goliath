@@ -1,5 +1,6 @@
 #include <limits>
 #include <memory>
+#include <iostream>
 #include <GLM\gtc\matrix_transform.hpp>
 #include "..\Math\MathHelp.h"
 #include "Tile.h"
@@ -102,15 +103,19 @@ void Tile::generate_normals() {
 		Vertex &v1(_mesh.vertices[ia]);
 		Vertex &v2(_mesh.vertices[ib]);
 		Vertex &v3(_mesh.vertices[ic]);
-		glm::dvec3 v1c = v1._position_high + v1._position_low;
-		glm::dvec3 v2c = v2._position_high + v2._position_low;
-		glm::dvec3 v3c = v3._position_high + v3._position_low;
+		glm::highp_dvec3 v1c = glm::highp_dvec3(v1._position_high) + glm::highp_dvec3(v1._position_low);
+		glm::highp_dvec3 v2c = glm::highp_dvec3(v2._position_high) + glm::highp_dvec3(v2._position_low);
+		glm::highp_dvec3 v3c = glm::highp_dvec3(v3._position_high) + glm::highp_dvec3(v3._position_low);
 		//Compute normal
-		glm::dvec3 normal(glm::cross(v1c - v2c,
-			v3c - v1c));
+		glm::highp_dvec3 normal(glm::cross(v1c - v2c,
+			v2c - v3c));
 		//Add normal to each vertex, this will be normalized in the shader, no point in doing it here
 		_mesh.vertices[ia]._normal += normal;
 		_mesh.vertices[ib]._normal += normal;
 		_mesh.vertices[ic]._normal += normal;
+	}
+
+	for (auto &vertex : _mesh.vertices) {
+		vertex._normal = glm::normalize(vertex._normal);
 	}
 }

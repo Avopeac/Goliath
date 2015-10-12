@@ -33,12 +33,7 @@ private:
 	double distance_nearest_corner(const Camera &camera);
 
 	const AABB<double> _box;
-	
-	//Neighbours
-	std::shared_ptr<QuadTree> _north = nullptr;
-	std::shared_ptr<QuadTree> _east = nullptr;
-	std::shared_ptr<QuadTree> _south = nullptr;
-	std::shared_ptr<QuadTree> _west = nullptr;
+	std::vector<vec3> _aabb_points;
 
 	//Parent
 	QuadTree *parent = nullptr;
@@ -48,9 +43,6 @@ private:
 	std::shared_ptr<QuadTree> _northeast = nullptr;
 	std::shared_ptr<QuadTree> _southwest = nullptr;
 	std::shared_ptr<QuadTree> _southeast = nullptr;
-
-	std::vector<vec3> _aabb_points;
-
 
 	const int _max_deviations = 0;
 	static int _id_counter;

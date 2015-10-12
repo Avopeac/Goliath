@@ -95,7 +95,7 @@ void Application::run() {
 
 	//TODO: Remove all the testing stuff!
 	double radius = 6378137.0 * 0.5;
-	Camera camera(0, radius, 0);
+	Camera camera(0, radius * 5.0, 0);
 	camera.set_perspective(45.0, (double)Application::_window_width / Application::_window_height, 0.01, 27000000.0);
 	QuadTree tree(AABB<double>(glm::highp_vec3(0,0,0), radius));
 
@@ -159,8 +159,6 @@ void Application::run() {
 		glUniformMatrix4fv(glGetUniformLocation(shader._program, "relativeToEye"), 1, GL_FALSE, value_ptr(relative_to_eye));
 		glUniform3fv(glGetUniformLocation(shader._program, "eyeVecHigh"), 1, value_ptr(glm::vec3(xp, yp, zp)));
 		glUniform3fv(glGetUniformLocation(shader._program, "eyeVecLow"), 1, value_ptr(glm::vec3(xl, yl, zl)));
-		glUniformMatrix4fv(glGetUniformLocation(shader._program, "model"), 1, GL_FALSE, value_ptr(model));
-		glUniformMatrix4fv(glGetUniformLocation(shader._program, "view"), 1, GL_FALSE, value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader._program, "proj"), 1, GL_FALSE, value_ptr(projection));
 		tree.draw(shader, camera);
 	

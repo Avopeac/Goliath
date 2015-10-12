@@ -12,8 +12,6 @@ out vec2 ourUv;
 out float ourClipZ;
 out float ourLogConstHalf;
 
-uniform mat4 model;
-uniform mat4 view;
 uniform mat4 proj;
 
 uniform vec3 eyeVecHigh;
@@ -26,9 +24,8 @@ uniform float nearPlaneDistance;
 
 void main()
 {
-	mat4 modelView = view * model;
-	mat3 normalMat = transpose(inverse(mat3(modelView)));
-	vec3 viewNormal = normalMat * normal;
+	mat4 normalMat = transpose(inverse(relativeToEye));
+	vec3 viewNormal = vec3(normalMat * vec4(normalize(normal),0));
 
 	//Reduce floating point errors with large positions
 	vec3 t1 = positionLow - eyeVecLow;
@@ -43,7 +40,7 @@ void main()
 	gl_Position.z = log2(max(nearPlaneDistance, 1.0 + gl_Position.w)) * logarithmicConstant - 1.0;
 
 	ourPosition = viewPos.xyz;
-	ourNormal = normalize(viewNormal.xyz);
+	ourNormal = viewNormal;
 	ourUv = uv;
 
 	//Remove artifacts from logarithmic depth buffer adjustments in fragment shader

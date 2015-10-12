@@ -15,18 +15,15 @@ uniform sampler2D texture_diffuse3;
 uniform sampler2D texture_specular1;
 uniform sampler2D texture_specular2;
 
-uniform mat4 model;
-uniform mat4 view;
+uniform mat4 relativeToEye;
 uniform vec3 light;
 
 void main()
 {
 
 	vec3 normal = normalize(ourNormal);
-	mat4 modelView = view * model;
-
 	//lightsource at infinite distance
-	vec3 lightDir = (modelView * vec4(light.xyz, 0)).xyz;
+	vec3 lightDir = (relativeToEye * vec4(light.xyz, 0)).xyz;
 	lightDir = normalize(lightDir);
 
 	//in eye space
@@ -38,7 +35,7 @@ void main()
 	float diffuse = max(0.0, dot(lightDir, normal));
 
 	float specular = 0.0;
-	float shininess = 20.0;
+	float shininess = 5.0;
 	if (diffuse > 0)
 	{
 		specular = pow(max(dot(normal, halfDir), 0.0), shininess);

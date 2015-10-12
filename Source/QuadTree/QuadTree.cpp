@@ -32,15 +32,11 @@ bool QuadTree::has_children() {
 		_southeast != nullptr;
 }
 
-bool QuadTree::child_data_resident() {
-	return false;
-}
-
 double QuadTree::distance_nearest_corner(const Camera &camera) {
 	double max = std::numeric_limits<double>().max();
 	double min_distance = max;
 	vec3 min(max, max, max);
-	for (auto it = _aabb_points.cbegin(); it != _aabb_points.cend(); ++it) {
+	for (auto it = _aabb_points.begin(); it != _aabb_points.end(); ++it) {
 		vec3 elem = camera.get_eye_vector() - (*it);
 		if (glm::dot(elem, elem) < glm::dot(min, min)) {
 			min = elem;
@@ -49,11 +45,23 @@ double QuadTree::distance_nearest_corner(const Camera &camera) {
 	return glm::dot(min, min);
 }
 
-void QuadTree::draw(Shader &shader, Camera &camera) {
+bool QuadTree::child_data_resident() {
+	return ((_northwest->_tile_id != -1 || _northwest->_tile_setup_complete) &&
+		(_northeast->_tile_id != -1 || _northeast->_tile_setup_complete) &&
+		(_southwest->_tile_id != -1 || _southwest->_tile_setup_complete) &&
+		(_southeast->_tile_id != -1 || _southeast->_tile_setup_complete));
+}
 
+void QuadTree::draw(Shader &shader, Camera &camera) {
 	double rho = compute_level_metric(camera, distance_nearest_corner(camera));
 	bool threshold_met = rho < DEFAULT_SCREEN_SPACE_ERROR;
-	if (threshold_met) {
+	bool building_children = has_children() && !child_data_resident();
+
+	if (building_children) {
+		draw_children(shader, camera);
+	}
+
+	if (threshold_met || building_children) {
 		draw_tile(shader);
 	}
 	else if (has_children()) {
@@ -84,11 +92,11 @@ void QuadTree::draw_tile(Shader &shader) {
 	}
 
 	if (_tile != nullptr && _tile_setup_complete) {
-		_tile->_mesh.draw_wireframe(shader);
+		_tile->_mesh.draw(shader);
 	}
 	else if (_tile_id == -1) {
 		_tile_id = MessageSystem::instance().post(
-			std::make_shared<TileMessage>(DEFAULT_TILE_SIZE, height_function, glm::dmat4(1), _box.get_center(), glm::dmat4(2.0 * _box.get_extent()), false, true)
+			std::make_shared<TileMessage>(DEFAULT_TILE_SIZE, std::make_shared<FractalHeightFunction>(), glm::dmat4(1), _box.get_center(), glm::dmat4(2.0 * _box.get_extent()), false, true)
 			);
 	}
 }

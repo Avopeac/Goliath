@@ -31,6 +31,9 @@
     <Filter Include="Source Files\QuadTree">
       <UniqueIdentifier>{1ed3ab41-da2f-4cfa-80a7-385dbb5f619f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MultiThreading">
+      <UniqueIdentifier>{c82a8558-5515-4d3c-88e1-723ef7083162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\standard.frag">
@@ -48,9 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Controller\Controller.cpp">
@@ -85,6 +85,15 @@
     </ClCompile>
     <ClCompile Include="Source\QuadTree\FractalHeightFunction.cpp">
       <Filter>Source Files\QuadTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MultiThreading\MessageSystem.cpp">
+      <Filter>Source Files\MultiThreading</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MultiThreading\TileMessage.cpp">
+      <Filter>Source Files\MultiThreading</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +165,15 @@
     </ClInclude>
     <ClInclude Include="Source\QuadTree\FractalHeightFunction.h">
       <Filter>Source Files\QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MultiThreading\Message.h">
+      <Filter>Source Files\MultiThreading</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MultiThreading\MessageSystem.h">
+      <Filter>Source Files\MultiThreading</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MultiThreading\TileMessage.h">
+      <Filter>Source Files\MultiThreading</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

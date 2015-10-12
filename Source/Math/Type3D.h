@@ -5,8 +5,6 @@
 ///
 /// Abstract class Type3D is useful for wrapping vectors of three dimensions to a strong type. 
 /// In our application it is used for vectors that are present in different coordinate systems.
-/// Date: 2015-09-22
-/// Author: Andreas Larsson
 ///
 class Type3D {
 public:

@@ -1,12 +1,13 @@
 #pragma once
 #include <iomanip>
 #include "Type3D.h"
+//How many decimals for printing
+#ifndef GEOGRAPHIC3D_PRINT_PRECISION
 #define GEOGRAPHIC3D_PRINT_PRECISION 10
+#endif
 ///
 /// Geographic3D is a representation of a three-component vector in a ellipsoidal coordinate system.
 /// In our application it is very useful for mapping points from cartesian coordinates to a point on the ellipsoid.
-/// Date: 2015-09-22
-/// Author: Andreas Larsson
 ///
 class Geographic3D : public Type3D {
 public:
@@ -15,7 +16,6 @@ public:
 	~Geographic3D() override = default;
 	
 protected:
-
 	// Inherited via Type3D
 	void print(std::ostream & os) const override {
 		os << std::setprecision(GEOGRAPHIC3D_PRINT_PRECISION)

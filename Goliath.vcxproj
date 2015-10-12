@@ -163,12 +163,14 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Controller\Controller.cpp" />
-    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Math\Ellipsoid.cpp" />
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Model.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Model\Texture.cpp" />
+    <ClCompile Include="Source\MultiThreading\MessageSystem.cpp" />
+    <ClCompile Include="Source\MultiThreading\TileMessage.cpp" />
     <ClCompile Include="Source\QuadTree\FractalHeightFunction.cpp" />
     <ClCompile Include="Source\QuadTree\QuadTree.cpp" />
     <ClCompile Include="Source\QuadTree\Tile.cpp" />
@@ -193,6 +195,9 @@
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
+    <ClInclude Include="Source\MultiThreading\Message.h" />
+    <ClInclude Include="Source\MultiThreading\MessageSystem.h" />
+    <ClInclude Include="Source\MultiThreading\TileMessage.h" />
     <ClInclude Include="Source\QuadTree\FractalHeightFunction.h" />
     <ClInclude Include="Source\QuadTree\HeightFunction.h" />
     <ClInclude Include="Source\QuadTree\QuadTree.h" />

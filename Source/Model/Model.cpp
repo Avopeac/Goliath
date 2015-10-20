@@ -5,15 +5,15 @@
 //Free function that loads a texture with an external library
 GLint texture_from_file(const char* path, std::string directory);
 
-void Model::Draw(Shader &shader) {
+void Model::draw(double delta_time) {
 	for (Mesh &mesh : _meshes) {
-		mesh.draw(shader);
+		mesh.draw(delta_time);
 	}
 }
 
-void Model::DrawWireframe(Shader &shader) {
+void Model::draw_wireframe(double delta_time) {
 	for (Mesh &mesh : _meshes) {
-		mesh.draw_wireframe(shader);
+		mesh.draw_wireframe(delta_time);
 	}
 }
 
@@ -48,23 +48,20 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene){
 		v.x = mesh->mVertices[i].x;
 		v.y = mesh->mVertices[i].y;
 		v.z = mesh->mVertices[i].z;
-		vertex._position_high = v;
-
+		vertex.position = v;
 		glm::vec3 n;
 		n.x = mesh->mNormals[i].x;
 		n.y = mesh->mNormals[i].y;
 		n.z = mesh->mNormals[i].z;
-		vertex._normal = n;
-
+		vertex.normal = n;
 		if (mesh->mTextureCoords[0]) {
 			glm::vec2 t;
 			t.x = mesh->mTextureCoords[0][i].x;
 			t.y = mesh->mTextureCoords[0][i].y;
-			vertex._texcoord = t;
+			vertex.texcoord = t;
 		} else {
-			vertex._texcoord = glm::vec2(0.0f, 0.0f);
+			vertex.texcoord = glm::vec2(0.0f, 0.0f);
 		}
-
 		vertices.push_back(vertex);
 	}
 	for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
@@ -75,9 +72,9 @@ Mesh Model::process_mesh(aiMesh* mesh, const aiScene* scene){
 	}
 	if (mesh->mMaterialIndex >= 0) {
 		aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-		std::vector<Texture> diffuseMaps = load_material_textures(material, aiTextureType_DIFFUSE, Texture::_diffuse_identifier);
+		std::vector<Texture> diffuseMaps = load_material_textures(material, aiTextureType_DIFFUSE, Texture::_diffuse_id);
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-		std::vector<Texture> specularMaps = load_material_textures(material, aiTextureType_SPECULAR, Texture::_specular_identifier);
+		std::vector<Texture> specularMaps = load_material_textures(material, aiTextureType_SPECULAR, Texture::_specular_id);
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 	std::cout << "Loaded mesh with " << vertices.size() << " vertices, " << indices.size() << " indices and " << textures.size() << " textures. " << std::endl;
@@ -106,7 +103,6 @@ std::vector<Texture> Model::load_material_textures(aiMaterial *mat, aiTextureTyp
 			_textures_loaded.push_back(texture);
 		}
 	}
-
 	return textures;
 }
 
@@ -114,22 +110,17 @@ GLint texture_from_file(const char* path, std::string directory) {
 	//Generate texture ID and load texture data 
 	std::string filename = std::string(path);
 	filename = directory + "\\" + filename;
-
 	GLuint textureID;
 	glGenTextures(1, &textureID);
 	int width, height;
-
 	unsigned char* image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 	if (image == nullptr) {
 		std::cout << "ERROR::SOIL::FAILED_TO_LOAD_IMAGE" << std::endl;
 	}
-
 	// Assign texture to ID
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
 	glGenerateMipmap(GL_TEXTURE_2D);
-
 	// Parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -137,7 +128,6 @@ GLint texture_from_file(const char* path, std::string directory) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image);
-
 	return textureID;
 }
 

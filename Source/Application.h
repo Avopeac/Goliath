@@ -19,7 +19,6 @@ class Application
 {
 public:
 	Application(unsigned int width = WINDOW_WIDTH, unsigned int height = WINDOW_HEIGHT, const std::string &title = WINDOW_NAME);
-	~Application();
 	int initialize();
 	void run();
 private:

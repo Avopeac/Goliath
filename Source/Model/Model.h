@@ -7,14 +7,12 @@
 #include "..\Application.h"
 #include "..\Model\Mesh.h"
 #include "..\Model\Texture.h"
-///Model is a mesh with a single attribute index, this code is derived from a tutorial.
-class Model {
+///Model is a mesh with a single attribute index.
+class Model : public Drawable {
 public:
-	//Implements the drawable interface, calls base class constructor
-	Model(GLchar* &path) { load_model(path); }
-	//Overrides the draw function
-	void Draw(Shader &shader);
-	void DrawWireframe(Shader &shader);
+	Model(GLchar* &path) : Drawable() { load_model(path); }
+	void draw(double delta_time) override;
+	void draw_wireframe(double delta_time) override;
 
 private:
 	//The meshes of the model

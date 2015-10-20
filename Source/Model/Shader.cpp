@@ -55,13 +55,13 @@ void Shader::compile_shader(const char *vertex_code, const char *fragment_code) 
 		std::cout << "Application failed to compile fragment shader. " << std::endl;
 	}
 	//Linked the shaders and create program
-	_program = glCreateProgram();
-	glAttachShader(_program, vertex);
-	glAttachShader(_program, fragment);
-	glLinkProgram(_program);
-	glGetProgramiv(_program, GL_LINK_STATUS, &success);
+	program = glCreateProgram();
+	glAttachShader(program, vertex);
+	glAttachShader(program, fragment);
+	glLinkProgram(program);
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(_program, _log_size, NULL, log);
+		glGetProgramInfoLog(program, _log_size, NULL, log);
 		std::cout << "Application failed to link shaders and create program. " << std::endl;
 	}
 	//Clean up
@@ -71,7 +71,7 @@ void Shader::compile_shader(const char *vertex_code, const char *fragment_code) 
 }
 
 void Shader::use() {
-	glUseProgram(_program);
+	glUseProgram(program);
 }
 
 

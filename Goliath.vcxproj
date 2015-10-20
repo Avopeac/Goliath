@@ -161,24 +161,24 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Source\MessageSystem.cpp" />
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Model.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Model\Texture.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
-    <ClCompile Include="Source\Threading\MessageSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Drawable.h" />
+    <ClInclude Include="Source\Message.h" />
+    <ClInclude Include="Source\MessageSystem.h" />
     <ClInclude Include="Source\Model\Mesh.h" />
     <ClInclude Include="Source\Model\Model.h" />
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
     <ClInclude Include="Source\Renderer.h" />
-    <ClInclude Include="Source\Threading\Message.h" />
-    <ClInclude Include="Source\Threading\MessageSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

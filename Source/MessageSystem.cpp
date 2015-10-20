@@ -3,7 +3,7 @@
 void MessageSystem::clean_up() {
 	_clean_up = true;
 	//Join threads
-	for (int i = 0; i < _threads.size(); ++i) {
+	for (unsigned int i = 0; i < _threads.size(); ++i) {
 		if (_threads[i].joinable()) {
 			_threads[i].join();
 		}

@@ -3,9 +3,7 @@
 #include "Renderer.h"
 #include "Application.h"
 #include "MessageSystem.h"
-
 Application::Application(unsigned int width, unsigned int height, const std::string &title) : _width(width), _height(height), _title(title) {}
-Application::~Application() { delete _window_ptr; }
 
 int Application::initialize() {
 	//Accumulate initialization status

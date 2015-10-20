@@ -53,11 +53,11 @@
     <ClCompile Include="Source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Threading\MessageSystem.cpp">
-      <Filter>Source Files\Threading</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Renderer.cpp">
       <Filter>Source Files\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MessageSystem.cpp">
+      <Filter>Source Files\Threading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,17 +79,17 @@
     <ClInclude Include="Source\Model\Vertex.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Threading\Message.h">
-      <Filter>Source Files\Threading</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Threading\MessageSystem.h">
-      <Filter>Source Files\Threading</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Drawable.h">
       <Filter>Source Files\Draw</Filter>
     </ClInclude>
     <ClInclude Include="Source\Renderer.h">
       <Filter>Source Files\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Message.h">
+      <Filter>Source Files\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MessageSystem.h">
+      <Filter>Source Files\Threading</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

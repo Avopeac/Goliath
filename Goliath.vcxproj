@@ -157,53 +157,28 @@
   <ItemGroup>
     <None Include="Shaders\standard.frag" />
     <None Include="Shaders\standard.vert" />
-    <None Include="Shaders\terrain.frag" />
-    <None Include="Shaders\terrain.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
-    <ClCompile Include="Source\Controller\Controller.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\Math\Ellipsoid.cpp" />
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Model.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Model\Texture.cpp" />
-    <ClCompile Include="Source\MultiThreading\MessageSystem.cpp" />
-    <ClCompile Include="Source\MultiThreading\TileMessage.cpp" />
-    <ClCompile Include="Source\QuadTree\FractalHeightFunction.cpp" />
-    <ClCompile Include="Source\QuadTree\QuadTree.cpp" />
-    <ClCompile Include="Source\QuadTree\Tile.cpp" />
-    <ClCompile Include="Source\Visibility\Camera.cpp" />
-    <ClCompile Include="Source\Visibility\Frustum.cpp" />
+    <ClCompile Include="Source\Renderer.cpp" />
+    <ClCompile Include="Source\Threading\MessageSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
-    <ClInclude Include="Source\Controller\Controller.h" />
-    <ClInclude Include="Source\Controller\KeyAction.h" />
-    <ClInclude Include="Source\Math\AABB.h" />
-    <ClInclude Include="Source\Math\Cartesian3D.h" />
-    <ClInclude Include="Source\Math\Ellipsoid.h" />
-    <ClInclude Include="Source\Math\Geographic3D.h" />
-    <ClInclude Include="Source\Math\MathHelp.h" />
-    <ClInclude Include="Source\Math\Plane.h" />
-    <ClInclude Include="Source\Math\Primitive.h" />
-    <ClInclude Include="Source\Math\Sphere.h" />
-    <ClInclude Include="Source\Math\Type3D.h" />
+    <ClInclude Include="Source\Drawable.h" />
     <ClInclude Include="Source\Model\Mesh.h" />
     <ClInclude Include="Source\Model\Model.h" />
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
-    <ClInclude Include="Source\MultiThreading\Message.h" />
-    <ClInclude Include="Source\MultiThreading\MessageSystem.h" />
-    <ClInclude Include="Source\MultiThreading\TileMessage.h" />
-    <ClInclude Include="Source\QuadTree\FractalHeightFunction.h" />
-    <ClInclude Include="Source\QuadTree\HeightFunction.h" />
-    <ClInclude Include="Source\QuadTree\QuadTree.h" />
-    <ClInclude Include="Source\QuadTree\Tile.h" />
-    <ClInclude Include="Source\Visibility\Camera.h" />
-    <ClInclude Include="Source\Visibility\Frustum.h" />
+    <ClInclude Include="Source\Renderer.h" />
+    <ClInclude Include="Source\Threading\Message.h" />
+    <ClInclude Include="Source\Threading\MessageSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

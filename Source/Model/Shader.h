@@ -11,6 +11,6 @@ public:
 	void use();
 	GLuint _program;
 private:
-	static unsigned const int _log_size;
+	unsigned const int _log_size = 512;
 	void compile_shader(const char *, const char *);
 };

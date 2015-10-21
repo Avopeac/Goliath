@@ -23,7 +23,7 @@
 #*.lib
 
 # Executables
-*.exe
+#*.exe
 *.out
 *.app
 
@@ -76,11 +76,11 @@ artifacts/
 *_i.c
 *_p.c
 *_i.h
-*.ilk
+#*.ilk
 *.meta
 *.obj
 *.pch
-*.pdb
+#*.pdb
 *.pgc
 *.pgd
 *.rsp

@@ -6,6 +6,10 @@
 #include <GL\GL.h>
 #include <GLFW\glfw3.h>
 #include "Shader.h"
+
+unsigned int Shader::_log_size = 512;
+GLuint Shader::_last_program = 0;
+
 Shader::Shader(const GLchar * vertex_path, const GLchar * fragment_path) {
 	std::string vertex_code;
 	std::string fragment_code;
@@ -71,7 +75,10 @@ void Shader::compile_shader(const char *vertex_code, const char *fragment_code) 
 }
 
 void Shader::use() {
-	glUseProgram(program);
+	if (_last_program != program) {
+		glUseProgram(program);
+		_last_program = program;
+	}
 }
 
 

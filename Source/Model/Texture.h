@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <assimp\postprocess.h>
 #include <GLFW\glfw3.h>
 #ifndef DIFFUSE_ID
 #define DIFFUSE_ID "tex_diffuse"
@@ -14,5 +13,4 @@ struct Texture {
 	static const std::string _specular_id;
 	GLuint _id;
 	std::string _type;
-	aiString _path;
 };

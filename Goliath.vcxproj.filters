@@ -41,9 +41,6 @@
     <ClCompile Include="Source\Model\Mesh.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Model\Model.cpp">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Model\Shader.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -65,9 +62,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Model\Mesh.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Model\Model.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\Model\Shader.h">

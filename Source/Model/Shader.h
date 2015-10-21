@@ -17,6 +17,7 @@ public:
 	void use();
 	GLuint program;
 private:
-	unsigned int _log_size = 512;
+	unsigned static int _log_size;
+	static GLuint _last_program;
 	void compile_shader(const char *vertex_code, const char *fragment_code);
 };

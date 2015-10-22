@@ -14,7 +14,7 @@ class Shader
 public:
 	Shader(const GLchar *vertex_path = STANDARD_VERT_SHADER, const GLchar *fragment_path = STANDARD_FRAG_SHADER);
 	~Shader() { };
-	void use();
+	void use() const;
 	GLuint program;
 private:
 	unsigned static int _log_size;

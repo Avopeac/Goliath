@@ -11,6 +11,5 @@ public:
 	virtual void draw_wireframe(const Camera &camera, double delta_time) override;
 private:
 	double _radius;
-	Mesh _mesh;
-
+	glm::mat4 _model;
 };

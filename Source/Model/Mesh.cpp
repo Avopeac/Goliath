@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iostream>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) : Drawable() {
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) {
 	vertices = vertices;
 	indices = indices;
 	if (&textures != nullptr) {
@@ -43,7 +43,7 @@ void Mesh::update_vertices() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Vertex::texcoord));
 }
 
-void Mesh::draw(const Camera &camera, double delta_time) {
+void Mesh::draw(const Shader &shader, double delta_time) {
 	GLuint diffuse_nr = 1;
 	GLuint specular_nr = 1;
 	//Set textures to texture units
@@ -61,7 +61,7 @@ void Mesh::draw(const Camera &camera, double delta_time) {
 		std::string uniform = name + number;
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, textures[i]._id);
-		glUniform1i(glGetUniformLocation(_shader.program, uniform.c_str()), i);
+		glUniform1i(glGetUniformLocation(shader.program, uniform.c_str()), i);
 	}
 	//Reset active texture unit
 	glActiveTexture(GL_TEXTURE0);
@@ -71,7 +71,7 @@ void Mesh::draw(const Camera &camera, double delta_time) {
 	glBindVertexArray(0);
 }
 
-void Mesh::draw_wireframe(const Camera &camera, double delta_time) {
+void Mesh::draw_wireframe(const Shader &shader, double delta_time) {
 	//No regard to textures, just draw with index list
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindVertexArray(_VAO);

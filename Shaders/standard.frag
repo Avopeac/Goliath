@@ -2,8 +2,9 @@
 
 out vec4 color;
 
-in vec3 ourColor;
 in vec2 ourUv;
+in vec3 ourNormal;
+in vec3 ourPosition;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_diffuse2;
@@ -13,5 +14,5 @@ uniform sampler2D texture_specular2;
 
 void main()
 {
-	color = texture(texture_diffuse1, ourUv);
+	color = vec4(normalize(ourNormal), 1.0);
 }

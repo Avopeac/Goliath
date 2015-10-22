@@ -57,9 +57,10 @@ int Application::initialize_glew(bool experimental) {
 
 void Application::run() {
 
-	Shader shader("Shaders/standard.vert", "Shaders/standard.frag");
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0,0,2), 0.11);
-	sphere->generate_mesh(10, 10);
+	Shader shader("Shaders/phong.vert", "Shaders/phong.frag");
+	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0,0,10), 0.11);
+	sphere->set_shader(shader);
+	sphere->generate_mesh(25, 25);
 
 	Camera camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0), 45.0, (double)_width/_height, 0.1, 1000.0);
 	Input input(_window_ptr);

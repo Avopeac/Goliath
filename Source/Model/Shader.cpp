@@ -74,7 +74,7 @@ void Shader::compile_shader(const char *vertex_code, const char *fragment_code) 
 	glDeleteShader(fragment);
 }
 
-void Shader::use() {
+void Shader::use() const {
 	if (_last_program != program) {
 		glUseProgram(program);
 		_last_program = program;

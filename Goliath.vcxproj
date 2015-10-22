@@ -158,28 +158,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Shaders\phong.frag" />
+    <None Include="Shaders\phong.vert" />
     <None Include="Shaders\standard.frag" />
     <None Include="Shaders\standard.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\Drawable\Plane.cpp" />
+    <ClCompile Include="Source\Drawable\Sphere.cpp" />
+    <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\MessageSystem.cpp" />
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Model\Texture.cpp" />
-    <ClCompile Include="Source\Renderer.cpp" />
+    <ClCompile Include="Source\Thread\MessageSystem.cpp" />
+    <ClCompile Include="Source\View\Camera.cpp" />
+    <ClCompile Include="Source\View\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
-    <ClInclude Include="Source\Drawable.h" />
-    <ClInclude Include="Source\Message.h" />
-    <ClInclude Include="Source\MessageSystem.h" />
+    <ClInclude Include="Source\Drawable\Plane.h" />
+    <ClInclude Include="Source\Drawable\Primitive.h" />
+    <ClInclude Include="Source\Drawable\Sphere.h" />
+    <ClInclude Include="Source\Input\Input.h" />
+    <ClInclude Include="Source\Input\InputEnabled.h" />
     <ClInclude Include="Source\Model\Mesh.h" />
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
-    <ClInclude Include="Source\Renderer.h" />
+    <ClInclude Include="Source\Thread\Message.h" />
+    <ClInclude Include="Source\Thread\MessageSystem.h" />
+    <ClInclude Include="Source\View\Camera.h" />
+    <ClInclude Include="Source\View\Drawable.h" />
+    <ClInclude Include="Source\View\Renderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

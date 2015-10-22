@@ -3,6 +3,7 @@
 #include <mutex>
 #include <memory>
 #include "Drawable.h"
+#include "Camera.h"
 class Renderer {
 public:
 	//Singleton
@@ -10,7 +11,8 @@ public:
 		static Renderer instance;
 		return instance;
 	}
-	void render(double delta_time);	
+	void update(double delta_time);
+	void render(const Camera &camera, double delta_time);
 	void add_drawable(const std::shared_ptr<Drawable> &drawable);
 private:
 	//Private constructor for singleton

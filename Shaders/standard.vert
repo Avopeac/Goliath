@@ -16,6 +16,5 @@ void main()
 	ourColor = color;
 	ourUv = uv;
 
-	//gl_Position = proj * view * model * vec4(position, 1.0);
 	gl_Position = proj * view * model * vec4(position, 1.0);
 }

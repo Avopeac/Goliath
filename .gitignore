@@ -11,7 +11,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-#*.dll
+*.dll
 
 # Fortran module files
 *.mod
@@ -20,10 +20,10 @@
 *.lai
 *.la
 *.a
-#*.lib
+*.lib
 
 # Executables
-#*.exe
+*.exe
 *.out
 *.app
 
@@ -76,11 +76,11 @@ artifacts/
 *_i.c
 *_p.c
 *_i.h
-#*.ilk
+*.ilk
 *.meta
 *.obj
 *.pch
-#*.pdb
+*.pdb
 *.pgc
 *.pgd
 *.rsp

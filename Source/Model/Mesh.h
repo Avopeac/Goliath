@@ -1,10 +1,11 @@
 #pragma once
 #include <vector>
 #include "..\Application.h"
-#include "..\Drawable.h"
+#include "..\View\Drawable.h"
 #include "..\Model\Vertex.h"
 #include "..\Model\Texture.h"
 #include "..\Model\Shader.h"
+#include "..\View\Camera.h"
 ///A mesh is the most basic thing that's uploaded to the GPU, it contains vertices, normals, texture coordinates and textures
 class Mesh : public Drawable{
 public:
@@ -15,9 +16,9 @@ public:
 	std::vector<Texture> textures;
 	std::vector<GLuint> indices;
 	//Inherited via Drawable
-	void draw(double delta_time) override;
+	void draw(const Camera &camera, double delta_time) override;
 	//Draw the mesh with wireframe mode
-	void draw_wireframe(double delta_time) override;
+	void draw_wireframe(const Camera &camera, double delta_time) override;
 	//Upload mesh to GPU
 	void setup_mesh();
 	//Upload new index list 

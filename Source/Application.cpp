@@ -1,14 +1,20 @@
 #pragma once
 #include <iostream>
-#include "Renderer.h"
+#include "View\Renderer.h"
+#include "View\Camera.h"
 #include "Application.h"
-#include "MessageSystem.h"
+#include "Thread\MessageSystem.h"
+#include "Input\Input.h"
+//TO BE REMOVED
+#include "Model\Shader.h"
+#include "Drawable\Sphere.h"
+
 Application::Application(unsigned int width, unsigned int height, const std::string &title) : _width(width), _height(height), _title(title) {}
 
 int Application::initialize() {
 	//Accumulate initialization status
 	int status = 0;
-	status += initialize_glfw(3, 3);
+	status += initialize_glfw(4, 5);
 	status += initialize_glew(true);
 	if (status < 0) {
 		glfwTerminate();
@@ -50,23 +56,34 @@ int Application::initialize_glew(bool experimental) {
 }
 
 void Application::run() {
+
+	Shader shader("Shaders/standard.vert", "Shaders/standard.frag");
+	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0,0,2), 0.11);
+	sphere->generate_mesh(10, 10);
+
+	Camera camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0), 45.0, (double)_width/_height, 0.1, 1000.0);
+	Input input(_window_ptr);
+	input.add_input_enabled_object(&camera);
+
 	//Set viewport settings
 	glViewport(0, 0, _width, _height);
 	glClearColor(_clear_color.r, _clear_color.g, _clear_color.b, _clear_color.a);
 	//Loop
 	double old_time = 0.0;
 	while (!glfwWindowShouldClose(_window_ptr)) {
-		//Poll events
-		glfwPollEvents();
 		//Timings
 		_elapsed_time = glfwGetTime();
 		_delta_time = _elapsed_time - old_time;
 		old_time = _elapsed_time;
 		_frames_per_second = 1.0 / _delta_time;
-		//Start rendering
-		Renderer::instance().render(_delta_time);
-		//Swap backbuffer
+
+		input.update(_delta_time);
+		camera.update(_delta_time);
+		Renderer::instance().add_drawable(sphere);
+		Renderer::instance().render(camera, _delta_time);
+
 		glfwSwapBuffers(_window_ptr);
+		glfwPollEvents();
 	}
 	//Stop the threads
 	MessageSystem::instance().clean_up();

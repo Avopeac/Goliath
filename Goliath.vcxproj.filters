@@ -16,14 +16,20 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{beacf452-1200-442a-853c-226ad5247e48}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\View">
+      <UniqueIdentifier>{33b24984-ab81-49c8-8195-6689408ddd29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Drawable">
+      <UniqueIdentifier>{86410f1c-a3cb-4d8e-af61-6f639b1f40c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread">
+      <UniqueIdentifier>{3cc4d906-a85b-49b4-b8fb-e301b198fc8c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Model">
-      <UniqueIdentifier>{e4ea8dd8-624a-4c4d-93f6-600b2ba437d2}</UniqueIdentifier>
+      <UniqueIdentifier>{a6030ac7-e8ea-4551-843d-85cffd0be487}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Threading">
-      <UniqueIdentifier>{c82a8558-5515-4d3c-88e1-723ef7083162}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Draw">
-      <UniqueIdentifier>{7ab9b066-5199-49bd-87bb-ce3419f2b214}</UniqueIdentifier>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{841ea2f0-b2c4-4398-bca8-b027bc9f672b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,10 +39,19 @@
     <None Include="Shaders\standard.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\phong.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\phong.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Application.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Drawable\Plane.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Drawable\Sphere.cpp">
+      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="Source\Model\Mesh.cpp">
       <Filter>Source Files\Model</Filter>
@@ -47,19 +62,34 @@
     <ClCompile Include="Source\Model\Texture.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Input\Input.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Thread\MessageSystem.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\View\Camera.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\View\Renderer.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Renderer.cpp">
-      <Filter>Source Files\Draw</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MessageSystem.cpp">
-      <Filter>Source Files\Threading</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Application.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Source\Drawable\Plane.h">
+      <Filter>Source Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Drawable\Primitive.h">
+      <Filter>Source Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Drawable\Sphere.h">
+      <Filter>Source Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="Source\Model\Mesh.h">
       <Filter>Source Files\Model</Filter>
@@ -73,17 +103,29 @@
     <ClInclude Include="Source\Model\Vertex.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Drawable.h">
-      <Filter>Source Files\Draw</Filter>
+    <ClInclude Include="Source\Input\Input.h">
+      <Filter>Source Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Renderer.h">
-      <Filter>Source Files\Draw</Filter>
+    <ClInclude Include="Source\Input\InputEnabled.h">
+      <Filter>Source Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Message.h">
-      <Filter>Source Files\Threading</Filter>
+    <ClInclude Include="Source\Thread\Message.h">
+      <Filter>Source Files\Thread</Filter>
     </ClInclude>
-    <ClInclude Include="Source\MessageSystem.h">
-      <Filter>Source Files\Threading</Filter>
+    <ClInclude Include="Source\Thread\MessageSystem.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\Camera.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\Drawable.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\Renderer.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Application.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -43,8 +43,7 @@ void Mesh::update_vertices() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Vertex::texcoord));
 }
 
-void Mesh::draw(double delta_time) {
-	_shader.use();
+void Mesh::draw(const Camera &camera, double delta_time) {
 	GLuint diffuse_nr = 1;
 	GLuint specular_nr = 1;
 	//Set textures to texture units
@@ -72,9 +71,8 @@ void Mesh::draw(double delta_time) {
 	glBindVertexArray(0);
 }
 
-void Mesh::draw_wireframe(double delta_time) {
+void Mesh::draw_wireframe(const Camera &camera, double delta_time) {
 	//No regard to textures, just draw with index list
-	_shader.use();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBindVertexArray(_VAO);
 	glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);

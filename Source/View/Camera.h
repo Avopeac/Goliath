@@ -43,6 +43,10 @@ private:
 	glm::mat4 _perspective, _view;
 	glm::quat _orientation;
 	glm::vec3 _eye, _center, _direction, _up, _right, _world_up;
+	
+	glm::vec3 get_direction_from_quaternion();
+	glm::vec3 get_up_from_quaternion();
+	glm::vec3 get_right_from_quaternion();
 
 	Plane _frustum[6];
 	glm::vec3 _points[8];

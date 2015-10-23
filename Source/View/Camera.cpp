@@ -16,9 +16,13 @@ Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &u
 }
 
 void Camera::update(double delta_time) {
-	glm::quat q = glm::conjugate(_orientation);
-	_view = glm::mat4_cast(q);
-	_view = glm::translate(_view, -_eye);
+	glm::vec3 v = get_direction_from_quaternion();
+	_view = glm::lookAt(_eye, get_direction_from_quaternion() + _eye, get_up_from_quaternion());
+	std::cout << _view[0].x << " " << _view[0].y << " " << _view[0].z << std::endl;
+	std::cout << _view[1].x << " " << _view[1].y << " " << _view[1].z << std::endl;
+	std::cout << _view[2].x << " " << _view[2].y << " " << _view[2].z << std::endl;
+	std::cout << _view[3].x << " " << _view[3].y << " " << _view[3].z << std::endl;
+	std::cout << std::endl;
 }
 
 bool Camera::intersects_point(const glm::vec3 &point) {
@@ -61,6 +65,24 @@ void Camera::set_roll(double amount) {
 	_orientation = q * _orientation;
 }
 
+glm::vec3 Camera::get_direction_from_quaternion() {
+	return glm::vec3(2.0f * (_orientation.x * _orientation.z + _orientation.w * _orientation.y),
+		2.0f * (_orientation.y * _orientation.x - _orientation.w * _orientation.x),
+		1.0f - 2.0f * (_orientation.x * _orientation.x + _orientation.y * _orientation.y));
+}
+
+glm::vec3 Camera::get_up_from_quaternion() {
+	return glm::vec3(2.0f * (_orientation.x * _orientation.y - _orientation.w * _orientation.z),
+		1.0f - 2.0f * (_orientation.x * _orientation.x + _orientation.z * _orientation.z),
+		2.0f * (_orientation.y * _orientation.z + _orientation.w * _orientation.x));
+}
+
+glm::vec3 Camera::get_right_from_quaternion() {
+	return glm::vec3(1.0f - 2.0f * (_orientation.y * _orientation.y + _orientation.z * _orientation.z),
+		2.0f * (_orientation.y * _orientation.x + _orientation.w * _orientation.z),
+			2.0f * (_orientation.x * _orientation.z - _orientation.w * _orientation.y));
+}
+
 void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
 	float delta = (float)delta_time;
 	if (glfwGetKey(window, GLFW_KEY_W)) {
@@ -70,12 +92,10 @@ void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
 		_eye -= _direction * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A)) {
-		_eye -= _right * delta;
-		_direction += _eye;
+		_eye += _right * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D)) {
-		_eye += _right * delta;
-		_direction += _eye;
+		_eye -= _right * delta;
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q)) {
 		set_roll(-delta_time);

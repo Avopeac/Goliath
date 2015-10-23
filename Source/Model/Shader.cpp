@@ -17,7 +17,7 @@ Shader::Shader(const GLchar * vertex_path, const GLchar * fragment_path) {
 	std::ifstream fragment_file;
 	vertex_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 	fragment_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	//Try openining and streaming in the shader files
+	//Try opening and streaming in the shader files
 	try {
 		vertex_file.open(vertex_path);
 		fragment_file.open(fragment_path);

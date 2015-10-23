@@ -14,7 +14,7 @@ Application::Application(unsigned int width, unsigned int height, const std::str
 int Application::initialize() {
 	//Accumulate initialization status
 	int status = 0;
-	status += initialize_glfw(4, 5);
+	status += initialize_glfw(3, 3);
 	status += initialize_glew(true);
 	if (status < 0) {
 		glfwTerminate();

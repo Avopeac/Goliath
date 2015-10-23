@@ -15,10 +15,11 @@ private:
 	static int _button, _mouse_action, _mouse_mods;
 	static double _offset_x, _offset_y;
 	std::vector<InputEnabled*> _objects;
-
+	GLFWwindow *_window_ptr;
 	friend void key_callback(GLFWwindow *window, int key, int scan_code, int action, int mods);
 	friend void cursor_position_callback(GLFWwindow *window, double x_pos, double y_pos);
 	friend void cursor_enter_callback(GLFWwindow *window, int entered);
 	friend void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
 	friend void scroll_callback(GLFWwindow *window, double offset_x, double offset_y);
+
 };

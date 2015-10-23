@@ -8,6 +8,7 @@ public:
 	virtual void handle_key_inputs(int key, int scan_code, int action, int mods, double delta_time) { return; }
 	virtual void handle_scroll_actions(double offset_x, double offset_y, double delta_time) { return; }
 	virtual void handle_joystick(const float *axes, int axes_count, const unsigned char *state, int state_count, const char* name, double delta_time) { return; }
+	virtual void handle_multiple_keystrokes(GLFWwindow *window, double delta_time) { return; }
 
 protected:
 	InputEnabled() {};

@@ -1,6 +1,9 @@
 #pragma once
 #include <GLFW\glfw3.h>
 #include <GLM\glm.hpp>
+#include <GLM\gtc\quaternion.hpp>
+#include <GLM\gtx\quaternion.hpp>
+#include <GLM\gtc\matrix_transform.hpp>
 #include "..\Drawable\Plane.h"
 #include "..\Input\InputEnabled.h"
 class Camera : public InputEnabled {
@@ -38,11 +41,12 @@ private:
 	double _near, _far;
 	double _yaw, _pitch, _roll;
 	glm::mat4 _perspective, _view;
-	glm::vec3 _eye, _center, _up;
+	glm::quat _orientation;
+	glm::vec3 _eye, _center, _direction, _up, _right, _world_up;
 
 	Plane _frustum[6];
 	glm::vec3 _points[8];
 
 	virtual void handle_mouse_movement(double x, double y, double delta_x, double delta_y, double acc_x, double acc_y, double delta_time) override;
-	virtual void handle_key_inputs(int key, int scan_code, int action, int mods, double delta_time) override;
+	virtual void handle_multiple_keystrokes(GLFWwindow *window, double delta_time) override;
 };

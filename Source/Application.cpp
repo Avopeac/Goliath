@@ -19,6 +19,10 @@ int Application::initialize() {
 	if (status < 0) {
 		glfwTerminate();
 	}
+
+	//White clear
+	_clear_color = glm::vec4(1.0, 1.0, 1.0, 1.0);
+
 	//Initialize the message passing system
 	MessageSystem::instance();
 	return status;

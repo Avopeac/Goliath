@@ -7,6 +7,7 @@ Input::Input(GLFWwindow *window) {
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+	_window_ptr = window;
 }
 
 void Input::add_input_enabled_object(InputEnabled *object) {
@@ -22,6 +23,10 @@ void Input::update(double delta_time) {
 		ptr->handle_mouse_press(_button, _mouse_action, _mouse_mods, delta_time);
 		ptr->handle_scroll_actions(_offset_x, _offset_y, delta_time);
 
+		if (_window_ptr != nullptr) {
+			ptr->handle_multiple_keystrokes(_window_ptr, delta_time);
+		}
+
 		if (glfwJoystickPresent(GLFW_JOYSTICK_1)) {
 			int axes_count, state_count;
 			const float *axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axes_count);
@@ -30,6 +35,9 @@ void Input::update(double delta_time) {
 			ptr->handle_joystick(axes, axes_count, state, state_count, name, delta_time);
 		}
 	}
+
+	Input::_delta_x = 0;
+	Input::_delta_y = 0;
 }
 
 void key_callback(GLFWwindow * window, int key, int scan_code, int action, int mods) {

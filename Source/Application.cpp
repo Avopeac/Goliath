@@ -74,7 +74,7 @@ void Application::run() {
 	sphere->set_shader(shader);
 	sphere->generate_mesh(25, 25);
 
-	Camera camera(glm::vec3(0, 0, -2), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0), 45.0, (double)_width/_height, 0.1, 1000.0);
+	Camera camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 45.0, (double)_width/_height, 0.1, 1000.0);
 	Input input(_window_ptr);
 	input.add_input_enabled_object(&camera);
 

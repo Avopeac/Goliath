@@ -27,16 +27,14 @@ public:
 	bool intersects_box(const glm::vec3 &center, const glm::vec3 &extents);
 
 private:
-	double _vertical_fov, _horizontal_fov;
-	double _aspect_ratio;
+	double _vertical_fov, _horizontal_fov, _aspect_ratio;
 	double _near, _far;
-	double _time;
-	double _accumulated_roll;
+	double _accumulated_roll, _time;
+
 	glm::mat4 _view, _perspective;
-	glm::quat _rotation_quat;
-	glm::quat _next_rotation_quat;
+	glm::quat _rotation_quat, _next_rotation_quat;
+	glm::quat _yaw, _pitch, _roll;
 	glm::mat4 _translation, _rotation_mat;
-	glm::vec3 _next_translation;
 
 	Plane _frustum[6];
 	glm::vec3 _points[8];

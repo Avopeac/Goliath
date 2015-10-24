@@ -8,12 +8,16 @@ Camera::Camera(const glm::vec3 &eye, const glm::vec3 &forward, const glm::vec3 &
 }
 
 void Camera::update(double delta_time) {
+	//Apply the individual axis rotations
+	_next_rotation_quat = glm::quat(1, 0, 0, 0);
+	_next_rotation_quat = _yaw * _next_rotation_quat;
+	_next_rotation_quat = _pitch * _next_rotation_quat;
+	_next_rotation_quat = _roll * _next_rotation_quat;
 	//The scale on third parameter to SLERP determines speed of interpolation
 	_rotation_quat = glm::slerp(_rotation_quat, _next_rotation_quat, (float)delta_time * 10.0f);
 	_rotation_mat = glm::mat4_cast(_rotation_quat);
 	//Multiply rotation and translation matrices to get view matrix, keeping to quaternions to avoid Gimbal locking
 	_view = _rotation_mat * _translation;
-
 	//DEBUG
 	/*_time += delta_time;
 	if (_time > .50) {
@@ -41,10 +45,10 @@ bool Camera::intersects_box(const glm::vec3 &center, const glm::vec3 &extents) {
 void Camera::handle_mouse_movement(double x, double y, double delta_x, double delta_y, double acc_x, double acc_y, double delta_time) {
 	float rx = glm::radians((float)acc_x) * 0.01f;
 	float ry = glm::radians((float)acc_y) * 0.01f;
-	//Create an identity quaternion and rotate the original orthonormal basis
-	_next_rotation_quat = glm::quat(1, 0, 0, 0);
-	_next_rotation_quat = glm::rotate(_next_rotation_quat, -ry, glm::vec3(1,0,0));
-	_next_rotation_quat = glm::rotate(_next_rotation_quat, -rx, glm::vec3(0,1,0));
+	_yaw = glm::quat(1, 0, 0, 0);
+	_yaw = glm::rotate(_yaw, -rx, glm::vec3(0,1,0));
+	_pitch = glm::quat(1, 0, 0, 0);
+	_pitch = glm::rotate(_pitch, -ry, glm::vec3(1, 0, 0));
 }
 
 void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
@@ -70,7 +74,10 @@ void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
 	if (glfwGetKey(window, GLFW_KEY_E)) {
 		_accumulated_roll -= delta_time;
 	}
-	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_accumulated_roll, glm::vec3(0, 0, 1));
+
+	//_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_accumulated_roll, glm::vec3(0, 0, 1));
+	_roll = glm::quat(1, 0, 0, 0);
+	_roll = glm::rotate(_roll, (float)_accumulated_roll, glm::vec3(0, 0, 1));
 
 	//Undo rotation that will be applied later
 	translation = glm::inverse(_rotation_mat) * translation;

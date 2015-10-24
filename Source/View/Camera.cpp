@@ -14,7 +14,8 @@ void Camera::update(double delta_time) {
 	//Multiply rotation and translation matrices to get view matrix, keeping to quaternions to avoid Gimbal locking
 	_view = _rotation_mat * _translation;
 
-	_time += delta_time;
+	//DEBUG
+	/*_time += delta_time;
 	if (_time > .50) {
 		_time = 0;
 		std::cout << _view[0].x << " " << _view[0].y << " " << _view[0].z << std::endl;
@@ -22,7 +23,7 @@ void Camera::update(double delta_time) {
 		std::cout << _view[2].x << " " << _view[2].y << " " << _view[2].z << std::endl;
 		std::cout << _view[3].x << " " << _view[3].y << " " << _view[3].z << std::endl;
 		std::cout << std::endl;
-	}
+	}*/
 }
 
 bool Camera::intersects_point(const glm::vec3 &point) {
@@ -61,6 +62,15 @@ void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
 	if (glfwGetKey(window, GLFW_KEY_D)) {
 		translation.x -= (float)delta_time;
 	}
+
+	//For rolling
+	if (glfwGetKey(window, GLFW_KEY_Q)) {
+		_accumulated_roll += delta_time;
+	} 
+	if (glfwGetKey(window, GLFW_KEY_E)) {
+		_accumulated_roll -= delta_time;
+	}
+	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_accumulated_roll, glm::vec3(0, 0, 1));
 
 	//Undo rotation that will be applied later
 	translation = glm::inverse(_rotation_mat) * translation;

@@ -31,6 +31,7 @@ private:
 	double _aspect_ratio;
 	double _near, _far;
 	double _time;
+	double _accumulated_roll;
 	glm::mat4 _view, _perspective;
 	glm::quat _rotation_quat;
 	glm::quat _next_rotation_quat;

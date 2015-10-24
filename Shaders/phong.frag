@@ -15,7 +15,7 @@ uniform sampler2D texture_specular1;
 uniform sampler2D texture_specular2;
 void main()
 {
-    vec3 lightPos = normalize(view * vec4(0, 1, -10, 0)).xyz; //Temporary
+    vec3 lightPos = normalize(view * vec4(0, 1, 10, 0)).xyz; //Temporary
     vec3 n = normalize(ourNormal);
     vec3 v = normalize(-ourPosition);
     vec3 l = normalize(lightPos);

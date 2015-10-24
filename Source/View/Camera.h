@@ -8,7 +8,7 @@
 #include "..\Input\InputEnabled.h"
 class Camera : public InputEnabled {
 public:
-	Camera(const glm::vec3 &eye, const glm::vec3 &forward, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far);
+	Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far);
 
 	void update(double delta_time);
 
@@ -30,7 +30,6 @@ private:
 	double _vertical_fov, _horizontal_fov, _aspect_ratio;
 	double _near, _far;
 	double _accumulated_roll, _time;
-
 	glm::mat4 _view, _perspective;
 	glm::quat _rotation_quat, _next_rotation_quat;
 	glm::quat _yaw, _pitch, _roll;

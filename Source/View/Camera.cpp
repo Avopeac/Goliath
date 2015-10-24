@@ -1,18 +1,25 @@
 #include "Camera.h"
 #include <iostream>
 
-Camera::Camera(const glm::vec3 &eye, const glm::vec3 &forward, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far)
+Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far)
 	: InputEnabled(), _vertical_fov(vertical_fov), _aspect_ratio(aspect_ratio), _near(near), _far(far) {
 	_perspective = glm::perspective(_vertical_fov, _aspect_ratio, _near, _far);
-	_translation = glm::mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1);
+	glm::vec3 direction = glm::normalize(center - eye);
+	glm::vec3 right = glm::cross(direction, glm::normalize(world_up));
+	glm::vec3 up = glm::cross(right, direction);
+	//This is as the view matrix before any rotations are applied
+	_translation = glm::mat4(glm::vec4(right, 0),
+		glm::vec4(up, 0),
+		glm::vec4(direction, 0),
+		glm::vec4(0,0,0,1));
 }
 
 void Camera::update(double delta_time) {
 	//Apply the individual axis rotations
 	_next_rotation_quat = glm::quat(1, 0, 0, 0);
+	_next_rotation_quat = _roll * _next_rotation_quat;
 	_next_rotation_quat = _yaw * _next_rotation_quat;
 	_next_rotation_quat = _pitch * _next_rotation_quat;
-	_next_rotation_quat = _roll * _next_rotation_quat;
 	//The scale on third parameter to SLERP determines speed of interpolation
 	_rotation_quat = glm::slerp(_rotation_quat, _next_rotation_quat, (float)delta_time * 10.0f);
 	_rotation_mat = glm::mat4_cast(_rotation_quat);
@@ -76,9 +83,8 @@ void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
 		_accumulated_roll -= delta_time;
 	}
 
-	//_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_accumulated_roll, glm::vec3(0, 0, 1));
 	_roll = glm::quat(1, 0, 0, 0);
-	_roll = glm::rotate(_roll, (float)_accumulated_roll, glm::vec3(0, 0, -1));
+	_roll = glm::rotate(_roll, (float)_accumulated_roll, glm::vec3(0, 0, 1));
 
 	//Undo rotation that will be applied later
 	translation = glm::inverse(_rotation_mat) * translation;

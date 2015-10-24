@@ -5,8 +5,8 @@
 #include "Sphere.h"
 #include "..\View\Renderer.h"
 Sphere::Sphere(const glm::vec3 & origin, double radius) : Primitive(origin), Drawable(), _radius(radius) {
-	_model = glm::scale(_model, glm::vec3((float)_radius));
 	_model = glm::translate(_model, _origin);
+	_model = glm::scale(_model, glm::vec3((float)_radius));
 }
 
 void Sphere::generate_mesh(unsigned int latitudes, unsigned int longitudes) {

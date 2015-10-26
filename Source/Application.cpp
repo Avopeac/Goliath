@@ -8,6 +8,7 @@
 //TO BE REMOVED
 #include "Model\Shader.h"
 #include "Drawable\Sphere.h"
+#include <GLM\gtc\type_ptr.hpp>
 
 Application::Application(unsigned int width, unsigned int height, const std::string &title) : _width(width), _height(height), _title(title) {}
 
@@ -64,24 +65,26 @@ int Application::initialize_glew(bool experimental) {
 		return -1;
 	}
 	std::cout << "Application successfully initialized GLEW. " << std::endl;
- 	return 1;
+	return 1;
 }
 
 void Application::run() {
 
 	Shader shader("Shaders/phong.vert", "Shaders/phong.frag");
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0,0,-2), 0.11);
+	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, -10), 1.0);
 	sphere->set_shader(shader);
 	sphere->generate_mesh(25, 25);
 
-	Camera camera(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 45.0, (double)_width/_height, 0.1, 1000.0);
+	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)_width / _height, 0.1, 1000.0);
 	Input input(_window_ptr);
 	input.add_input_enabled_object(&camera);
+
+	Shader shady("Shaders/standard.vert", "Shaders/standard.frag");
 
 	//Set viewport settings
 	glViewport(0, 0, _width, _height);
 	glClearColor(_clear_color.r, _clear_color.g, _clear_color.b, _clear_color.a);
-	
+
 	const double desired_time = 1.0 / 60.0;
 	double old_time = 0.0;
 	double accumulated_time = 0.0;
@@ -100,6 +103,21 @@ void Application::run() {
 		Renderer::instance().add_drawable(sphere);
 		Renderer::instance().render(camera, _delta_time);
 
+		/*Mesh m;
+		m.vertices = camera.vertices;
+		m.indices = camera.indices;
+		m.setup_mesh();
+		glDisable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		shady.use();
+		glUniformMatrix4fv(glGetUniformLocation(shady.program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+		glUniformMatrix4fv(glGetUniformLocation(shady.program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
+		glUniformMatrix4fv(glGetUniformLocation(shady.program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+		m.draw(shady, _delta_time);
+		m.draw_wireframe(shader, _delta_time);
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_BLEND);*/
 		glfwSwapInterval(1);
 		glfwSwapBuffers(_window_ptr);
 		glfwPollEvents();

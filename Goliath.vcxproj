@@ -158,12 +158,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="Shaders\phong.frag" />
-    <None Include="Shaders\phong.vert" />
-    <None Include="Shaders\standard.frag" />
-    <None Include="Shaders\standard.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Drawable\Plane.cpp" />
     <ClCompile Include="Source\Drawable\Sphere.cpp" />
@@ -192,6 +186,12 @@
     <ClInclude Include="Source\View\Camera.h" />
     <ClInclude Include="Source\View\Drawable.h" />
     <ClInclude Include="Source\View\Renderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\simple.frag" />
+    <None Include="Shaders\simple.vert" />
+    <None Include="Shaders\standard.frag" />
+    <None Include="Shaders\standard.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,10 +5,10 @@
 #include "Application.h"
 #include "Thread\MessageSystem.h"
 #include "Input\Input.h"
+#include "AntTweakBar\AntTweakBar.h"
 //TO BE REMOVED
 #include "Model\Shader.h"
 #include "Drawable\Sphere.h"
-#include <GLM\gtc\type_ptr.hpp>
 
 Application::Application(unsigned int width, unsigned int height, const std::string &title) : _width(width), _height(height), _title(title) {}
 
@@ -20,10 +20,11 @@ int Application::initialize() {
 	if (status < 0) {
 		glfwTerminate();
 	}
-
+	//Initialize AntTweakBar
+	TwInit(TW_OPENGL_CORE, NULL);
+	TwWindowSize(_width, _height);
 	//White clear
-	_clear_color = glm::vec4(1.0, 1.0, 1.0, 1.0);
-
+	_clear_color = glm::vec4(1.0);
 	//Initialize the message passing system
 	MessageSystem::instance();
 	return status;
@@ -43,7 +44,6 @@ int Application::initialize_glfw(int major_version, int minor_version) {
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_SAMPLES, 4);
-
 	//Create a OpenGL context
 	_window_ptr = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
 	if (_window_ptr == nullptr) {
@@ -69,17 +69,18 @@ int Application::initialize_glew(bool experimental) {
 }
 
 void Application::run() {
+	//Create input manager
+	Input input(_window_ptr, "TweakBar");
 
-	Shader shader("Shaders/phong.vert", "Shaders/phong.frag");
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, -10), 1.0);
+	//To be removed
+	Shader shader("Shaders/standard.vert", "Shaders/standard.frag");
+	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
 	sphere->set_shader(shader);
 	sphere->generate_mesh(25, 25);
-
+	
+	//Create camera
 	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)_width / _height, 0.1, 1000.0);
-	Input input(_window_ptr);
 	input.add_input_enabled_object(&camera);
-
-	Shader shady("Shaders/standard.vert", "Shaders/standard.frag");
 
 	//Set viewport settings
 	glViewport(0, 0, _width, _height);
@@ -103,27 +104,14 @@ void Application::run() {
 		Renderer::instance().add_drawable(sphere);
 		Renderer::instance().render(camera, _delta_time);
 
-		/*Mesh m;
-		m.vertices = camera.vertices;
-		m.indices = camera.indices;
-		m.setup_mesh();
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		shady.use();
-		glUniformMatrix4fv(glGetUniformLocation(shady.program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-		glUniformMatrix4fv(glGetUniformLocation(shady.program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-		glUniformMatrix4fv(glGetUniformLocation(shady.program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
-		m.draw(shady, _delta_time);
-		m.draw_wireframe(shader, _delta_time);
-		glEnable(GL_CULL_FACE);
-		glDisable(GL_BLEND);*/
 		glfwSwapInterval(1);
 		glfwSwapBuffers(_window_ptr);
 		glfwPollEvents();
 	}
 	//Stop the threads
 	MessageSystem::instance().clean_up();
-	//Shut down glfw
+	//Clean up AntTweakBar	
+	TwTerminate();
+	//Shut down glfw 
 	glfwTerminate();
 }

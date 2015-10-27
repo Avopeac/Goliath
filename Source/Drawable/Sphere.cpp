@@ -3,11 +3,24 @@
 #include <GLM\gtc\constants.hpp>
 #include <GLM\gtc\type_ptr.hpp>
 #include <GLM\gtc\matrix_transform.hpp>
+#include <AntTweakBar\AntTweakBar.h>
 #include "Sphere.h"
+#include "..\Input\Input.h"
 #include "..\View\Renderer.h"
 Sphere::Sphere(const glm::vec3 & origin, double radius) : Primitive(origin), Drawable(), _radius(radius) {
 	_model = glm::scale(_model, glm::vec3((float)_radius));
 	_model = glm::translate(_model, _origin);
+	//TO BE REMOVED, JUST TESTING TWEAKBAR
+	roughness = 0.2f;
+	gaussian = 0.2f;
+	reflectance = 1.0f;
+	distribution = 0;
+	diffuseColor = glm::vec3(0.3, 0, 0);
+	specularColor = glm::vec3(1.0, 0.9, 0.95);
+	TwAddVarRW(Input::_tw_bar, "Roughness", TW_TYPE_FLOAT, &roughness, " min=0 max=1 step=0.01 ");
+	TwAddVarRW(Input::_tw_bar, "Distribution", TW_TYPE_INT32, &distribution, " min=0 max=1 step=1 ");
+	TwAddVarRW(Input::_tw_bar, "Gaussian", TW_TYPE_FLOAT, &gaussian, " min=0 max=1 step=0.01 ");
+	TwAddVarRW(Input::_tw_bar, "Reflectance", TW_TYPE_FLOAT, &reflectance, " min=0 max=1 step=0.01 ");
 }
 
 void Sphere::generate_mesh(unsigned int latitudes, unsigned int longitudes) {
@@ -40,18 +53,17 @@ void Sphere::generate_mesh(unsigned int latitudes, unsigned int longitudes) {
 			_mesh.indices.push_back(second + 1);
 		}
 	}
-
 	_mesh.setup_mesh();
 }
 
 void Sphere::draw(const Camera &camera, double delta_time) {
 		_shader.use();
-		glUniform3fv(glGetUniformLocation(_shader.program, "diffuseColor"), 1, glm::value_ptr(glm::vec3(0.3, 0.001, 0.001)));
-		glUniform3fv(glGetUniformLocation(_shader.program, "specularColor"), 1, glm::value_ptr(glm::vec3(0.7, 0.6, 0.6)));
-		glUniform1f(glGetUniformLocation(_shader.program, "roughness"), 0.2f);
-		glUniform1f(glGetUniformLocation(_shader.program, "gaussian"), 0.4f);
-		glUniform1f(glGetUniformLocation(_shader.program, "reflectance"), 0.6f);
-		glUniform1i(glGetUniformLocation(_shader.program, "distribution"), 1);
+		glUniform3fv(glGetUniformLocation(_shader.program, "diffuseColor"), 1, glm::value_ptr(diffuseColor));
+		glUniform3fv(glGetUniformLocation(_shader.program, "specularColor"), 1, glm::value_ptr(specularColor));
+		glUniform1f(glGetUniformLocation(_shader.program, "roughness"), roughness);
+		glUniform1f(glGetUniformLocation(_shader.program, "gaussian"), gaussian);
+		glUniform1f(glGetUniformLocation(_shader.program, "reflectance"), reflectance);
+		glUniform1i(glGetUniformLocation(_shader.program, "distribution"), distribution);
 		glUniformMatrix4fv(glGetUniformLocation(_shader.program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
 		glUniformMatrix4fv(glGetUniformLocation(_shader.program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 		glUniformMatrix4fv(glGetUniformLocation(_shader.program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));

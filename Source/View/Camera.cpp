@@ -11,8 +11,6 @@ Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &w
 }
 
 void Camera::update(double delta_time) {
-
-
 	//Apply the individual axis rotations
 	_next_rotation_quat = glm::angleAxis((float)_yaw, _base_up);
 	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_pitch, _base_right);
@@ -74,9 +72,11 @@ bool Camera::intersects_box(const glm::vec3 &center, const glm::vec3 &extents) c
 	return true;
 }
 
-void Camera::handle_mouse_movement(double x, double y, double delta_x, double delta_y, double acc_x, double acc_y, double delta_time) {
-	_yaw = acc_x * 0.0001;
-	_pitch = acc_y * 0.0001;
+void Camera::handle_mouse_movement(double x, double y, double delta_x, double delta_y, double delta_time, bool captured) {
+	if (captured) {
+		_yaw += delta_x * 0.0001;
+		_pitch += delta_y * 0.0001;
+	}
 }
 
 void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {

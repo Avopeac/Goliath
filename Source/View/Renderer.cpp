@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include <GLFW\glfw3.h>
+#include <AntTweakBar\AntTweakBar.h>
 void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
 	_render_queue_mutex.lock();
 	_render_queue.push(drawable);
@@ -22,4 +23,7 @@ void Renderer::render(const Camera &camera, double delta_time) {
 	if (drawable != nullptr) {
 		drawable->draw(camera, delta_time);
 	}
+
+	//Draw AntTweakBar
+	TwDraw();
 }

@@ -12,22 +12,16 @@
 class Camera : public InputEnabled {
 public:
 	Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far);
-
 	void update(double delta_time);
-
 	const glm::mat4 &get_perspective() const { return _perspective; }
 	const glm::mat4 &get_view() const { return _view; }
-
 	double get_vertical_fov() const { return _vertical_fov; }
 	double get_aspect_ratio() const { return _aspect_ratio; }
-
 	double get_near() const { return _near; }
 	double get_far() const { return _far; }
-
 	bool intersects_point(const glm::vec3 &point) const;
 	bool intersects_sphere(const glm::vec3 &center, double radius) const;
 	bool intersects_box(const glm::vec3 &center, const glm::vec3 &extents) const;
-
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 
@@ -46,7 +40,7 @@ private:
 	Plane _frustum[6];
 	glm::vec3 _points[8];
 
-	virtual void handle_mouse_movement(double x, double y, double delta_x, double delta_y, double acc_x, double acc_y, double delta_time) override;
+	virtual void handle_mouse_movement(double x, double y, double delta_x, double delta_y, double delta_time, bool captured) override;
 	virtual void handle_multiple_keystrokes(GLFWwindow *window, double delta_time) override;
 	virtual void handle_key_inputs(int key, int scan_code, int action, int mods, double delta_time) override;
 };

@@ -12,4 +12,14 @@ public:
 private:
 	double _radius;
 	glm::mat4 _model;
+
+
+	//TO BE REMOVED
+	float reflectance;
+	float gaussian;
+	float roughness;
+	glm::vec3 diffuseColor;
+	glm::vec3 specularColor;
+	int distribution;
+
 };

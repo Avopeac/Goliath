@@ -11,7 +11,6 @@ public:
 		static Renderer instance;
 		return instance;
 	}
-	void update(double delta_time);
 	void render(const Camera &camera, double delta_time);
 	void add_drawable(const std::shared_ptr<Drawable> &drawable);
 private:

@@ -32,11 +32,11 @@ void main()
 	mat3 normalMat = transpose(inverse(mat3(modelView)));
 	vec3 viewNormal = normalMat * normal;
 
-	vec2 waveDirection = vec2(40.0, 0.0);
-	float k = 40;//2.0*3.14/10.0;
+	vec2 waveDirection = vec2(10.0, 5.0);
+	float k = 2.0*3.14/1.0;
 	float T = 5.0;
 	float omega = 2.0*3.14/T;
-	float A = 20000.0;
+	float A = 10000.0;
 	vec3 newPosH;
 	float highDot = (dot(waveDirection, positionHigh.xz));
 	float lowDot = (dot(waveDirection, positionLow.xz));
@@ -46,6 +46,19 @@ void main()
 	
 	newPosH.xz = positionHigh.xz + positionLow.xz - (waveDirection/k) * A * sinValue;
 	newPosH.y = positionHigh.y + positionLow.y + A * cosValue;
+
+	waveDirection = vec2(5.0, 10.0);
+	k = 2.0*3.14/1.0;
+	T = 3.0;
+	omega = 2.0*3.14/T;
+	A = 1000.0;
+	highDot = (dot(waveDirection, positionHigh.xz));
+	lowDot = (dot(waveDirection, positionLow.xz));
+	omegaTime = omega*time;
+	sinValue = sin(omegaTime)*sin(highDot)*sin(lowDot) + cos(omegaTime)*sin(highDot)*cos(lowDot) - sin(omegaTime)*cos(highDot)*cos(lowDot) + cos(omegaTime)*cos(highDot)*sin(lowDot);
+	cosValue = cos(omegaTime)*cos(highDot)*cos(lowDot) + sin(omegaTime)*sin(highDot)*cos(lowDot) - cos(omegaTime)*sin(highDot)*sin(lowDot) + sin(omegaTime)*cos(highDot)*sin(lowDot);
+	newPosH.xz = newPosH.xz - (waveDirection/k) * A * sinValue;
+	newPosH.y = newPosH.y + A * cosValue;
 
 	vec3 newPosL = positionLow;
 	//newPosL.xz = positionLow.xz - (waveDirection/k) * A * sinValue;

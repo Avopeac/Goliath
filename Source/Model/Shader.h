@@ -12,10 +12,11 @@
 class Shader
 {
 public:
-	Shader(const GLchar *vertex_path = STANDARD_VERT_SHADER, const GLchar *fragment_path = STANDARD_FRAG_SHADER);
+	Shader(const GLchar *vertex_path, const GLchar *fragment_path);
 	~Shader() { };
 	void use() const;
 	GLuint program;
+
 private:
 	unsigned static int _log_size;
 	static GLuint _last_program;

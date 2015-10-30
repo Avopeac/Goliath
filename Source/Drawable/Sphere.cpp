@@ -10,17 +10,13 @@
 Sphere::Sphere(const glm::vec3 & origin, double radius) : Primitive(origin), Drawable(), _radius(radius) {
 	_model = glm::scale(_model, glm::vec3((float)_radius));
 	_model = glm::translate(_model, _origin);
-	//TO BE REMOVED, JUST TESTING TWEAKBAR
-	roughness = 0.2f;
-	gaussian = 0.2f;
-	reflectance = 1.0f;
-	distribution = 0;
-	diffuseColor = glm::vec3(0.3, 0, 0);
-	specularColor = glm::vec3(1.0, 0.9, 0.95);
-	TwAddVarRW(Input::_tw_bar, "Roughness", TW_TYPE_FLOAT, &roughness, " min=0 max=1 step=0.01 ");
-	TwAddVarRW(Input::_tw_bar, "Distribution", TW_TYPE_INT32, &distribution, " min=0 max=1 step=1 ");
-	TwAddVarRW(Input::_tw_bar, "Gaussian", TW_TYPE_FLOAT, &gaussian, " min=0 max=1 step=0.01 ");
-	TwAddVarRW(Input::_tw_bar, "Reflectance", TW_TYPE_FLOAT, &reflectance, " min=0 max=1 step=0.01 ");
+	_material.albedo = glm::vec3(0.5, 0.01, 0.01);
+	generate_mesh(25, 25);
+	set_shader(Renderer::instance().get_standard_shader(), true);
+	TwAddVarRW(Input::_tw_bar, "Roughness", TW_TYPE_FLOAT, &_material.roughness, " min=0 max=1 step=0.01 ");
+	TwAddVarRW(Input::_tw_bar, "Gaussian", TW_TYPE_FLOAT, &_material.gaussian, " min=0 max=1 step=0.01 ");
+	TwAddVarRW(Input::_tw_bar, "Absorption", TW_TYPE_FLOAT, &_material.absorption, " min=0 max=1 step=0.01 ");
+	TwAddVarRW(Input::_tw_bar, "Refraction", TW_TYPE_FLOAT, &_material.refraction, " min=0 max=20 step=0.01 ");
 }
 
 void Sphere::generate_mesh(unsigned int latitudes, unsigned int longitudes) {
@@ -56,24 +52,30 @@ void Sphere::generate_mesh(unsigned int latitudes, unsigned int longitudes) {
 	_mesh.setup_mesh();
 }
 
-void Sphere::draw(const Camera &camera, double delta_time) {
-		_shader.use();
-		glUniform3fv(glGetUniformLocation(_shader.program, "diffuseColor"), 1, glm::value_ptr(diffuseColor));
-		glUniform3fv(glGetUniformLocation(_shader.program, "specularColor"), 1, glm::value_ptr(specularColor));
-		glUniform1f(glGetUniformLocation(_shader.program, "roughness"), roughness);
-		glUniform1f(glGetUniformLocation(_shader.program, "gaussian"), gaussian);
-		glUniform1f(glGetUniformLocation(_shader.program, "reflectance"), reflectance);
-		glUniform1i(glGetUniformLocation(_shader.program, "distribution"), distribution);
-		glUniformMatrix4fv(glGetUniformLocation(_shader.program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
-		glUniformMatrix4fv(glGetUniformLocation(_shader.program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-		glUniformMatrix4fv(glGetUniformLocation(_shader.program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+void Sphere::draw(const Lighting &lighting, const Camera &camera, double delta_time) {
+		_shader->use();
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glEnable(GL_DEPTH_TEST);
+		//Enable alpha blending
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glUniform3fv(glGetUniformLocation(_shader->program, "albedo"), 1, glm::value_ptr(_material.albedo));
+		glUniform1f(glGetUniformLocation(_shader->program, "roughness"), _material.roughness);
+		glUniform1f(glGetUniformLocation(_shader->program, "gaussian"), _material.gaussian);
+		glUniform1f(glGetUniformLocation(_shader->program, "absorption"), _material.absorption);
+		glUniform1f(glGetUniformLocation(_shader->program, "refraction"), _material.refraction);
+		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
 		_mesh.draw(_shader, delta_time);
 }
 
-void Sphere::draw_wireframe(const Camera &camera, double delta_time) {
-	_shader.use();
-	glUniformMatrix4fv(glGetUniformLocation(_shader.program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
-	glUniformMatrix4fv(glGetUniformLocation(_shader.program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-	glUniformMatrix4fv(glGetUniformLocation(_shader.program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+void Sphere::draw_wireframe(const Lighting &lighting, const Camera &camera, double delta_time) {
+	_shader->use();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	_mesh.draw_wireframe(_shader, delta_time);
 }

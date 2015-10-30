@@ -71,21 +71,18 @@ int Application::initialize_glew(bool experimental) {
 void Application::run() {
 	//Create input manager
 	Input input(_window_ptr, "TweakBar");
-
+	//Create a renderer
+	Renderer::instance().initialize();
 	//To be removed
-	Shader shader("Shaders/standard.vert", "Shaders/standard.frag");
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
-	sphere->set_shader(shader);
-	sphere->generate_mesh(25, 25);
-	
 	//Create camera
 	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)_width / _height, 0.1, 1000.0);
+	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);
 
 	//Set viewport settings
 	glViewport(0, 0, _width, _height);
 	glClearColor(_clear_color.r, _clear_color.g, _clear_color.b, _clear_color.a);
-
 	const double desired_time = 1.0 / 60.0;
 	double old_time = 0.0;
 	double accumulated_time = 0.0;

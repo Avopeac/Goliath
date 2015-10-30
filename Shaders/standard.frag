@@ -5,68 +5,90 @@
 
 out vec4 color;
 in vec2 ourUv;
-in vec3 ourNormal, ourPosition, lightDir;
-uniform vec3 diffuseColor, specularColor;
-uniform float roughness, gaussian, reflectance;
-uniform int distribution;
+in vec3 ourNormal;
+in vec3 ourPosition;
 uniform mat4 view;
+
+//Textures
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_diffuse2;
 uniform sampler2D texture_diffuse3;
 uniform sampler2D texture_specular1;
 uniform sampler2D texture_specular2;
 
+//Lights are pre-multiplied with view matrix
+uniform int lights;
+uniform vec3 directions[20];
+uniform vec3 intensities[20];
+
+//Material properties
+uniform vec3 albedo;
+uniform float roughness;
+uniform float gaussian;
+uniform float absorption;
+uniform float refraction;
+
 float geometric(float ndotl, float ndoth, float vdoth, float ndotv)
 {
-    float p = 2.0 * ndoth;
-	float q = 1.0 / vdoth;
-	return min(1.0, min((p * ndotv) * q, (p * ndotl) * q));
+    float q = 1.0 / vdoth;
+    return min(1.0, min((2.0 * ndoth * ndotv) * q, (2.0 * ndoth * ndotl) * q));
 }
 
-float beckmann_rough(float ndotv, float roughsqr)
-{
-	float ndv2 = ndotv * ndotv;
-	float br1 = exp((ndv2 - 1.0)/(roughsqr * ndv2));
-	float br2 = roughsqr * ndv2 * ndv2;
-    return br1 / br2;
+float gaussian_rough(float ndoth, float gaussian, float roughSquared) {
+    float acosSquared = pow(acos(ndoth), 2.0);
+    return gaussian * exp(-acosSquared/(roughSquared));
 }
 
-float gaussian_rough(float ndoth, float gaussian, float roughsqr) { return gaussian * exp(-acos(ndoth)/(roughsqr)); }
-float schlick_fresnel(float reflectance, float vdoth) { return reflectance + pow(1.0 - vdoth, 5) * (1.0 - reflectance); }
+float schlick_fresnel(float refraction, float vdoth) {
+    return refraction + pow(1.0 - vdoth, 5) * (1.0 - refraction);
+}
 
 void main()
 {
-	//Temporary
-    vec3 lightPos = normalize(view * vec4(0, 1, 0, 0)).xyz;
+    //Numerically approximated constants
+	const float pi = 3.14159265359;
+    const float gammaExponent = 0.45454545455;
+
     vec3 n = normalize(ourNormal);
     vec3 v = normalize(-ourPosition);
-    vec3 l = normalize(lightPos);
-    vec3 h = normalize(v + l);
+    float ndotv = max(0.0, dot(n, v));
 
-    float ndotl = max(0.0, dot(n, l));
-	float ndoth = max(0.0, dot(n, h));
-	float vdoth = max(0.0, dot(v, h));
-	float ndotv = max(0.0, dot(n, v));
-	float roughsqr = roughness * roughness;
-
-	float r = 0;
-	//Gaussian distribution on microfacets
-	if (distribution == 0)
+	//For each light source
+    vec3 fSpecular = vec3(0);
+    vec3 fDiffuse = vec3(0);
+	vec3 fAmbient = vec3(0);
+    for (int i = 0; i < lights; ++i)
 	{
-		r = gaussian_rough(ndoth, gaussian, roughsqr);
-	}
-
-	//Beckmann distribution on microfacets
-	if (distribution == 1)
-	{
-		r = beckmann_rough(ndotv, roughsqr);
-	}
-
-	float g = geometric(ndotl, ndoth, vdoth, ndotv);
-	float f = schlick_fresnel(reflectance, vdoth);
-	float rs = (f * g * r) / (ndotv * ndotl);
-	vec3 final = max(0.0, ndotl) * (specularColor * rs + diffuseColor);
+        vec3 l = normalize(vec3(view * vec4(directions[i], 0)));
+        float ndotl = max(0.0, dot(n, l));
+		//No light transfer between surface and light if < 0.0
+        if (ndotl > 0.0)
+		{
+			float roughSquared = pow(roughness, 2.0);
+            vec3 h = normalize(v + l);
+            float ndoth = max(0.0, dot(n, h));
+            float vdoth = max(0.0, dot(v, h));
+            //Gaussian distribution on microfacets
+			float rough = gaussian_rough(ndoth, gaussian, roughSquared);
+            float fresnel = schlick_fresnel(refraction, vdoth);
+            float geometry = geometric(ndotl, ndoth, vdoth, ndotv);
+            float specular = (fresnel * geometry * rough) / (pi * ndotl * ndotv);
+            fSpecular += ndotl * intensities[i] * specular * (1.0 - absorption);
+			fDiffuse += ndotl * albedo * absorption;
+        }
+		//Importance is lower for these indirect light rays
+		fAmbient += 0.1 * (intensities[i] + albedo);
+    }	
+	//Average the results
+	vec3 final = (fAmbient + fDiffuse + fSpecular) / lights;
+	//Gamma correction, power of 1.0 / 2.2
+	final = pow(final, vec3(gammaExponent));
 	color = vec4(final, 1.0);
 }
+
+
+
+
+
 
 

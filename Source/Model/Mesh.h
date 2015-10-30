@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include "..\Application.h"
 #include "..\Model\Vertex.h"
 #include "..\Model\Texture.h"
@@ -14,8 +15,8 @@ public:
 	std::vector<Vertex> vertices;
 	std::vector<Texture> textures;
 	std::vector<GLuint> indices;
-	void draw(const Shader &shader, double delta_time);
-	void draw_wireframe(const Shader &shader, double delta_time);
+	void draw(std::shared_ptr<Shader> shader, double delta_time);
+	void draw_wireframe(std::shared_ptr<Shader> shader, double delta_time);
 	void setup_mesh();
 	void update_indices();
 	void update_vertices();

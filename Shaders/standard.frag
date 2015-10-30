@@ -59,7 +59,8 @@ void main()
 	vec3 fAmbient = vec3(0);
     for (int i = 0; i < lights; ++i)
 	{
-        vec3 l = normalize(vec3(view * vec4(directions[i], 0)));
+		//There's no guarantee that directions are in view-space
+        vec3 l = normalize(directions[i]);
         float ndotl = max(0.0, dot(n, l));
 		//No light transfer between surface and light if < 0.0
         if (ndotl > 0.0)

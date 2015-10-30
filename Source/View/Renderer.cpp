@@ -32,9 +32,6 @@ void Renderer::render(const Camera &camera, double delta_time) {
 	glUniformMatrix4fv(glGetUniformLocation(standard->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	
 	if (lighting.get_num_lights() > 0) {
-		//for (auto &l : lighting.directions) {
-		//	l = glm::vec3(camera.get_view() * glm::vec4(l, 0));
-		//}
 		glUniform1i(glGetUniformLocation(standard->program, "lights"), lighting.get_num_lights());
 		glUniform3fv(glGetUniformLocation(standard->program, "directions"), lighting.get_num_lights(), &lighting.directions[0][0]);
 		glUniform3fv(glGetUniformLocation(standard->program, "intensities"), lighting.get_num_lights(), &lighting.intensities[0][0]);

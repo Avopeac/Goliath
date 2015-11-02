@@ -10,7 +10,13 @@
 #include "Model\Shader.h"
 #include "Drawable\Sphere.h"
 
-Application::Application(unsigned int width, unsigned int height, const std::string &title) : _width(width), _height(height), _title(title) {}
+unsigned int Application::width = WINDOW_WIDTH;
+unsigned int Application::height = WINDOW_HEIGHT;
+
+Application::Application(unsigned int width, unsigned int height, const std::string &title) : _title(title) {
+	this->width = width;
+	this->height = height;
+}
 
 int Application::initialize() {
 	//Accumulate initialization status
@@ -22,7 +28,7 @@ int Application::initialize() {
 	}
 	//Initialize AntTweakBar
 	TwInit(TW_OPENGL_CORE, NULL);
-	TwWindowSize(_width, _height);
+	TwWindowSize(width, height);
 	//Clear color
 	_clear_color = glm::vec4(0.0);
 	//Initialize the message passing system
@@ -39,13 +45,8 @@ int Application::initialize_glfw(int major_version, int minor_version) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor_version);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-	glfwWindowHint(GLFW_SAMPLES, 4);
 	//Create a OpenGL context
-	_window_ptr = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
+	_window_ptr = glfwCreateWindow(width, height, _title.c_str(), nullptr, nullptr);
 	if (_window_ptr == nullptr) {
 		std::cout << "Application failed to create a OpenGL context with GLFW. " << std::endl;
 		return -1;
@@ -76,13 +77,13 @@ void Application::run() {
 	//To be removed
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
 	//Create camera
-	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)_width / _height, 0.1, 1000.0);
+	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000.0);
 	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);
 
 	//Set viewport settings
-	glViewport(0, 0, _width, _height);
-	glClearColor(_clear_color.r, _clear_color.g, _clear_color.b, _clear_color.a);
+	glViewport(0, 0, width, height);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
 	const double desired_time = 1.0 / 60.0;
 	double old_time = 0.0;
 	double accumulated_time = 0.0;

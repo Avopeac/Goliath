@@ -5,6 +5,7 @@
 #include <AntTweakBar\AntTweakBar.h>
 #include "BloomNode.h"
 #include "GammaNode.h"
+#include "ToneMappingNode.h"
 
 void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
 	_render_queue_mutex.lock();
@@ -19,15 +20,15 @@ void Renderer::initialize() {
 	directions.push_back({ 0,1,0 }); //sky
 	directions.push_back({ -1,0,-1 }); //indirect sun
 	std::vector<glm::vec3> intensities;
-	intensities.push_back({ 1.0, 1.5, 1.0 }); //sun color
+	intensities.push_back({ 1.5, 1.5, 1.0 }); //sun color
 	intensities.push_back({ 0.11, 0.161, 0.184 }); //sky color
 	intensities.push_back({ 0.15, 0.15, 0.1 }); //indirect sun color
 	_lighting = Lighting(3, directions, intensities);
-	_standard_shader = std::make_shared<Shader>(STANDARD_VERT_SHADER, STANDARD_FRAG_SHADER);
 	//Set up post processing
 	_camera_target_texture.initialize();
 	_post_processing.add_node(std::make_shared<BloomNode>(5, 5, 1.0f, 1.0f));
 	_post_processing.add_node(std::make_shared<GammaNode>(2.2f));
+	_post_processing.add_node(std::make_shared<ToneMappingNode>(1.0f));
 }
 
 void Renderer::render(const Camera &camera, double delta_time) {
@@ -37,8 +38,8 @@ void Renderer::render(const Camera &camera, double delta_time) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	draw_queue(camera, delta_time);
 	//Apply post processing
-	_post_processing.apply(_quad, _camera_target_texture, _rt2);
-	RenderTexture::use(nullptr, &_rt2, nullptr);
+	_post_processing.apply(_quad, _camera_target_texture, _post_processing_target_texture);
+	RenderTexture::use(nullptr, &_post_processing_target_texture, nullptr);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	_quad.draw();
 	//Draw AntTweakBar
@@ -64,8 +65,11 @@ void Renderer::set_standard_uniform(const Camera &camera) {
 	glUniformMatrix4fv(glGetUniformLocation(_standard_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	glUniformMatrix4fv(glGetUniformLocation(_standard_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	if (_lighting.get_num_lights() > 0) {
+		for (int i = 0; i < _lighting.get_num_lights(); ++i) {
+			_lighting.view_space_directions[i] = glm::mat3(camera.get_view()) * _lighting.directions[i];
+		}
 		glUniform1i(glGetUniformLocation(_standard_shader->program, "lights"), _lighting.get_num_lights());
-		glUniform3fv(glGetUniformLocation(_standard_shader->program, "directions"), _lighting.get_num_lights(), &_lighting.directions[0][0]);
+		glUniform3fv(glGetUniformLocation(_standard_shader->program, "directions"), _lighting.get_num_lights(), &_lighting.view_space_directions[0][0]);
 		glUniform3fv(glGetUniformLocation(_standard_shader->program, "intensities"), _lighting.get_num_lights(), &_lighting.intensities[0][0]);
 	}
 }

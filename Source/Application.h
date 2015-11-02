@@ -5,11 +5,11 @@
 #include <GLM\glm.hpp>
 //The default argument window width
 #ifndef WINDOW_WIDTH
-#define WINDOW_WIDTH 1024
+#define WINDOW_WIDTH 1920
 #endif
 //The default argument window height
 #ifndef WINDOW_HEIGHT
-#define WINDOW_HEIGHT 768
+#define WINDOW_HEIGHT 1080
 #endif
 //The default argument window name
 #ifndef WINDOW_NAME
@@ -19,11 +19,11 @@ class Application
 {
 public:
 	Application(unsigned int width = WINDOW_WIDTH, unsigned int height = WINDOW_HEIGHT, const std::string &title = WINDOW_NAME);
+	static unsigned int width, height;
 	int initialize();
 	void run();
 private:
 	GLFWwindow *_window_ptr;
-	unsigned int _width, _height;
 	double _delta_time;
 	double _elapsed_time;
 	double _frames_per_second;

@@ -3,8 +3,9 @@
 #include <GL\glew.h>
 #include <GL\GL.h>
 #include <GLFW\glfw3.h>
+#include "..\Application.h"
 struct RenderTexture {
-	RenderTexture(unsigned int width = 1024, unsigned int height = 768) : width(width), height(height) {}
+	RenderTexture(unsigned int width = Application::width, unsigned int height = Application::height) : width(width), height(height) {}
 
 	void initialize() {
 		glGenFramebuffers(1, &framebuffer);

@@ -34,12 +34,12 @@ private:
 	//Standard rendering
 	const unsigned int _num_lights = 3;
 	Lighting _lighting;
-	std::shared_ptr<Shader> _standard_shader;
+	std::shared_ptr<Shader> _standard_shader = std::make_shared<Shader>(STANDARD_VERT_SHADER, STANDARD_FRAG_SHADER);
 	void set_standard_uniform(const Camera &camera);
 
 	//For post processing
 	RenderTexture _camera_target_texture;
-	RenderTexture _rt2;
+	RenderTexture _post_processing_target_texture;
 	Shader _plain_texture_shader = Shader("Shaders/plaintextureshader.vert", "Shaders/plaintextureshader.frag");
 	ScreenQuad _quad;
 	PostProcessing _post_processing;

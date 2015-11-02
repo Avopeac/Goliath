@@ -197,6 +197,7 @@
     <ClInclude Include="Source\View\RenderTexture.h" />
     <ClInclude Include="Source\View\Renderer.h" />
     <ClInclude Include="Source\View\ScreenQuad.h" />
+    <ClInclude Include="Source\View\ToneMappingNode.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\additiveshader.frag" />
@@ -211,6 +212,8 @@
     <None Include="Shaders\standard.vert" />
     <None Include="Shaders\thresholdshader.frag" />
     <None Include="Shaders\thresholdshader.vert" />
+    <None Include="Shaders\tonemappingshader.frag" />
+    <None Include="Shaders\tonemappingshader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

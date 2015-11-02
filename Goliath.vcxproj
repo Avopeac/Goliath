@@ -191,6 +191,7 @@
     <ClInclude Include="Source\View\BloomNode.h" />
     <ClInclude Include="Source\View\Camera.h" />
     <ClInclude Include="Source\View\Drawable.h" />
+    <ClInclude Include="Source\View\GammaNode.h" />
     <ClInclude Include="Source\View\PostProcessing.h" />
     <ClInclude Include="Source\View\PostProcessingNode.h" />
     <ClInclude Include="Source\View\RenderTexture.h" />
@@ -202,6 +203,8 @@
     <None Include="Shaders\additiveshader.vert" />
     <None Include="Shaders\blurfiltershader.frag" />
     <None Include="Shaders\blurfiltershader.vert" />
+    <None Include="Shaders\gammacorrectionshader.frag" />
+    <None Include="Shaders\gammacorrectionshader.vert" />
     <None Include="Shaders\plaintextureshader.frag" />
     <None Include="Shaders\plaintextureshader.vert" />
     <None Include="Shaders\standard.frag" />

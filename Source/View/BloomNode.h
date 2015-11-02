@@ -2,11 +2,18 @@
 #include "PostProcessingNode.h"
 #include "RenderTexture.h"
 #include "ScreenQuad.h"
+#include "..\Input\Input.h"
 class BloomNode : public PostProcessingNode {
 public:
 	BloomNode(int blur_passes, int blur_size, float src_scale, float dst_scale)
 		: PostProcessingNode(), _blur_passes(blur_passes), _blur_size(blur_size), _src_scale(src_scale), _dst_scale(dst_scale) {
 		_temp.initialize();
+		//DEBUG
+		TwAddSeparator(Input::_tw_bar, "Bloom Effect", NULL);
+		TwAddVarRW(Input::_tw_bar, "Blur Passes", TW_TYPE_INT32, &_blur_passes, " min=0 max=25 step=1 ");
+		TwAddVarRW(Input::_tw_bar, "Blur Size", TW_TYPE_INT32, &_blur_size, " min=0 max=25 step=1 ");
+		TwAddVarRW(Input::_tw_bar, "Source Factor", TW_TYPE_FLOAT, &_src_scale, " min=0 max=2.0 step=0.1 ");
+		TwAddVarRW(Input::_tw_bar, "Destination Factor", TW_TYPE_FLOAT, &_dst_scale, " min=0 max=2.0 step=0.1 ");
 	}
 
 	~BloomNode() override {
@@ -35,14 +42,9 @@ public:
 			quad.draw();
 		}
 		
-		//RenderTexture::use(&dst, &_temp)
+		RenderTexture::use(&dst, &src, &_temp);
 		_additive_shader.use();
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, _temp.color);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, src.color);
 		glUniform1f(glGetUniformLocation(_additive_shader.program, "texScale1"), _src_scale);
 		glUniform1f(glGetUniformLocation(_additive_shader.program, "texScale2"), _dst_scale);
 		glUniform1i(glGetUniformLocation(_additive_shader.program, "texUnit1"), 0);

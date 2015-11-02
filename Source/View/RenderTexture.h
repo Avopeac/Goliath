@@ -66,7 +66,7 @@ struct RenderTexture {
 
 		out != nullptr ? glViewport(0, 0, out->width, out->height) : glViewport(0, 0, last_width, last_height);
 
-		if (out != 0L) {
+		if (out != nullptr) {
 			glBindFramebuffer(GL_FRAMEBUFFER, out->framebuffer);
 			glViewport(0, 0, out->width, out->height);
 		}

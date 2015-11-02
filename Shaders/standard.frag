@@ -1,26 +1,15 @@
 #version 330 core
-
 // This shader uses the Cook-Torrence shading model from http://content.gpwiki.org/D3DBook:%28Lighting%29_Cook-Torrance
 // Check out this source for more information about PBR https://docs.google.com/document/d/1Fb9_KgCo0noxROKN4iT8ntTbx913e-t4Wc2nMRWPzNk/edit#
-
 out vec4 color;
 in vec2 ourUv;
 in vec3 ourNormal;
 in vec3 ourPosition;
 uniform mat4 view;
-
-//Textures
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_diffuse2;
-uniform sampler2D texture_diffuse3;
-uniform sampler2D texture_specular1;
-uniform sampler2D texture_specular2;
-
-//Lights are pre-multiplied with view matrix
+//Lights
 uniform int lights;
 uniform vec3 directions[20];
 uniform vec3 intensities[20];
-
 //Material properties
 uniform vec3 albedo;
 uniform float roughness;
@@ -47,12 +36,9 @@ void main()
 {
     //Numerically approximated constants
 	const float pi = 3.14159265359;
-    const float gammaExponent = 0.45454545455;
-
     vec3 n = normalize(ourNormal);
     vec3 v = normalize(-ourPosition);
     float ndotv = max(0.0, dot(n, v));
-
 	//For each light source
     vec3 fSpecular = vec3(0);
     vec3 fDiffuse = vec3(0);
@@ -60,7 +46,7 @@ void main()
     for (int i = 0; i < lights; ++i)
 	{
 		//There's no guarantee that directions are in view-space
-        vec3 l = normalize(vec3(view * vec4(directions[i], 0.0)));
+        vec3 l = normalize(vec3(view * vec4(directions[i], 0.0))); 
         float ndotl = max(0.0, dot(n, l));
 		//No light transfer between surface and light if < 0.0
         if (ndotl > 0.0)

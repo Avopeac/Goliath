@@ -4,6 +4,7 @@
 #include <GLFW\glfw3.h>
 #include <AntTweakBar\AntTweakBar.h>
 #include "BloomNode.h"
+#include "GammaNode.h"
 
 void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
 	_render_queue_mutex.lock();
@@ -23,27 +24,23 @@ void Renderer::initialize() {
 	intensities.push_back({ 0.15, 0.15, 0.1 }); //indirect sun color
 	_lighting = Lighting(3, directions, intensities);
 	_standard_shader = std::make_shared<Shader>(STANDARD_VERT_SHADER, STANDARD_FRAG_SHADER);
-
 	//Set up post processing
-	_rt1.initialize();
-	_rt2.initialize();
-
-	//Add bloom shader
-	int blur_passes = 5;
-	int blur_size = 5;
-	float src_scale = 1.0f;
-	float dst_scale = 1.0f;
-	_post_processing.add_node(std::make_shared<BloomNode>(blur_passes, blur_size, src_scale, dst_scale));
+	_camera_target_texture.initialize();
+	_post_processing.add_node(std::make_shared<BloomNode>(5, 5, 1.0f, 1.0f));
+	_post_processing.add_node(std::make_shared<GammaNode>(2.2f));
 }
 
 void Renderer::render(const Camera &camera, double delta_time) {
 	set_standard_uniform(camera);
 	//Render to target texture
-	RenderTexture::use(&_rt1, nullptr, nullptr);
+	RenderTexture::use(&_camera_target_texture, nullptr, nullptr);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	draw_queue(camera, delta_time);
 	//Apply post processing
-	_post_processing.apply(_quad, _rt1, _rt2);
+	_post_processing.apply(_quad, _camera_target_texture, _rt2);
+	RenderTexture::use(nullptr, &_rt2, nullptr);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	_quad.draw();
 	//Draw AntTweakBar
 	TwDraw();
 }

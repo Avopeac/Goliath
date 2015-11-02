@@ -38,7 +38,7 @@ private:
 	void set_standard_uniform(const Camera &camera);
 
 	//For post processing
-	RenderTexture _rt1;
+	RenderTexture _camera_target_texture;
 	RenderTexture _rt2;
 	Shader _plain_texture_shader = Shader("Shaders/plaintextureshader.vert", "Shaders/plaintextureshader.frag");
 	ScreenQuad _quad;

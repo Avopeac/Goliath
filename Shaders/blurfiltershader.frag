@@ -6,8 +6,10 @@ uniform bool horizontal;
 uniform int size;
 void main(void)
 {
+	//Find texel size
 	vec2 offsets = 1.0 / textureSize(texUnit, 0);
 	vec3 results = texture(texUnit, ourUv).rgb;
+	//Horizontal or vertical convolution kernel
 	if (horizontal)
 	{
 		for(int i = 0; i < size; ++i)
@@ -25,5 +27,6 @@ void main(void)
 		
 	}
 	
-	color = vec4(results / (2.0 * size + 1), 1.0);
+	//Average the results
+	color = vec4(results / vec3(2.0 * size + 1), 1.0);
 }

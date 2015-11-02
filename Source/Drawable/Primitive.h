@@ -1,5 +1,6 @@
 #pragma once
 #include <GLM\glm.hpp>
+//An object can derive this pure abstract base class, primitives often have intersection methods and may always have an origin
 class Primitive {
 public:
 	virtual ~Primitive() {};

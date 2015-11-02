@@ -146,6 +146,9 @@
     <ClInclude Include="Source\View\BloomNode.h">
       <Filter>Source Files\View</Filter>
     </ClInclude>
+    <ClInclude Include="Source\View\GammaNode.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\standard.frag">
@@ -176,6 +179,12 @@
       <Filter>Resource Files\Shader Files</Filter>
     </None>
     <None Include="Shaders\blurfiltershader.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\gammacorrectionshader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\gammacorrectionshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
   </ItemGroup>

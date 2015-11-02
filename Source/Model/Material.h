@@ -1,5 +1,6 @@
 #pragma once
 #include "GLM\glm.hpp"
+///Every drawable surface in a scene has a material, if this surface is using standard shader it will be able to take all these values as uniforms.
 struct Material {
 	Material(const glm::vec3 albedo = { 0.2,0.01,0.2 }, float roughness = 0.5f, float absorption = 0.5f, float gaussian = 0.5f, float refraction = 4.0f) 
 		: albedo(albedo), roughness(roughness), absorption(absorption), gaussian(gaussian), refraction(refraction) {};

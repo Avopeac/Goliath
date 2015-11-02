@@ -1,6 +1,7 @@
 #pragma once
 #include <GLM\glm.hpp>
 #include "Primitive.h"
+//Simple mathematical plane class
 class Plane : public Primitive {
 public:
 	Plane(double x = 0, double y = 0, double z = 0, double d = 0) : x(x), y(y), z(z), d(d) {};

@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\View">
+      <UniqueIdentifier>{33b24984-ab81-49c8-8195-6689408ddd29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Drawable">
+      <UniqueIdentifier>{86410f1c-a3cb-4d8e-af61-6f639b1f40c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Thread">
+      <UniqueIdentifier>{3cc4d906-a85b-49b4-b8fb-e301b198fc8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{a6030ac7-e8ea-4551-843d-85cffd0be487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{841ea2f0-b2c4-4398-bca8-b027bc9f672b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Terrain">
+      <UniqueIdentifier>{62ee4f9d-185b-45d1-bfae-6ec84832cc5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shader Files">
+      <UniqueIdentifier>{beacf452-1200-442a-853c-226ad5247e48}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Drawable\Plane.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Drawable\Sphere.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model\Mesh.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model\Shader.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model\Texture.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Input\Input.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Thread\MessageSystem.cpp">
+      <Filter>Source Files\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\View\Camera.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\View\Renderer.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Terrain\Tile.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\View\RenderTexture.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Drawable\Plane.h">
+      <Filter>Source Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Drawable\Primitive.h">
+      <Filter>Source Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Drawable\Sphere.h">
+      <Filter>Source Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Mesh.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Shader.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Texture.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Vertex.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input\Input.h">
+      <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Input\InputEnabled.h">
+      <Filter>Source Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Thread\Message.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Thread\MessageSystem.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\Camera.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\Drawable.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\Renderer.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Application.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\Tile.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Material.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Lighting.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\RenderTexture.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\PostProcessing.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\PostProcessingNode.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\ScreenQuad.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\BloomNode.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\standard.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\standard.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\additiveshader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\additiveshader.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\plaintextureshader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\plaintextureshader.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\thresholdshader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\thresholdshader.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\blurfiltershader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\blurfiltershader.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

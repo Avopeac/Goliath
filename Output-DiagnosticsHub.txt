@@ -1,0 +1,13 @@
+﻿Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).
+Merging of ETL files has failed (0x8007007f) (Flags: 0x0000001f).

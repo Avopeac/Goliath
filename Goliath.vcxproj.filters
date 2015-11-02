@@ -72,6 +72,9 @@
     <ClCompile Include="Source\Terrain\Tile.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="Source\View\RenderTexture.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Drawable\Plane.h">
@@ -128,18 +131,51 @@
     <ClInclude Include="Source\Model\Lighting.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Source\View\RenderTexture.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\PostProcessing.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\PostProcessingNode.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\ScreenQuad.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\BloomNode.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\simple.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\simple.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
     <None Include="Shaders\standard.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="Shaders\standard.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\additiveshader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\additiveshader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\plaintextureshader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\plaintextureshader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\thresholdshader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\thresholdshader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\blurfiltershader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\blurfiltershader.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

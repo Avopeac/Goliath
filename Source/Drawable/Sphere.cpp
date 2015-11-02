@@ -11,6 +11,9 @@ Sphere::Sphere(const glm::vec3 & origin, double radius) : Primitive(origin), Dra
 	_model = glm::scale(_model, glm::vec3((float)_radius));
 	_model = glm::translate(_model, _origin);
 	_material.albedo = glm::vec3(0.5, 0.01, 0.01);
+	_material.absorption = 0.0f;
+	_material.gaussian = 1.0f;
+	_material.refraction = 16.0f;
 	generate_mesh(25, 25);
 	set_shader(Renderer::instance().get_standard_shader(), true);
 	TwAddVarRW(Input::_tw_bar, "Roughness", TW_TYPE_FLOAT, &_material.roughness, " min=0 max=1 step=0.01 ");

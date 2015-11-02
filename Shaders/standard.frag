@@ -60,7 +60,7 @@ void main()
     for (int i = 0; i < lights; ++i)
 	{
 		//There's no guarantee that directions are in view-space
-        vec3 l = normalize(directions[i]);
+        vec3 l = normalize(vec3(view * vec4(directions[i], 0.0)));
         float ndotl = max(0.0, dot(n, l));
 		//No light transfer between surface and light if < 0.0
         if (ndotl > 0.0)
@@ -77,13 +77,11 @@ void main()
             fSpecular += ndotl * intensities[i] * specular * (1.0 - absorption);
 			fDiffuse += ndotl * albedo * absorption;
         }
-		//Importance is lower for these indirect light rays
+		//Fake global illumination
 		fAmbient += 0.1 * (intensities[i] + albedo);
     }	
 	//Average the results
 	vec3 final = (fAmbient + fDiffuse + fSpecular) / lights;
-	//Gamma correction, power of 1.0 / 2.2
-	final = pow(final, vec3(gammaExponent));
 	color = vec4(final, 1.0);
 }
 

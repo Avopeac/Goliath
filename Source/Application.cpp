@@ -23,8 +23,8 @@ int Application::initialize() {
 	//Initialize AntTweakBar
 	TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(_width, _height);
-	//White clear
-	_clear_color = glm::vec4(1.0);
+	//Clear color
+	_clear_color = glm::vec4(0.0);
 	//Initialize the message passing system
 	MessageSystem::instance();
 	return status;

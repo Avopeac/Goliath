@@ -16,7 +16,7 @@ void Camera::update(double delta_time) {
 	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_pitch, _base_right);
 	//TODO: Apply roll somewhere
 	//The scale on third parameter to SLERP determines speed of interpolation
-	_rotation_quat = glm::slerp(_rotation_quat, _next_rotation_quat, (float)delta_time * 2.0f);
+	_rotation_quat = glm::slerp(_rotation_quat, _next_rotation_quat, (float)delta_time * 5.0f);
 	_next_forward = glm::rotate(_rotation_quat, _base_forward);
 	_next_right = glm::rotate(_rotation_quat, _base_right);
 	_next_up = glm::rotate(_rotation_quat, _base_up);

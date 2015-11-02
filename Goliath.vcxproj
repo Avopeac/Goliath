@@ -170,6 +170,7 @@
     <ClCompile Include="Source\Thread\MessageSystem.cpp" />
     <ClCompile Include="Source\View\Camera.cpp" />
     <ClCompile Include="Source\View\Renderer.cpp" />
+    <ClCompile Include="Source\View\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
@@ -187,15 +188,26 @@
     <ClInclude Include="Source\Terrain\Tile.h" />
     <ClInclude Include="Source\Thread\Message.h" />
     <ClInclude Include="Source\Thread\MessageSystem.h" />
+    <ClInclude Include="Source\View\BloomNode.h" />
     <ClInclude Include="Source\View\Camera.h" />
     <ClInclude Include="Source\View\Drawable.h" />
+    <ClInclude Include="Source\View\PostProcessing.h" />
+    <ClInclude Include="Source\View\PostProcessingNode.h" />
+    <ClInclude Include="Source\View\RenderTexture.h" />
     <ClInclude Include="Source\View\Renderer.h" />
+    <ClInclude Include="Source\View\ScreenQuad.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\simple.frag" />
-    <None Include="Shaders\simple.vert" />
+    <None Include="Shaders\additiveshader.frag" />
+    <None Include="Shaders\additiveshader.vert" />
+    <None Include="Shaders\blurfiltershader.frag" />
+    <None Include="Shaders\blurfiltershader.vert" />
+    <None Include="Shaders\plaintextureshader.frag" />
+    <None Include="Shaders\plaintextureshader.vert" />
     <None Include="Shaders\standard.frag" />
     <None Include="Shaders\standard.vert" />
+    <None Include="Shaders\thresholdshader.frag" />
+    <None Include="Shaders\thresholdshader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

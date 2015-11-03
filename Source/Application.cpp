@@ -10,6 +10,8 @@
 #include "Model\Shader.h"
 #include "Drawable\Sphere.h"
 #include "Terrain\Tile.h"
+#include <GLM\gtx\transform.hpp>
+#include <GLM\gtc\matrix_transform.hpp>
 
 unsigned int Application::width = WINDOW_WIDTH;
 unsigned int Application::height = WINDOW_HEIGHT;
@@ -75,12 +77,12 @@ void Application::run() {
 	Renderer::instance().initialize();
 	//To be removed
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
-	std::shared_ptr<Tile> t1 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, 2, 0), glm::mat4(1));
-	std::shared_ptr<Tile> t2 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, -2, 0), glm::rotate(glm::mat4(1), glm::pi<float>(), glm::vec3(0, 0, 1)));
-	std::shared_ptr<Tile> t3 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(-2, 0, 0), glm::rotate(glm::mat4(1), glm::half_pi<float>(), glm::vec3(0, 0, 1)));
-	std::shared_ptr<Tile> t4 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(2, 0, 0), glm::rotate(glm::mat4(1), -glm::half_pi<float>(), glm::vec3(0, 0, 1)));
-	std::shared_ptr<Tile> t5 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, 0, 2), glm::rotate(glm::mat4(1), glm::half_pi<float>(), glm::vec3(1, 0, 0)));
-	std::shared_ptr<Tile> t6 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, 0, -2), glm::rotate(glm::mat4(1), -glm::half_pi<float>(), glm::vec3(1, 0, 0)));
+	std::shared_ptr<Tile> t1 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, 2, 0)), glm::mat4(1), true);
+	std::shared_ptr<Tile> t2 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, -2, 0)), glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), true);
+	std::shared_ptr<Tile> t3 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(-2, 0, 0)), glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), true);
+	std::shared_ptr<Tile> t4 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(2, 0, 0)), glm::rotate(-glm::half_pi<float>(), glm::vec3(0, 0, 1)), true);
+	std::shared_ptr<Tile> t5 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, 0, 2)), glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), true);
+	std::shared_ptr<Tile> t6 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, 0, -2)), glm::rotate(-glm::half_pi<float>(), glm::vec3(1, 0, 0)), true);
 
 	//Create camera
 	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000.0);

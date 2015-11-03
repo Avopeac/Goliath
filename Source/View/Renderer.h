@@ -36,10 +36,5 @@ private:
 	Lighting _lighting;
 	std::shared_ptr<Shader> _standard_shader = std::make_shared<Shader>(STANDARD_VERT_SHADER, STANDARD_FRAG_SHADER);
 	void set_standard_uniform(const Camera &camera);
-
-	//For post processing
-	//RenderTexture _camera_target_texture;
-	//RenderTexture _post_processing_target_texture;
-	//ScreenQuad _quad;
 	PostProcessing _post_processing;
 };

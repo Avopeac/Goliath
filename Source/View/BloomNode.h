@@ -7,7 +7,6 @@ class BloomNode : public PostProcessingNode {
 public:
 	BloomNode(int blur_passes, int blur_size, float src_scale, float dst_scale)
 		: PostProcessingNode(), _blur_passes(blur_passes), _blur_size(blur_size), _src_scale(src_scale), _dst_scale(dst_scale) {
-		_temp.initialize();
 		//DEBUG
 		TwAddSeparator(Input::_tw_bar, "Bloom Effect", NULL);
 		TwAddVarRW(Input::_tw_bar, "Blur Passes", TW_TYPE_INT32, &_blur_passes, " min=0 max=25 step=1 ");
@@ -20,7 +19,7 @@ public:
 		_temp.release();
 	}
 
-	void apply(const ScreenQuad &quad, RenderTexture &src, RenderTexture &dst) override {
+	void apply(const ScreenQuad &quad, const Camera &camera, RenderTexture &src, RenderTexture &dst) override {
 		_threshold_shader.use();
 		RenderTexture::use(&_temp, &src, nullptr);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

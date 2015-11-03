@@ -26,7 +26,7 @@ public:
 private:
 
 	//Private constructor for singleton
-	Renderer() = default;
+	Renderer() {};
 	void draw_queue(const Camera &camera, double delta_time);
 	std::mutex _render_queue_mutex;
 	std::queue<std::shared_ptr<Drawable>> _render_queue;

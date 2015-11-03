@@ -10,7 +10,7 @@ public:
 		TwAddSeparator(Input::_tw_bar, "Gamma Effect", NULL);
 		TwAddVarRW(Input::_tw_bar, "Gamma", TW_TYPE_FLOAT, &_gamma_exponent, " min=0.0 max=4.0 step=0.1");
 	}
-	void apply(const ScreenQuad &quad, RenderTexture &src, RenderTexture &dst) override {
+	void apply(const ScreenQuad &quad, const Camera &camera, RenderTexture &src, RenderTexture &dst) override {
 		_gamma_shader.use();
 		RenderTexture::use(&dst, &src, nullptr);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

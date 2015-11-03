@@ -69,6 +69,8 @@ void main()
 	//Average the results
 	vec3 final = (fAmbient + fDiffuse + fSpecular) / lights;
 	color = vec4(final, 1.0);
+
+	gl_FragDepth = gl_FragCoord.z;
 }
 
 

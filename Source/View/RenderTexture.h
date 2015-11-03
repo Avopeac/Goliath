@@ -5,9 +5,12 @@
 #include <GLFW\glfw3.h>
 #include "..\Application.h"
 struct RenderTexture {
-	RenderTexture(unsigned int width = Application::width, unsigned int height = Application::height) : width(width), height(height) {}
+	RenderTexture(unsigned int width = Application::width, unsigned int height = Application::height) : width(width), height(height) {
+		initialize();
+	}
 
 	void initialize() {
+		glGenRenderbuffers(1, &renderbuffer);
 		glGenFramebuffers(1, &framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		//Create color texture
@@ -32,10 +35,7 @@ struct RenderTexture {
 		//Attach textures to fbo
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth, 0);
 		//Render depth
-		glGenRenderbuffers(1, &renderbuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuffer);
 		//Print status
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status == GL_FRAMEBUFFER_COMPLETE) {

@@ -32,18 +32,9 @@ void Renderer::initialize() {
 
 void Renderer::render(const Camera &camera, double delta_time) {
 	set_standard_uniform(camera);
-	//Render to target texture
-	RenderTexture::use(&_camera_target_texture, nullptr, nullptr);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	_post_processing.capture();
 	draw_queue(camera, delta_time);
-	//Apply post processing
-	_post_processing.apply(_quad, camera, _camera_target_texture, _post_processing_target_texture);
-	RenderTexture::use(nullptr, &_post_processing_target_texture, nullptr);
-	_plain_texture_shader.use();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUniform1i(glGetUniformLocation(_plain_texture_shader.program, "texUnit"), 0);
-	glBindTexture(GL_TEXTURE_2D, _post_processing_target_texture.color);
-	_quad.draw();
+	_post_processing.apply(camera);
 	//Draw AntTweakBar
 	TwDraw();
 }

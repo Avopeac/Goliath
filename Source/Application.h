@@ -27,7 +27,6 @@ private:
 	double _delta_time;
 	double _elapsed_time;
 	double _frames_per_second;
-	glm::vec4 _clear_color;
 	const std::string _title;
 	int initialize_glew(bool experimental);
 	int initialize_glfw(int major_version, int minor_version);

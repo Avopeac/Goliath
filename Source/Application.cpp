@@ -9,6 +9,7 @@
 //TO BE REMOVED
 #include "Model\Shader.h"
 #include "Drawable\Sphere.h"
+#include "Terrain\Tile.h"
 
 unsigned int Application::width = WINDOW_WIDTH;
 unsigned int Application::height = WINDOW_HEIGHT;
@@ -29,8 +30,6 @@ int Application::initialize() {
 	//Initialize AntTweakBar
 	TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(width, height);
-	//Clear color
-	_clear_color = glm::vec4(0.0);
 	//Initialize the message passing system
 	MessageSystem::instance();
 	return status;
@@ -76,6 +75,13 @@ void Application::run() {
 	Renderer::instance().initialize();
 	//To be removed
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
+	std::shared_ptr<Tile> t1 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, 2, 0), glm::mat4(1));
+	std::shared_ptr<Tile> t2 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, -2, 0), glm::rotate(glm::mat4(1), glm::pi<float>(), glm::vec3(0, 0, 1)));
+	std::shared_ptr<Tile> t3 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(-2, 0, 0), glm::rotate(glm::mat4(1), glm::half_pi<float>(), glm::vec3(0, 0, 1)));
+	std::shared_ptr<Tile> t4 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(2, 0, 0), glm::rotate(glm::mat4(1), -glm::half_pi<float>(), glm::vec3(0, 0, 1)));
+	std::shared_ptr<Tile> t5 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, 0, 2), glm::rotate(glm::mat4(1), glm::half_pi<float>(), glm::vec3(1, 0, 0)));
+	std::shared_ptr<Tile> t6 = std::make_shared<Tile>(4, glm::mat4(4), glm::vec3(0, 0, -2), glm::rotate(glm::mat4(1), -glm::half_pi<float>(), glm::vec3(1, 0, 0)));
+
 	//Create camera
 	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000.0);
 	//Add camera to as a input enabled object
@@ -83,7 +89,7 @@ void Application::run() {
 
 	//Set viewport settings
 	glViewport(0, 0, width, height);
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 	const double desired_time = 1.0 / 60.0;
 	double old_time = 0.0;
 	double accumulated_time = 0.0;
@@ -100,6 +106,12 @@ void Application::run() {
 		input.update(_delta_time);
 		camera.update(_delta_time);
 		Renderer::instance().add_drawable(sphere);
+		Renderer::instance().add_drawable(t1);
+		Renderer::instance().add_drawable(t2);
+		Renderer::instance().add_drawable(t3);
+		Renderer::instance().add_drawable(t4);
+		Renderer::instance().add_drawable(t5);
+		Renderer::instance().add_drawable(t6);
 		Renderer::instance().render(camera, _delta_time);
 
 		glfwSwapInterval(1);

@@ -53,30 +53,6 @@ void Tile::generate_mesh() {
 	unsigned int i = 0, j = 0;
 	float x, z;
 
-#if 0
-	for (j = 0; j <= _resolution; ++j) {
-		x = i * step;
-		z = j * step;
-		glm::vec3 position(x - offset, 0, z - offset);
-		generate_vertex_skirt(position, glm::vec3(x, 0, 0));
-		if (j == _resolution) {
-			generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
-		}
-	}
-
-	for (i = 0; i <= _resolution; ++i) {
-		for (j = 0; j <= _resolution; ++j) {
-			x = i * step;
-			z = j * step;
-			glm::vec3 position(x - offset, 0, z - offset);
-			generate_vertex(position);
-			if (j == _resolution) {
-				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
-			}
-		}
-	}
-#endif
-
 	for (i = 0; i <= _resolution; ++i) {
 		if (i == 0) {
 			for (j = 0; j <= _resolution; ++j) {

@@ -2,31 +2,25 @@
 out vec4 color;
 in vec2 ourUv;
 uniform sampler2D texUnit;
-uniform bool horizontal;
-uniform int size;
+uniform vec2 direction;
+uniform float size;
 void main(void)
 {
-	//Find texel size
-	vec2 offsets = 1.0 / textureSize(texUnit, 0);
-	vec3 results = texture(texUnit, ourUv).rgb;
-	//Horizontal or vertical convolution kernel
-	if (horizontal)
-	{
-		for(int i = 0; i < size; ++i)
-		{
-			results += texture(texUnit, ourUv + vec2(offsets.x * i, 0)).rgb;
-			results += texture(texUnit, ourUv - vec2(offsets.x * i, 0)).rgb;
-		}
-	} else 
-	{
-		for(int i = 0; i < size; ++i)
-		{
-			results += texture(texUnit, ourUv + vec2(0, offsets.y * i)).rgb;
-			results += texture(texUnit, ourUv - vec2(0, offsets.y * i)).rgb;
-		}
-		
-	}
-	
-	//Average the results
-	color = vec4(results / vec3(2.0 * size + 1), 1.0);
+    //Find texel size
+    float blur = size / textureSize(texUnit, 0).x;
+	vec4 sum = vec4(0);
+    float hstep = direction.x;
+    float vstep = direction.y;
+	vec2 tc = ourUv;
+    sum += texture(texUnit, vec2(tc.x - 4.0*blur*hstep, tc.y - 4.0*blur*vstep)) * 0.0162162162;
+    sum += texture(texUnit, vec2(tc.x - 3.0*blur*hstep, tc.y - 3.0*blur*vstep)) * 0.0540540541;
+    sum += texture(texUnit, vec2(tc.x - 2.0*blur*hstep, tc.y - 2.0*blur*vstep)) * 0.1216216216;
+    sum += texture(texUnit, vec2(tc.x - 1.0*blur*hstep, tc.y - 1.0*blur*vstep)) * 0.1945945946;
+    sum += texture(texUnit, vec2(tc.x, tc.y)) * 0.2270270270;
+    sum += texture(texUnit, vec2(tc.x + 1.0*blur*hstep, tc.y + 1.0*blur*vstep)) * 0.1945945946;
+    sum += texture(texUnit, vec2(tc.x + 2.0*blur*hstep, tc.y + 2.0*blur*vstep)) * 0.1216216216;
+    sum += texture(texUnit, vec2(tc.x + 3.0*blur*hstep, tc.y + 3.0*blur*vstep)) * 0.0540540541;
+    sum += texture(texUnit, vec2(tc.x + 4.0*blur*hstep, tc.y + 4.0*blur*vstep)) * 0.0162162162;
+	color = vec4(sum.rgb, 1.0);
 }
+

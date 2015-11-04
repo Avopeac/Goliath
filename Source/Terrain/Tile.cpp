@@ -130,7 +130,7 @@ unsigned int Tile::skirt_padding() {
 
 void Tile::draw(const Lighting &lighting, const Camera & camera, double delta_time) {
 	setup_draw(lighting, camera, delta_time);
-	_mesh.draw_wireframe(_shader, delta_time);
+	_mesh.draw(_shader, delta_time);
 }
 
 void Tile::draw_wireframe(const Lighting &lighting, const Camera & camera, double delta_time) {

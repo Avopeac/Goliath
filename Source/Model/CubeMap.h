@@ -17,7 +17,8 @@ public:
 
 	void load_cubemap(const char *right, const char *left, const char *top, const char *bottom, const char *front, const char * back) {
 		glGenTextures(1, &texid);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, texid);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texid); 
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		unsigned char *data = nullptr;
 		std::array <const char*, CUBEMAP_FACES> cubemap_images = { right, left, top, bottom, front, back };
 		for (int i = 0; i < cubemap_images.size(); ++i) {
@@ -27,20 +28,6 @@ public:
 			}
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		}
-
-
-		/*data = SOIL_load_image("Images/skybox_space_right1.png", &width, &height, &channels, SOIL_LOAD_RGB);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		data = SOIL_load_image("Images/skybox_space_left2.png", &width, &height, &channels, SOIL_LOAD_RGB);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		data = SOIL_load_image("Images/skybox_space_top3.png", &width, &height, &channels, SOIL_LOAD_RGB);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		data = SOIL_load_image("Images/skybox_space_bottom4.png", &width, &height, &channels, SOIL_LOAD_RGB);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		data = SOIL_load_image("Images/skybox_space_front5.png", &width, &height, &channels, SOIL_LOAD_RGB);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		data = SOIL_load_image("Images/skybox_space_back6.png", &width, &height, &channels, SOIL_LOAD_RGB);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);*/
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

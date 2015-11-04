@@ -4,8 +4,7 @@
 #include <GLFW\glfw3.h>
 #include <AntTweakBar\AntTweakBar.h>
 #include "BloomNode.h"
-#include "GammaNode.h"
-#include "ToneMappingNode.h"
+#include "GammaToneMapNode.h"
 
 void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
 	_render_queue_mutex.lock();
@@ -25,9 +24,8 @@ void Renderer::initialize() {
 	intensities.push_back({ 0.15, 0.15, 0.1 }); //indirect sun color
 	_lighting = Lighting(3, directions, intensities);
 	//Set up post processing
-	_post_processing.add_node(std::make_shared<BloomNode>(5, 5, 1.0f, 1.0f));
-	_post_processing.add_node(std::make_shared<GammaNode>(2.2f));
-	_post_processing.add_node(std::make_shared<ToneMappingNode>(1.0f));
+	_post_processing.add_node(std::make_shared<BloomNode>(2, 0.42f, 1.0f, 1.0f));
+	_post_processing.add_node(std::make_shared<GammaToneMapNode>(2.3f, 2.2f));
 }
 
 void Renderer::render(const Camera &camera, double delta_time) {

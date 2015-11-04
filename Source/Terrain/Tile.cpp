@@ -1,5 +1,6 @@
 #include "Tile.h"
-#include "..\View\Renderer.h"
+#include <GLM/gtc/type_ptr.hpp>
+#include "View/Renderer.h"
 
 Tile::Tile(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &translation, const glm::mat4 &rotation, bool normalize)
 	: Drawable(), _resolution(resolution), _translation(translation), _normalize(normalize), _scale(scale), _rotation(rotation) {
@@ -48,16 +49,26 @@ void Tile::generate_mesh() {
 	_mesh.setup_mesh();
 }
 
-void Tile::draw(const Lighting &lighting, const Camera & camera, double delta_time) {
+void Tile::setup_draw(const Lighting &lighting, const Camera & camera, double delta_time) {
 	_shader->use();
 	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
+
+	// I think _translation, _rotation, _scale is done in mesh generation.
+	// Could probably be uploaded here instead for better performance ?
+	glm::mat4 model;
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+}
+
+void Tile::draw(const Lighting &lighting, const Camera & camera, double delta_time) {
+	setup_draw(lighting, camera, delta_time);
 	_mesh.draw_wireframe(_shader, delta_time);
 }
 
 void Tile::draw_wireframe(const Lighting &lighting, const Camera & camera, double delta_time) {
-	_shader->use();
-	glDisable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
+	setup_draw(lighting, camera, delta_time);
 	_mesh.draw_wireframe(_shader, delta_time);
 }

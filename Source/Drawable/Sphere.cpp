@@ -8,9 +8,6 @@
 #include "..\Input\Input.h"
 #include "..\View\Renderer.h"
 Sphere::Sphere(const glm::vec3 & origin, double radius) : Primitive(origin), Drawable(), _radius(radius) {
-	//Set up model matrix
-	_model = glm::scale(_model, glm::vec3((float)_radius));
-	_model = glm::translate(_model, _origin);
 	//Set up material
 	_material.albedo = glm::vec3(0.5, 0.01, 0.01);
 	_material.absorption = 0.0f;
@@ -61,23 +58,31 @@ void Sphere::generate_mesh(unsigned int latitudes, unsigned int longitudes) {
 }
 
 void Sphere::draw(const Lighting &lighting, const Camera &camera, double delta_time) {
-		_shader->use();
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glEnable(GL_DEPTH_TEST);
-		//Enable alpha blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glUniform3fv(glGetUniformLocation(_shader->program, "albedo"), 1, glm::value_ptr(_material.albedo));
-		glUniform1f(glGetUniformLocation(_shader->program, "roughness"), _material.roughness);
-		glUniform1f(glGetUniformLocation(_shader->program, "gaussian"), _material.gaussian);
-		glUniform1f(glGetUniformLocation(_shader->program, "absorption"), _material.absorption);
-		glUniform1f(glGetUniformLocation(_shader->program, "refraction"), _material.refraction);
-		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
-		_mesh.draw(_shader, delta_time);
+	//Set up model matrix
+	_model = glm::mat4();
+	_model = glm::scale(_model, glm::vec3((float)_radius));
+	_model = glm::translate(_model, _origin);
+	_shader->use();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
+	//Enable alpha blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glUniform3fv(glGetUniformLocation(_shader->program, "albedo"), 1, glm::value_ptr(_material.albedo));
+	glUniform1f(glGetUniformLocation(_shader->program, "roughness"), _material.roughness);
+	glUniform1f(glGetUniformLocation(_shader->program, "gaussian"), _material.gaussian);
+	glUniform1f(glGetUniformLocation(_shader->program, "absorption"), _material.absorption);
+	glUniform1f(glGetUniformLocation(_shader->program, "refraction"), _material.refraction);
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
+	_mesh.draw(_shader, delta_time);
 }
 
 void Sphere::draw_wireframe(const Lighting &lighting, const Camera &camera, double delta_time) {
+	//Set up model matrix
+	_model = glm::mat4();
+	_model = glm::scale(_model, glm::vec3((float)_radius));
+	_model = glm::translate(_model, _origin);
 	_shader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);

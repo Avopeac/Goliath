@@ -8,7 +8,10 @@ public:
 	virtual void draw_wireframe(const Lighting &lighting, const Camera & camera, double delta_time) override;
 
 private:
-	virtual void setup_draw(const Lighting &lighting, const Camera & camera, double delta_time);
+	void generate_vertex(glm::vec3 position);
+	void generate_vertex_skirt(glm::vec3 position, glm::vec3 normal);
+	void setup_draw(const Lighting &lighting, const Camera & camera, double delta_time);
+	unsigned int skirt_padding();
 	void generate_mesh();
 	unsigned int _resolution;
 	glm::mat4 _scale;

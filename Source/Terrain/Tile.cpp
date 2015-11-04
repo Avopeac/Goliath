@@ -8,36 +8,121 @@ Tile::Tile(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &tra
 	generate_mesh();
 }
 
+void Tile::generate_vertex(glm::vec3 position) {
+	Vertex vertex;
+
+	if (_normalize) {
+		vertex.normal = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
+		vertex.normal = glm::normalize(vertex.normal);
+		vertex.position = glm::vec3(_scale * glm::vec4(vertex.normal, 1.0f));
+	}
+	else {
+		vertex.position = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
+		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
+	}
+
+	vertex.texcoord = { position.x, position.z };
+
+	_mesh.vertices.push_back(vertex);
+}
+
+void Tile::generate_vertex_skirt(glm::vec3 position, glm::vec3 normal) {
+	Vertex vertex;
+
+	if (_normalize) {
+		position = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
+		normal = glm::vec3(_translation * _rotation * _scale * glm::vec4(normal, 1));
+		normal = glm::normalize(normal);
+		vertex.position = 0.95f * glm::vec3(_scale * glm::normalize(glm::vec4(position, 1)));
+		vertex.normal = normal;
+	}
+	else {
+		position.y = position.y - 0.05f; // Ugly
+		vertex.position = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
+		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
+	}
+
+	vertex.texcoord = { position.x, position.z };
+
+	_mesh.vertices.push_back(vertex);
+}
+
 void Tile::generate_mesh() {
 	float step = 1.0f / _resolution;
 	float offset = 0.5f;
-	unsigned int i, j;
+	unsigned int i = 0, j = 0;
 	float x, z;
-	int counter = 0;
+
+#if 0
+	for (j = 0; j <= _resolution; ++j) {
+		x = i * step;
+		z = j * step;
+		glm::vec3 position(x - offset, 0, z - offset);
+		generate_vertex_skirt(position, glm::vec3(x, 0, 0));
+		if (j == _resolution) {
+			generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
+		}
+	}
+
 	for (i = 0; i <= _resolution; ++i) {
 		for (j = 0; j <= _resolution; ++j) {
 			x = i * step;
 			z = j * step;
-			Vertex vertex;
-			glm::vec4 position(x - offset, 0, z - offset, 1.0);
-			if (_normalize) {
-				position = _translation * _rotation * _scale * position;
-				glm::vec4 normal = glm::normalize(glm::vec4(position.x, position.y, position.z, 0.0));
-				vertex.position = glm::vec3(_scale * normal);
-				vertex.normal = { normal.x, normal.y, normal.z };
+			glm::vec3 position(x - offset, 0, z - offset);
+			generate_vertex(position);
+			if (j == _resolution) {
+				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
 			}
-			else {
-				vertex.position = glm::vec3(_translation * _rotation * _scale * position);
-				vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 0));
+		}
+	}
+#endif
+
+	for (i = 0; i <= _resolution; ++i) {
+		if (i == 0) {
+			for (j = 0; j <= _resolution; ++j) {
+				x = i * step;
+				z = j * step;
+				glm::vec3 position(x - offset, 0, z - offset);
+				if (j == 0) {
+					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, z)));
+				}
+				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(x, 0, 0)));
+				if (j == _resolution) {
+					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
+				}
 			}
-			vertex.texcoord = { x, z };
-			_mesh.vertices.push_back(vertex);
+		}
+		for (j = 0; j <= _resolution; ++j) {
+			x = i * step;
+			z = j * step;
+			glm::vec3 position(x - offset, 0, z - offset);
+			if (j == 0) {
+				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, z)));
+			}
+			generate_vertex(position);
+			if (j == _resolution) {
+				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
+			}
+		}
+		if (i == _resolution) {
+			for (j = 0; j <= _resolution; ++j) {
+				x = i * step;
+				z = j * step;
+				glm::vec3 position(x - offset, 0, z - offset);
+				if (j == 0) {
+					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, z)));
+				}
+				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(x, 0, 0)));
+				if (j == _resolution) {
+					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
+				}
+			}
 		}
 	}
 
-	unsigned int stride = _resolution + 1;
-	for (i = 0; i < _resolution; ++i) {
-		for (j = 0; j < _resolution; ++j) {
+	unsigned int stride = _resolution + skirt_padding() + 1;
+	for (i = 0; i < _resolution + skirt_padding(); ++i) {
+		for (j = 0; j < _resolution + skirt_padding(); ++j) {
 			_mesh.indices.push_back(i + 1 + j * stride);
 			_mesh.indices.push_back(i + (j + 1) * stride);
 			_mesh.indices.push_back(i + j * stride);
@@ -61,6 +146,10 @@ void Tile::setup_draw(const Lighting &lighting, const Camera & camera, double de
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+}
+
+unsigned int Tile::skirt_padding() {
+	return 2;
 }
 
 void Tile::draw(const Lighting &lighting, const Camera & camera, double delta_time) {

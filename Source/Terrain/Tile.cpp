@@ -12,6 +12,7 @@ void Tile::generate_mesh() {
 	float offset = 0.5f;
 	unsigned int i, j;
 	float x, z;
+	int counter = 0;
 	for (i = 0; i <= _resolution; ++i) {
 		for (j = 0; j <= _resolution; ++j) {
 			x = i * step;
@@ -32,6 +33,7 @@ void Tile::generate_mesh() {
 			_mesh.vertices.push_back(vertex);
 		}
 	}
+
 	unsigned int stride = _resolution + 1;
 	for (i = 0; i < _resolution; ++i) {
 		for (j = 0; j < _resolution; ++j) {

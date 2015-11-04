@@ -152,6 +152,9 @@
     <ClInclude Include="Source\View\ToneMappingNode.h">
       <Filter>Source Files\View</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Terrain\Skybox.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\standard.frag">
@@ -194,6 +197,12 @@
       <Filter>Resource Files\Shader Files</Filter>
     </None>
     <None Include="Shaders\tonemappingshader.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\skyboxshader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\skyboxshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
   </ItemGroup>

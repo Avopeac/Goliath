@@ -176,11 +176,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
+    <ClInclude Include="Source\Drawable\Cube.h" />
     <ClInclude Include="Source\Drawable\Plane.h" />
     <ClInclude Include="Source\Drawable\Primitive.h" />
     <ClInclude Include="Source\Drawable\Sphere.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Input\InputEnabled.h" />
+    <ClInclude Include="Source\Model\CubeMap.h" />
     <ClInclude Include="Source\Model\Lighting.h" />
     <ClInclude Include="Source\Model\Material.h" />
     <ClInclude Include="Source\Model\Mesh.h" />

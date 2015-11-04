@@ -155,6 +155,12 @@
     <ClInclude Include="Source\Terrain\Skybox.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Model\CubeMap.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Drawable\Cube.h">
+      <Filter>Source Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\standard.frag">

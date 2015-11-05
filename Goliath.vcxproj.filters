@@ -128,9 +128,6 @@
     <ClInclude Include="Source\Model\Material.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Model\Lighting.h">
-      <Filter>Source Files\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="Source\View\RenderTexture.h">
       <Filter>Source Files\View</Filter>
     </ClInclude>
@@ -157,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="Source\View\GammaToneMapNode.h">
       <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Lighting.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

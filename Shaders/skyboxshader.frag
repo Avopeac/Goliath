@@ -1,13 +1,19 @@
 #version 330
 out vec4 color;
-in vec3 texDir;
 in vec3 viewPos;
-uniform samplerCube skybox;
+in vec3 texDir;
+
+//Lights
+uniform int lights;
+uniform vec3 directions[20];
+uniform vec3 intensities[20];
 uniform vec3 planetViewPos;
 uniform float planetRadius;
 uniform float atmosphereRadius;
-uniform float scaleHeight;
+uniform float viewDepth;
+uniform vec4 scattering;
 uniform mat4 view;
+uniform samplerCube skybox;
 
 //Keeps track of intersections
 float intersection1 = -1.0;
@@ -33,86 +39,61 @@ bool raySphereIntersection(vec3 o, vec3 ray, vec3 c, float rad)
 	return true;
 }
 
-vec3 atmosphericRadiance(int samples, vec3 origin, vec3 ray) {
-	float sampleStep = 1.0 / samples;
-	vec3 radiance = texture(skybox, texDir).rgb;
-	bool planetIntersection = false;
-	bool atmosphereIntersection = false;
-	float l0, l1, l2, dl, h;
-	planetIntersection = raySphereIntersection(origin, ray, planetViewPos, planetRadius);
-	if (planetIntersection && (intersection1 > 0.0) && (intersection2 < 0.0)) { return radiance; }
-	l0 = intersection1;
-	atmosphereIntersection = raySphereIntersection(origin, ray, planetViewPos, atmosphereRadius);
-	l1 = intersection1;
-	l2 = intersection2;
 
-	//Set up initial ray for marching
-	vec3 p0 = origin;
+vec3 atmosphericRadiance(int samples, vec3 origin, vec3 ray)
+{
+	int i; //Loop variable
+	float sampleStep = 1.0 / samples;
+	vec3 radiance = texture(skybox, texDir).xyz;
+	bool atmosphereIntersection = raySphereIntersection(origin, ray, planetViewPos, atmosphereRadius);
+	if (!atmosphereIntersection) { return radiance; } //Miss everything
+	float l1 = intersection1, l2 = intersection2; //Atmosphere hits
+	bool planetIntersection = raySphereIntersection(origin, ray, planetViewPos, planetRadius);
+	float l0 = intersection1; //Nearest planet hit
+	if (planetIntersection && intersection2 < 0.0) { return radiance; } //Under ground
 	vec3 dp = ray;
-	vec3 p1;
-	if (!planetIntersection){
-		//Missed everything
-		if (!atmosphereIntersection) { return radiance; }
-		//Inside to boundary
-		if (l2 <= 0.0) {
-			l1 = l1;
-		} else { 
-			p0 = p0 + (l1 + dp);
+	vec3 p0 = origin;
+
+	//Set l0 to the current view depth (along ray)
+	if (!planetIntersection){ //Ray outside planet surface
+		if (l2 < 0.0) { //Ray starts inside atmosphere to boundary
+			l0 = l1;
+		} else { //Ray starts goes boundary to boundary
+			p0 += dp * l1;
 			l0 = l2 - l1;
 		}
-		//Add up lightsources TODO: add actual lightsources
-		for (int i = 0; i < 2; ++i) {
-			if (dot(vec3(0,1,0), normalize(dp)) >= 0.0) {
-				radiance += vec3(0.01,0.01,0.01);
-			} 
-		}
-	} else {
-		if (l0 < l1) { atmosphereIntersection = false; }	
-		if (!atmosphereIntersection) {
-			l0 = l0; //Useless?
-		} else {
-			p0 = p0 + (l1 + dp);
-			l0 = l0 - l1;
+	} else { //Ray hits plantery surface
+		if (l1 < l0){ //Ray goes from boundary to planet surface
+			p0 += dp * l1;
+			l0 -= l1;
+		} else { //Ray goes from inside atmosphere to planet surface
+			l0 = l0;
 		}
 	}
 
-	dp *= l0;
-	p1 = p0 + dp;
+	//p1 is point on end of view depth and dp the raymarching step size
+	vec3 p1 = p0 + dp * l0;
+	dp = p1 - p0;
 	dp *= sampleStep;
-
-	float qqq = dot(normalize(p1), normalize(vec3(0,1,0)));
-	const float viewDepth = 5.0f;
-	const float atmosHeight = 4.0;
-	const vec4 scattering = vec4(0.198141888310295, 0.465578010163675, 0.862540960504986, 0.0000000000000000000000025);
-	vec3 b;
-	vec3 p = p1;
-	dl = l0 * sampleStep/viewDepth;
-	for (int i = 0; i < samples; ++i){
-		p-=dp;
-		raySphereIntersection(p, normalize(p), planetViewPos, atmosphereRadius);
-		h = exp(intersection1 / atmosHeight) / 2.78;
+	float dl = l0 * sampleStep / viewDepth;
+	l1 = scattering.a; 
+	
+	vec3 p,b;
+	float h;
+	for (p = p1, i = 0; i < samples; p-=dp, ++i){
+		b = normalize(p) * planetRadius;
+		h = length(p - b); //Height above planet surface
+		h = exp(h / atmosphereRadius);
 		b = scattering.rgb * h * dl;
-		radiance.r *= 1.0 - b.r;
-		radiance.g *= 1.0 - b.g;
-		radiance.b *= 1.0 - b.b;
-		radiance += b * qqq;
+		radiance *= b;
+		radiance += b;
 	}
 
-	radiance = max(vec3(0.0), radiance);
-	h = 0.0;
-	if (h < radiance.r) { h = radiance.r; }
-	if (h < radiance.g) { h = radiance.g; }
-	if (h < radiance.b) { h = radiance.b; }
-	if (h > 1.0) {
-		h = 1.0 / h;
-		radiance.r *= h;
-		radiance.g *= h;
-		radiance.b *= h;
-	}
-
+	if (radiance.r < 0.0) { radiance.r = 0.0; }
+	if (radiance.g < 0.0) { radiance.g = 0.0; }
+	if (radiance.b < 0.0) { radiance.b = 0.0; }
 	return radiance;
 }
-
 
 void main(void)
 {

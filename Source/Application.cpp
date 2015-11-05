@@ -87,7 +87,7 @@ void Application::run() {
 	std::shared_ptr<Tile> t6 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, 0, -2)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), true);
 
 	//Create camera
-	Camera camera(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000.0);
+	Camera camera(glm::vec3(0, 0, -13), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000.0);
 	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);
 

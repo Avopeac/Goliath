@@ -47,8 +47,8 @@ private:
 		glm::vec3 planetPos = glm::vec3(camera.get_view() * glm::vec4(0, 0, 0, 1));
 
 		glUniform3fv(glGetUniformLocation(_shader->program, "planetViewPos"), 1, glm::value_ptr(planetPos));
-		glUniform1f(glGetUniformLocation(_shader->program, "planetRadius"), 10);
-		glUniform1f(glGetUniformLocation(_shader->program, "atmosphereRadius"), 5);
+		glUniform1f(glGetUniformLocation(_shader->program, "planetRadius"), 4);
+		glUniform1f(glGetUniformLocation(_shader->program, "atmosphereRadius"), 4.2);
 
 
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(skybox_view));

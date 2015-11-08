@@ -193,6 +193,7 @@
     <ClInclude Include="Source\Terrain\Tile.h" />
     <ClInclude Include="Source\Thread\Message.h" />
     <ClInclude Include="Source\Thread\MessageSystem.h" />
+    <ClInclude Include="Source\View\AtmosphereNode.h" />
     <ClInclude Include="Source\View\BloomNode.h" />
     <ClInclude Include="Source\View\Camera.h" />
     <ClInclude Include="Source\View\Drawable.h" />
@@ -206,6 +207,8 @@
   <ItemGroup>
     <None Include="Shaders\additiveshader.frag" />
     <None Include="Shaders\additiveshader.vert" />
+    <None Include="Shaders\atmosphereshader.frag" />
+    <None Include="Shaders\atmosphereshader.vert" />
     <None Include="Shaders\blurfiltershader.frag" />
     <None Include="Shaders\blurfiltershader.vert" />
     <None Include="Shaders\plaintextureshader.frag" />

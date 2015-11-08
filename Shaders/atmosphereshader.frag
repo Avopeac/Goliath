@@ -54,7 +54,7 @@ float mie(float cosTetha, float cosTethaSqr, float g, float gSqr) {
     return nom * denom;
 }
 
-float rayleigh(float cosTethaSqr){ return 0.75 * (0.75 + cosTethaSqr); }
+float rayleigh(float cosTethaSqr){ return 0.75 * (1.0 + cosTethaSqr); }
 
 float scale(float cosTetha) {
     float x = 1.0 - cosTetha;
@@ -104,18 +104,18 @@ vec4 atmosphere(float samples, vec3 origin, vec3 ray) {
 	float sampleStep = length(pb - pa) / samples;
     float scaledLength = sampleStep / scaleRadius;
 	vec3 px = pa;
-	vec3 dp = normalize(pa - pb);
+	vec3 dp = normalize(pb - pa);
 	vec3 color = vec3(0,0,0);
     for (float i = 0.0; i < samples; ++i) {
-        float height = length(px - planetWorldPos);
+        float height = length(px);
         float depth = exp(scaleOverHeight * (planetRadius - height));
 
-        float lightAngle = dot(sunDirection, px - planetWorldPos) / height;
-        float cameraAngle = dot(dp, px - planetWorldPos) / height;
+        float lightAngle = dot(sunDirection, px) / height;
+        float cameraAngle = dot(dp, px) / height;
 
         float scatter = depth * (scale(lightAngle) + scale(cameraAngle));
 		vec3 attenuate = exp(-scatter * (sunInverseWavelength * rayleighConstant4Pi + mieConstant4Pi));
-        color = color + attenuate * (depth * scaledLength);
+        color = color + attenuate * depth * scaledLength;
         px = px + sampleStep * dp;
     }
 

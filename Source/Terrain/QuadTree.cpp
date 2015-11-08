@@ -34,7 +34,7 @@ void QuadTree::draw_wireframe(const Lighting &lighting, const Camera &camera, do
 
 void QuadTree::create_patch() {
 	std::cout << "Creating tile :  " << _extents << " " << _center.x << " " << _center.y << " " << _center.z << std::endl;
-	//_patch = std::make_shared<Tile>(16, glm::mat4(_extents * 0.5f), glm::translate(glm::mat4(1), glm::vec3(0.5, 0, 0)), glm::mat4(1), false);
+	_patch = std::make_shared<Tile>(16, glm::mat4(_extents * 0.5f), glm::translate(glm::mat4(1), glm::vec3(0.5, 0, 0)), glm::mat4(1), false);
 }
 
 void QuadTree::subdivide() {

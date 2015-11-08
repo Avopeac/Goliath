@@ -15,5 +15,11 @@ void main()
     ourNormal = mat3(normal_matrix) * normal;
     vec4 viewPos = view * model * vec4(position, 1.0);
 	ourPosition = viewPos.xyz;
-    gl_Position = proj * viewPos;
+
+
+	float far =	100000.0;
+	float c = 0.001;
+	vec4 clipPos = proj * viewPos;
+	clipPos.z = (2.0 * log(c * clipPos.w + 1.0) / log(c * far +  1) - 1) * clipPos.w;
+    gl_Position = clipPos;
 }

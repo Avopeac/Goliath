@@ -19,6 +19,7 @@ public:
 	double get_aspect_ratio() const { return _aspect_ratio; }
 	double get_near() const { return _near; }
 	double get_far() const { return _far; }
+	const glm::vec3 &get_eye() const { return _eye; }
 	bool intersects_point(const glm::vec3 &point) const;
 	bool intersects_sphere(const glm::vec3 &center, double radius) const;
 	bool intersects_box(const glm::vec3 &center, const glm::vec3 &extents) const;
@@ -30,6 +31,7 @@ private:
 	double _near, _far;
 	double _time;
 	double _yaw, _pitch, _roll;
+	double _movement_speed = 1000.0;
 	glm::mat4 _view, _perspective;
 	glm::quat _rotation_quat, _next_rotation_quat;
 	glm::vec3 _eye, _base_forward, _base_right, _base_up;

@@ -67,8 +67,8 @@ void Sphere::draw(const Lighting &lighting, const Camera &camera, double delta_t
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	//Enable alpha blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glUniform3fv(glGetUniformLocation(_shader->program, "albedo"), 1, glm::value_ptr(_material.albedo));
 	glUniform1f(glGetUniformLocation(_shader->program, "roughness"), _material.roughness);
 	glUniform1f(glGetUniformLocation(_shader->program, "gaussian"), _material.gaussian);

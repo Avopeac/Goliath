@@ -64,13 +64,11 @@ void main()
 			fDiffuse += ndotl * albedo * absorption;
         }
 		//Fake global illumination
-		fAmbient += 0.1 * (intensities[i] + albedo);
+		//fAmbient += 0.1 * (intensities[i] + albedo);
     }	
 	//Average the results
 	vec3 final = (fAmbient + fDiffuse + fSpecular) / lights;
 	color = vec4(final, 1.0);
-
-	gl_FragDepth = gl_FragCoord.z;
 }
 
 

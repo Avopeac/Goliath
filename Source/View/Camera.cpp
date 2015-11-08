@@ -82,16 +82,16 @@ void Camera::handle_mouse_movement(double x, double y, double delta_x, double de
 void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
 	//Create a translation in the original orthonormal basis
 	if (glfwGetKey(window, GLFW_KEY_W)) {
-		_eye += glm::rotate(_rotation_quat, _base_forward) * (float)delta_time;
+		_eye += glm::rotate(_rotation_quat, _base_forward) * (float)delta_time * (float)_movement_speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S)) {
-		_eye -= glm::rotate(_rotation_quat, _base_forward) * (float)delta_time;
+		_eye -= glm::rotate(_rotation_quat, _base_forward) * (float)delta_time * (float)_movement_speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A)) {
-		_eye -= glm::rotate(_rotation_quat, _base_right) * (float)delta_time;
+		_eye -= glm::rotate(_rotation_quat, _base_right) * (float)delta_time * (float)_movement_speed;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D)) {
-		_eye += glm::rotate(_rotation_quat, _base_right) * (float)delta_time;
+		_eye += glm::rotate(_rotation_quat, _base_right) * (float)delta_time * (float)_movement_speed;
 	}
 
 	//For rolling

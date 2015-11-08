@@ -14,6 +14,7 @@ struct RenderTexture {
 		glGenFramebuffers(1, &framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 		//Create color texture
+		glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &color);
 		glBindTexture(GL_TEXTURE_2D, color);
 		std::cout << " Created color texture with id " << color << std::endl;
@@ -24,6 +25,7 @@ struct RenderTexture {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color, 0);
 		//Create depth texture
+		glActiveTexture(GL_TEXTURE1);
 		glGenTextures(1, &depth);
 		glBindTexture(GL_TEXTURE_2D, depth);
 		std::cout << " Created depth texture with id " << depth << std::endl;
@@ -31,11 +33,13 @@ struct RenderTexture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
-		//Attach textures to fbo
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth, 0);
 		//Render depth
-		glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+		//glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
 		//Print status
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status == GL_FRAMEBUFFER_COMPLETE) {
@@ -45,6 +49,8 @@ struct RenderTexture {
 			std::cout << "RenderTexture creation failed." << std::endl;
 		}
 		//Switch back to screen
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 

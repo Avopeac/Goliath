@@ -11,6 +11,7 @@
 #include "Drawable\Sphere.h"
 #include "Terrain\Skybox.h"
 #include "Terrain\Tile.h"
+#include "Terrain\QuadTree.h"
 #include <GLM\gtx\transform.hpp>
 #include <GLM\gtc\matrix_transform.hpp>
 
@@ -79,15 +80,16 @@ void Application::run() {
 	//To be removed
 	std::shared_ptr<Skybox> skybox = std::make_shared<Skybox>();
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
-	std::shared_ptr<Tile> t1 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, 2, 0)), glm::mat4(1), true);
-	std::shared_ptr<Tile> t2 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, -2, 0)), glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), true);
-	std::shared_ptr<Tile> t3 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(-2, 0, 0)), glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), true);
-	std::shared_ptr<Tile> t4 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(2, 0, 0)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), true);
-	std::shared_ptr<Tile> t5 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, 0, 2)), glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), true);
-	std::shared_ptr<Tile> t6 = std::make_shared<Tile>(16, glm::scale(glm::vec3(4)), glm::translate(glm::vec3(0, 0, -2)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), true);
+/*	std::shared_ptr<Tile> t1 = std::make_shared<Tile>(64, glm::scale(glm::vec3(136000)), glm::translate(glm::vec3(0, 68000, 0)), glm::mat4(1), true);
+	std::shared_ptr<Tile> t2 = std::make_shared<Tile>(64, glm::scale(glm::vec3(136000)), glm::translate(glm::vec3(0, -68000, 0)), glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), true);
+	std::shared_ptr<Tile> t3 = std::make_shared<Tile>(64, glm::scale(glm::vec3(136000)), glm::translate(glm::vec3(-68000, 0, 0)), glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), true);
+	std::shared_ptr<Tile> t4 = std::make_shared<Tile>(64, glm::scale(glm::vec3(136000)), glm::translate(glm::vec3(68000, 0, 0)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), true);
+	std::shared_ptr<Tile> t5 = std::make_shared<Tile>(64, glm::scale(glm::vec3(136000)), glm::translate(glm::vec3(0, 0, 68000)), glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), true);
+	std::shared_ptr<Tile> t6 = std::make_shared<Tile>(64, glm::scale(glm::vec3(136000)), glm::translate(glm::vec3(0, 0, -68000)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), true);*/
+	std::shared_ptr<QuadTree> tree = std::make_shared<QuadTree>(glm::vec3(0), 4);
 
 	//Create camera
-	Camera camera(glm::vec3(0, 0, -13), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000.0);
+	Camera camera(glm::vec3(0, 0, -20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000000.0);
 	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);
 
@@ -111,12 +113,13 @@ void Application::run() {
 		camera.update(_delta_time);
 		Renderer::instance().add_drawable(skybox);
 		Renderer::instance().add_drawable(sphere);
-		Renderer::instance().add_drawable(t1);
+		/*Renderer::instance().add_drawable(t1);
 		Renderer::instance().add_drawable(t2);
 		Renderer::instance().add_drawable(t3);
 		Renderer::instance().add_drawable(t4);
 		Renderer::instance().add_drawable(t5);
-		Renderer::instance().add_drawable(t6);
+		Renderer::instance().add_drawable(t6);*/
+		Renderer::instance().add_drawable(tree);
 		Renderer::instance().render(camera, _delta_time);
 
 		glfwSwapInterval(1);

@@ -168,6 +168,7 @@
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Model\Texture.cpp" />
+    <ClCompile Include="Source\Terrain\QuadTree.cpp" />
     <ClCompile Include="Source\Terrain\Tile.cpp" />
     <ClCompile Include="Source\Thread\MessageSystem.cpp" />
     <ClCompile Include="Source\View\Camera.cpp" />
@@ -189,6 +190,8 @@
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
+    <ClInclude Include="Source\Terrain\NoiseCube.h" />
+    <ClInclude Include="Source\Terrain\QuadTree.h" />
     <ClInclude Include="Source\Terrain\Skybox.h" />
     <ClInclude Include="Source\Terrain\Tile.h" />
     <ClInclude Include="Source\Thread\Message.h" />

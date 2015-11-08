@@ -25,8 +25,8 @@ void Renderer::initialize() {
 	intensities.push_back({ 0.15, 0.15, 0.1 }); //indirect sun color
 	_lighting = Lighting(3, directions, intensities);
 	//Set up post processing
-	_post_processing.add_node(std::make_shared<BloomNode>(2, 0.42f, 1.0f, 1.0f));
 	_post_processing.add_node(std::make_shared<AtmosphereNode>());
+	_post_processing.add_node(std::make_shared<BloomNode>(2, 0.42f, 1.0f, 1.0f));
 	_post_processing.add_node(std::make_shared<GammaToneMapNode>(2.3f, 2.2f));
 }
 

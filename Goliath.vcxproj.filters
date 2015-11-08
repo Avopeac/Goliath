@@ -75,6 +75,9 @@
     <ClCompile Include="Source\View\RenderTexture.cpp">
       <Filter>Source Files\View</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Terrain\QuadTree.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Drawable\Plane.h">
@@ -160,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="Source\View\AtmosphereNode.h">
       <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\NoiseCube.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\QuadTree.h">
+      <Filter>Source Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

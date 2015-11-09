@@ -29,7 +29,7 @@ void QuadTree::draw(const Lighting &lighting, const Camera &camera, double delta
 }
 
 double QuadTree::distance_nearest_corner(const Camera &camera) {
-	return glm::abs(glm::dot((glm::vec3(_translation[3]) - camera.get_eye()), glm::vec3(camera.get_view()[2])) - _extents);
+	return glm::abs(glm::dot((glm::vec3(_translation[3]) - camera.get_eye()), -glm::vec3(camera.get_view()[2])) - _extents);
 }
 
 void QuadTree::draw_wireframe(const Lighting &lighting, const Camera &camera, double delta_time) {

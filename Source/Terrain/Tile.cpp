@@ -18,67 +18,29 @@ void Tile::generate_vertex(glm::vec3 position) {
 	_mesh.vertices.push_back(vertex);
 }
 
-void Tile::generate_vertex_skirt(glm::vec3 position, glm::vec3 normal) {
-	Vertex vertex;
-	position.y = position.y - 0.05f; // Ugly
-	vertex.position = glm::vec3(_premult_transf * glm::vec4(position, 1.0));
-	vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
-	vertex.texcoord = { position.x, position.z };
-	_mesh.vertices.push_back(vertex);
+void Tile::generate_vertex_helper(float offset, float step, unsigned int column, bool edge) {
+	float x = column * step - offset, z = 0.0f;
+	generate_vertex({ x, _skirt_offset, -offset });
+	for (unsigned int row = 0; row <= _resolution; ++row) {
+		z = row * step - offset;
+		edge ? generate_vertex({ x, _skirt_offset, z }) : generate_vertex({ x, 0, z });
+	}
+	generate_vertex({ x, _skirt_offset, _resolution * step - offset });
 }
 
 void Tile::generate_mesh() {
+	//Set up vertices
 	float step = 1.0f / _resolution;
 	float offset = 0.5f;
-	unsigned int i = 0, j = 0;
-	float x, z;
-
-	for (i = 0; i <= _resolution; ++i) {
-		if (i == 0) {
-			for (j = 0; j <= _resolution; ++j) {
-				x = i * step;
-				z = j * step;
-				glm::vec3 position(x - offset, 0, z - offset);
-				if (j == 0) {
-					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, z)));
-				}
-				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(x, 0, 0)));
-				if (j == _resolution) {
-					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
-				}
-			}
-		}
-		for (j = 0; j <= _resolution; ++j) {
-			x = i * step;
-			z = j * step;
-			glm::vec3 position(x - offset, 0, z - offset);
-			if (j == 0) {
-				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, z)));
-			}
-			generate_vertex(position);
-			if (j == _resolution) {
-				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
-			}
-		}
-		if (i == _resolution) {
-			for (j = 0; j <= _resolution; ++j) {
-				x = i * step;
-				z = j * step;
-				glm::vec3 position(x - offset, 0, z - offset);
-				if (j == 0) {
-					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, z)));
-				}
-				generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(x, 0, 0)));
-				if (j == _resolution) {
-					generate_vertex_skirt(position, glm::cross(glm::vec3(x, 0, z), glm::vec3(0, 0, -z)));
-				}
-			}
-		}
+	generate_vertex_helper(offset, step, 0, true);
+	for (unsigned int column = 0; column <= _resolution; ++column) {
+		generate_vertex_helper(offset, step, column, false);
 	}
-
-	unsigned int stride = _resolution + skirt_padding() + 1;
-	for (i = 0; i < _resolution + skirt_padding(); ++i) {
-		for (j = 0; j < _resolution + skirt_padding(); ++j) {
+	generate_vertex_helper(offset, step, _resolution, true);
+	//Set up indices
+	unsigned int stride = _resolution + _skirt_padding + 1;
+	for (unsigned int i = 0; i < _resolution + _skirt_padding; ++i) {
+		for (unsigned int j = 0; j < _resolution + _skirt_padding; ++j) {
 			_mesh.indices.push_back(i + 1 + j * stride);
 			_mesh.indices.push_back(i + (j + 1) * stride);
 			_mesh.indices.push_back(i + j * stride);
@@ -87,25 +49,26 @@ void Tile::generate_mesh() {
 			_mesh.indices.push_back(i + 1 + j * stride);
 		}
 	}
+	//Upload mesh
 	_mesh.setup_mesh();
 }
 
 void Tile::setup_draw(const Lighting &lighting, const Camera & camera, double delta_time) {
 	_shader->use();
 	glDisable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	//glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
-
-	// I think _translation, _rotation, _scale is done in mesh generation.
-	// Could probably be uploaded here instead for better performance ?
+	glUniform3fv(glGetUniformLocation(_shader->program, "albedo"), 1, glm::value_ptr(_material.albedo));
+	glUniform1f(glGetUniformLocation(_shader->program, "roughness"), _material.roughness);
+	glUniform1f(glGetUniformLocation(_shader->program, "gaussian"), _material.gaussian);
+	glUniform1f(glGetUniformLocation(_shader->program, "absorption"), _material.absorption);
+	glUniform1f(glGetUniformLocation(_shader->program, "refraction"), _material.refraction);
 	glm::mat4 model;
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
-}
 
-unsigned int Tile::skirt_padding() {
-	return 2;
+	//These are set in renderer if using standard shader!
+	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
+	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 }
 
 void Tile::draw(const Lighting &lighting, const Camera & camera, double delta_time) {

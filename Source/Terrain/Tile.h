@@ -11,10 +11,12 @@ public:
 
 private:
 	void generate_vertex(glm::vec3 position);
-	void generate_vertex_skirt(glm::vec3 position, glm::vec3 normal);
+	//void generate_vertex_skirt(glm::vec3 position, glm::vec3 normal);
+	void generate_vertex_helper(float offset, float step, unsigned int column, bool edge);
 	void setup_draw(const Lighting &lighting, const Camera & camera, double delta_time);
-	unsigned int skirt_padding();
 	void generate_mesh();
+	const unsigned int _skirt_padding = 2;
+	const float _skirt_offset = -0.05f;
 	unsigned int _resolution;
 	glm::mat4 _premult_transf;
 	glm::mat4 _scale;

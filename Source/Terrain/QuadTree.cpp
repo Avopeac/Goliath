@@ -1,5 +1,7 @@
 #include "QuadTree.h"
 #include <iostream>
+#include <GLM\gtc\matrix_transform.hpp>
+#include <GLM\gtx\transform.hpp>
 
 void QuadTree::draw(const Lighting &lighting, const Camera &camera, double delta_time) {
 	if (_level < 1) {
@@ -23,7 +25,7 @@ void QuadTree::draw(const Lighting &lighting, const Camera &camera, double delta
 			_has_patch = true;
 		}
 		else {
-			_patch->draw_wireframe(lighting, camera, delta_time);
+			_patch->draw(lighting, camera, delta_time);
 		}
 	}
 }
@@ -33,27 +35,35 @@ void QuadTree::draw_wireframe(const Lighting &lighting, const Camera &camera, do
 }
 
 void QuadTree::create_patch() {
-	std::cout << "Creating tile :  " << _extents << " " << _center.x << " " << _center.y << " " << _center.z << std::endl;
-	_patch = std::make_shared<Tile>(16, glm::mat4(_extents * 0.5f), glm::translate(glm::mat4(1), glm::vec3(0.5, 0, 0)), glm::mat4(1), false);
+	//std::cout << "Creating tile :  " << _extents << " " << _center.x << " " << _center.y << " " << _center.z << std::endl;
+	glm::mat4 trans = _translation;
+	trans[3] *= 0.25f;
+	_patch = std::make_shared<Tile>(64, glm::mat4(2.0f * _extents), trans, _rotation, true);
 }
 
 void QuadTree::subdivide() {
 
+
 	float offset = _extents * 0.5f;
+	glm::mat4 tnw = glm::translate(glm::vec3(_translation[3].x - offset, _translation[3].y, _translation[3].z + offset));
+	glm::mat4 tne = glm::translate(glm::vec3(_translation[3].x + offset, _translation[3].y, _translation[3].z + offset));
+	glm::mat4 tsw = glm::translate(glm::vec3(_translation[3].x - offset, _translation[3].y, _translation[3].z - offset));
+	glm::mat4 tse = glm::translate(glm::vec3(_translation[3].x + offset, _translation[3].y, _translation[3].z - offset));
+	
 	//Create 4 sub-quadtrees
-	_northwest = std::make_shared<QuadTree>(glm::vec3(_center.x - offset, _center.y, _center.z + offset), offset);
+	_northwest = std::make_shared<QuadTree>(_rotation, tnw, offset);
 	_northwest->_level = _level + 1;
 	_northwest->_parent = this;
 
-	_northeast = std::make_shared<QuadTree>(glm::vec3(_center.x + offset, _center.y, _center.z + offset), offset);
+	_northeast = std::make_shared<QuadTree>(_rotation, tne, offset);
 	_northeast->_level = _level + 1;
 	_northeast->_parent = this;
 
-	_southwest = std::make_shared<QuadTree>(glm::vec3(_center.x - offset, _center.y, _center.z - offset), offset);
+	_southwest = std::make_shared<QuadTree>(_rotation, tsw, offset);
 	_southwest->_level = _level + 1;
 	_southwest->_parent = this;
 
-	_southeast = std::make_shared<QuadTree>(glm::vec3(_center.x + offset, _center.y, _center.z - offset), offset);
+	_southeast = std::make_shared<QuadTree>(_rotation, tse, offset);
 	_southeast->_level = _level + 1;
 	_southeast->_parent = this;
 

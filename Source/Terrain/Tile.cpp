@@ -113,7 +113,7 @@ void Tile::generate_mesh() {
 void Tile::setup_draw(const Lighting &lighting, const Camera & camera, double delta_time) {
 	_shader->use();
 	glDisable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
+	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 
 	// I think _translation, _rotation, _scale is done in mesh generation.

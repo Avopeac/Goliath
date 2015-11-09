@@ -6,7 +6,7 @@
 class QuadTree : public Drawable {
 public:
 	//For root quads
-	QuadTree(const glm::vec3 &center, float extents) : Drawable(), _center(center), _extents(extents) {
+	QuadTree(const glm::mat4 &rotation, const glm::mat4 &translation, float extents) : Drawable(), _rotation(rotation), _translation(translation), _extents(extents) {
 		create_patch();
 	};
 
@@ -18,7 +18,8 @@ private:
 	void subdivide();
 	void create_patch();
 	//The axis aligned bounding box
-	glm::vec3 _center;
+	glm::mat4 _translation;
+	glm::mat4 _rotation;
 	float _extents;
 	//The current recursion level
 	unsigned int _level = 0;

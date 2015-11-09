@@ -16,6 +16,7 @@ public:
 	const glm::mat4 &get_perspective() const { return _perspective; }
 	const glm::mat4 &get_view() const { return _view; }
 	double get_vertical_fov() const { return _vertical_fov; }
+	double get_horizontal_fov() const { return _horizontal_fov; }
 	double get_aspect_ratio() const { return _aspect_ratio; }
 	double get_near() const { return _near; }
 	double get_far() const { return _far; }
@@ -27,7 +28,7 @@ public:
 	std::vector<unsigned int> indices;
 
 private:
-	double _vertical_fov, _aspect_ratio;
+	double _vertical_fov, _horizontal_fov, _aspect_ratio;
 	double _near, _far;
 	double _time;
 	double _yaw, _pitch, _roll;

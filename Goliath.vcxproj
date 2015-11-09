@@ -190,7 +190,6 @@
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
-    <ClInclude Include="Source\Terrain\NoiseCube.h" />
     <ClInclude Include="Source\Terrain\QuadTree.h" />
     <ClInclude Include="Source\Terrain\Skybox.h" />
     <ClInclude Include="Source\Terrain\Tile.h" />

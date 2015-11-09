@@ -10,44 +10,22 @@ Tile::Tile(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &tra
 
 void Tile::generate_vertex(glm::vec3 position) {
 	Vertex vertex;
-
-	if (_normalize) {
-		vertex.normal = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
-		vertex.normal = glm::normalize(vertex.normal);
-		vertex.position = glm::vec3(_scale * glm::vec4(vertex.normal, 1.0f));
-	}
-	else {
-		vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
-		vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
-		vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
-		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
-	}
-
+	vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
+	vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+	vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+	vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	vertex.texcoord = { position.x, position.z };
-
 	_mesh.vertices.push_back(vertex);
 }
 
 void Tile::generate_vertex_skirt(glm::vec3 position, glm::vec3 normal) {
 	Vertex vertex;
-
-	if (_normalize) {
-		position = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
-		normal = glm::vec3(_translation * _rotation * _scale * glm::vec4(normal, 1));
-		normal = glm::normalize(normal);
-		vertex.position = 0.95f * glm::vec3(_scale * glm::normalize(glm::vec4(position, 1)));
-		vertex.normal = normal;
-	}
-	else {
-		position.y = position.y - 0.05f; // Ugly
-		vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
-		vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
-		vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
-		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
-	}
-
+	position.y = position.y - 0.05f; // Ugly
+	vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
+	vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+	vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+	vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	vertex.texcoord = { position.x, position.z };
-
 	_mesh.vertices.push_back(vertex);
 }
 

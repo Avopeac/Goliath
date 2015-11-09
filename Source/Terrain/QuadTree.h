@@ -12,11 +12,13 @@ public:
 
 	// Inherited via Drawable
 	virtual void draw(const Lighting &lighting, const Camera & camera, double delta_time) override;
+	double distance_nearest_corner(const Camera & camera);
 	virtual void draw_wireframe(const Lighting &lighting, const Camera &camera, double delta_time) override;
 
 private:
 	void subdivide();
 	void create_patch();
+	double compute_level_metric(const Camera & camera, double distance);
 	//The axis aligned bounding box
 	glm::mat4 _translation;
 	glm::mat4 _rotation;
@@ -25,6 +27,7 @@ private:
 	unsigned int _level = 0;
 	bool _has_children = false;
 	bool _has_patch = false;
+	double _screen_space_error = 0.05f;
 	//The parent quad tree
 	QuadTree *_parent = nullptr;
 	//The object contained in a leaf of the quad tree

@@ -2,17 +2,17 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include "View/Renderer.h"
 
-Tile::Tile(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &translation, const glm::mat4 &rotation, bool normalize)
-	: Drawable(), _resolution(resolution), _translation(translation), _normalize(normalize), _scale(scale), _rotation(rotation) {
+Tile::Tile(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &translation, const glm::mat4 &rotation)
+	: Drawable(), _resolution(resolution), _translation(translation), _scale(scale), _rotation(rotation) {
 	set_shader(Renderer::instance().get_standard_shader(), true);
+	_premult_transf = _translation * _rotation * _scale;
+	//Do this last!
 	generate_mesh();
 }
 
 void Tile::generate_vertex(glm::vec3 position) {
 	Vertex vertex;
-	vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
-	vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
-	vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+	vertex.position = glm::vec3(_premult_transf * glm::vec4(position, 1.0));
 	vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	vertex.texcoord = { position.x, position.z };
 	_mesh.vertices.push_back(vertex);
@@ -21,9 +21,7 @@ void Tile::generate_vertex(glm::vec3 position) {
 void Tile::generate_vertex_skirt(glm::vec3 position, glm::vec3 normal) {
 	Vertex vertex;
 	position.y = position.y - 0.05f; // Ugly
-	vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
-	vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
-	vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+	vertex.position = glm::vec3(_premult_transf * glm::vec4(position, 1.0));
 	vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	vertex.texcoord = { position.x, position.z };
 	_mesh.vertices.push_back(vertex);
@@ -104,10 +102,6 @@ void Tile::setup_draw(const Lighting &lighting, const Camera & camera, double de
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
-}
-
-void Tile::translateTile(const glm::vec3 &t) {
-	glm::mat4 model = glm::translate(t);
 }
 
 unsigned int Tile::skirt_padding() {

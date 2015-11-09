@@ -37,7 +37,7 @@ void QuadTree::draw_wireframe(const Lighting &lighting, const Camera &camera, do
 }
 
 void QuadTree::create_patch() {
-	_patch = std::make_shared<Tile>(4, glm::mat4(_extents), _translation, _rotation, false);
+	_patch = std::make_shared<Tile>(4, glm::scale(glm::vec3(_extents)), _translation, _rotation);
 }
 
 double QuadTree::compute_level_metric(const Camera &camera, double distance) {

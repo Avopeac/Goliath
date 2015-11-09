@@ -7,7 +7,7 @@ class QuadTree : public Drawable {
 public:
 	//For root quads
 	QuadTree(const glm::mat4 &rotation, const glm::mat4 &translation, float extents) : Drawable(), _rotation(rotation), _translation(translation), _extents(extents) {
-		create_patch();
+		//create_patch();
 	};
 
 	// Inherited via Drawable

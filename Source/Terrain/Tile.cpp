@@ -17,7 +17,7 @@ void Tile::generate_vertex(glm::vec3 position) {
 		vertex.position = glm::vec3(_scale * glm::vec4(vertex.normal, 1.0f));
 	}
 	else {
-		vertex.position = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
+		vertex.position = glm::vec3(_rotation * _translation * _scale * glm::vec4(position, 1));
 		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	}
 
@@ -38,7 +38,7 @@ void Tile::generate_vertex_skirt(glm::vec3 position, glm::vec3 normal) {
 	}
 	else {
 		position.y = position.y - 0.05f; // Ugly
-		vertex.position = glm::vec3(_translation * _rotation * _scale * glm::vec4(position, 1));
+		vertex.position = glm::vec3(_rotation * _translation * _scale * glm::vec4(position, 1));
 		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	}
 
@@ -122,6 +122,10 @@ void Tile::setup_draw(const Lighting &lighting, const Camera & camera, double de
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+}
+
+void Tile::translateTile(const glm::vec3 &t) {
+	glm::mat4 model = glm::translate(t);
 }
 
 unsigned int Tile::skirt_padding() {

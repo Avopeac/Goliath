@@ -17,7 +17,9 @@ void Tile::generate_vertex(glm::vec3 position) {
 		vertex.position = glm::vec3(_scale * glm::vec4(vertex.normal, 1.0f));
 	}
 	else {
-		vertex.position = glm::vec3(_rotation * _translation * _scale * glm::vec4(position, 1));
+		vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
+		vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+		vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
 		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	}
 
@@ -38,7 +40,9 @@ void Tile::generate_vertex_skirt(glm::vec3 position, glm::vec3 normal) {
 	}
 	else {
 		position.y = position.y - 0.05f; // Ugly
-		vertex.position = glm::vec3(_rotation * _translation * _scale * glm::vec4(position, 1));
+		vertex.position = glm::vec3(_scale * glm::vec4(position, 1));
+		vertex.position = glm::vec3(_scale * _translation * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
+		vertex.position = glm::vec3(_scale * _translation * _rotation * glm::inverse(_translation) * glm::inverse(_scale) * glm::vec4(vertex.position, 1));
 		vertex.normal = glm::vec3(_rotation * glm::vec4(0, 1, 0, 1));
 	}
 

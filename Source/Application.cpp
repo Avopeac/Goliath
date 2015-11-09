@@ -81,14 +81,14 @@ void Application::run() {
 	std::shared_ptr<Skybox> skybox = std::make_shared<Skybox>();
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
 
-	float scale = 7.0f;
-	float trans = 0.5f;
-	std::shared_ptr<QuadTree> t1 = std::make_shared<QuadTree>(glm::mat4(1), glm::translate(glm::vec3(0, trans, 0)), scale);
-	std::shared_ptr<QuadTree> t2 = std::make_shared<QuadTree>(glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, trans, 0)), scale);
-	std::shared_ptr<QuadTree> t3 = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, trans, 0)), scale);
-	std::shared_ptr<QuadTree> t4 = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, trans, 0)), scale);
-	std::shared_ptr<QuadTree> t5 = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, trans, 0)), scale);
-	std::shared_ptr<QuadTree> t6 = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, trans, 0)), scale);
+	float scale = 4.0f;
+	float trans = 2.0f;
+	std::shared_ptr<QuadTree> t1 = std::make_shared<QuadTree>(glm::mat4(1), glm::translate(glm::vec3(5, trans, 0)), scale);
+	std::shared_ptr<QuadTree> t2 = std::make_shared<QuadTree>(glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(5, -trans, 0)), scale);
+	std::shared_ptr<QuadTree> t3 = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(-trans+5, 0, 0)), scale);
+	std::shared_ptr<QuadTree> t4 = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(trans+5, 0, 0)), scale);
+	std::shared_ptr<QuadTree> t5 = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(5, 0, trans)), scale);
+	std::shared_ptr<QuadTree> t6 = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(5, 0, -trans)), scale);
 
 	//Create camera
 	Camera camera(glm::vec3(0, 0, -13), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 10000.0);

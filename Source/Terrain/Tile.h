@@ -15,6 +15,8 @@ private:
 	void generate_vertex_helper(float offset, float step, unsigned int column, bool edge);
 	void setup_draw(const Lighting &lighting, const Camera & camera, double delta_time);
 	void generate_mesh();
+	float height_function(float lacunarity, float dimension, float octaves, float scale, float offset, glm::vec3 &seed);
+	void generate_normals();
 	const unsigned int _skirt_padding = 2;
 	const float _skirt_offset = -0.05f;
 	unsigned int _resolution;

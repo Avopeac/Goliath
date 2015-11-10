@@ -47,7 +47,7 @@ bool Camera::intersects_sphere(const glm::vec3 &center, double radius) const {
 	for (unsigned short i = 0; i < 6; ++i) {
 		Plane p(_frustum[i]);
 		glm::vec3 n(p.x, p.y, p.z);
-		if (glm::dot(n, center) + p.d > radius) {
+		if (glm::dot(n, center) + p.d < radius) {
 			return false;
 		}
 	}

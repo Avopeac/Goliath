@@ -12,10 +12,8 @@ void main()
 {
     ourUv = uv;
 	mat4 normal_matrix = inverse(transpose(view * model));
-    ourNormal = mat3(normal_matrix) * normal;
-	//Spherification
-	vec4 pos = vec4(normalize(position) * 4.0, 1.0);
-    vec4 viewPos = view * model * pos;
+    ourNormal = vec3(normal_matrix * vec4(normal, 0.0));
+    vec4 viewPos = view * model * vec4(position, 1.0);
 	ourPosition = viewPos.xyz;
 	float far =	100000.0;
 	float c = 0.001;

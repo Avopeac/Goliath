@@ -67,13 +67,7 @@ void main()
 		//fAmbient += 0.1 * (intensities[i] + albedo);
     }	
 	//Average the results
-	vec3 final = (fAmbient + fDiffuse + fSpecular) / lights;
-	color = vec4(albedo, 1.0); //vec4(final, 1.0);
+	//vec3 final = (fAmbient + fDiffuse + fSpecular) / lights;
+	//color = vec4(final, 1.0);
+	color = vec4(n, 1.0);
 }
-
-
-
-
-
-
-

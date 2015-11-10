@@ -219,6 +219,8 @@
     <None Include="Shaders\skyboxshader.vert" />
     <None Include="Shaders\standard.frag" />
     <None Include="Shaders\standard.vert" />
+    <None Include="Shaders\terraingroundshader.frag" />
+    <None Include="Shaders\terraingroundshader.vert" />
     <None Include="Shaders\thresholdshader.frag" />
     <None Include="Shaders\thresholdshader.vert" />
     <None Include="Shaders\gammatonemapshader.frag" />

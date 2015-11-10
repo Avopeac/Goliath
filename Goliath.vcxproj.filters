@@ -217,5 +217,11 @@
     <None Include="Shaders\atmosphereshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
+    <None Include="Shaders\terraingroundshader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\terraingroundshader.vert">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -34,6 +34,12 @@
     <Filter Include="Resource Files\Shader Files">
       <UniqueIdentifier>{beacf452-1200-442a-853c-226ad5247e48}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shader Files\Post Processing">
+      <UniqueIdentifier>{df4b08d9-ee2d-4178-ae40-5182536ff16a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\View\Post Processing">
+      <UniqueIdentifier>{b67ee052-8c53-445b-b47a-35124d9a9789}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Drawable\Plane.cpp">
@@ -72,10 +78,13 @@
     <ClCompile Include="Source\Terrain\Tile.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="Source\View\RenderTexture.cpp">
-      <Filter>Source Files\View</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Terrain\QuadTree.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\View\RenderTexture.cpp">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Terrain\Planet.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
@@ -131,21 +140,6 @@
     <ClInclude Include="Source\Model\Material.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Source\View\RenderTexture.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\View\PostProcessing.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\View\PostProcessingNode.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\View\ScreenQuad.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\View\BloomNode.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Terrain\Skybox.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
@@ -155,16 +149,37 @@
     <ClInclude Include="Source\Drawable\Cube.h">
       <Filter>Source Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="Source\View\GammaToneMapNode.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Model\Lighting.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Source\View\AtmosphereNode.h">
+    <ClInclude Include="Source\Terrain\QuadTree.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\ShaderStore.h">
       <Filter>Source Files\View</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Terrain\QuadTree.h">
+    <ClInclude Include="Source\View\AtmosphereNode.h">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\PostProcessingNode.h">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\PostProcessing.h">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\GammaToneMapNode.h">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\BloomNode.h">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\RenderTexture.h">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\ScreenQuad.h">
+      <Filter>Source Files\View\Post Processing</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\Planet.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
@@ -175,46 +190,52 @@
     <None Include="Shaders\standard.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
-    <None Include="Shaders\additiveshader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\additiveshader.vert">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\plaintextureshader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\plaintextureshader.vert">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\thresholdshader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\thresholdshader.vert">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\blurfiltershader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\blurfiltershader.vert">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
     <None Include="Shaders\skyboxshader.frag">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
     <None Include="Shaders\skyboxshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
-    <None Include="Shaders\gammatonemapshader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
+    <None Include="Shaders\additiveshader.frag">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
-    <None Include="Shaders\gammatonemapshader.vert">
-      <Filter>Resource Files\Shader Files</Filter>
+    <None Include="Shaders\additiveshader.vert">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
     <None Include="Shaders\atmosphereshader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
     <None Include="Shaders\atmosphereshader.vert">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\blurfiltershader.frag">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\blurfiltershader.vert">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\gammatonemapshader.frag">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\gammatonemapshader.vert">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\plaintextureshader.frag">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\plaintextureshader.vert">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\thresholdshader.frag">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\thresholdshader.vert">
+      <Filter>Resource Files\Shader Files\Post Processing</Filter>
+    </None>
+    <None Include="Shaders\groundshader.frag">
+      <Filter>Resource Files\Shader Files</Filter>
+    </None>
+    <None Include="Shaders\groundshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
   </ItemGroup>

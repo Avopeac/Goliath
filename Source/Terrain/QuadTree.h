@@ -5,20 +5,21 @@
 #include <GLM\glm.hpp>
 class QuadTree : public Drawable {
 public:
-	//For root quads
-	QuadTree(const glm::mat4 &rotation, const glm::mat4 &translation, float extents) : Drawable(), _rotation(rotation), _translation(translation), _extents(extents) {
-		//create_patch();
-	};
+	QuadTree() : Drawable() {}
+	QuadTree(const glm::mat4 &rotation, const glm::mat4 &translation, float extents) : Drawable(), _rotation(rotation), _translation(translation), _extents(extents) {};
+	void set_rotation(const glm::mat4 &rotation) { _rotation = rotation; }
+	void set_translation(const glm::mat4 &translation) { _translation = translation; }
+	void set_extents(float extents) { _extents = extents; }
 
 	// Inherited via Drawable
-	virtual void draw(const Lighting &lighting, const Camera & camera, double delta_time) override;
-	double distance_nearest_corner(const Camera & camera);
-	virtual void draw_wireframe(const Lighting &lighting, const Camera &camera, double delta_time) override;
-
+	virtual void draw(const Camera & camera, double delta_time) override;
+	virtual void draw_wireframe(const Camera &camera, double delta_time) override;
+	
 private:
 	void subdivide();
 	void create_patch();
 	double compute_level_metric(const Camera & camera, double distance);
+	double distance_nearest_corner(const Camera & camera);
 	//The axis aligned bounding box
 	glm::mat4 _translation;
 	glm::mat4 _rotation;

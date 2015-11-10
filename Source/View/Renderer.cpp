@@ -6,6 +6,7 @@
 #include "AtmosphereNode.h"
 #include "BloomNode.h"
 #include "GammaToneMapNode.h"
+#include "..\Model\CubeMap.h"
 
 void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
 	_render_queue_mutex.lock();
@@ -14,16 +15,6 @@ void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
 }
 
 void Renderer::initialize() {
-	//Set up default lighting
-	std::vector<glm::vec3> directions;
-	directions.push_back({ 0,1,0 }); //sun
-	directions.push_back({ 0,1,0 }); //sky
-	directions.push_back({ -1,0,-1 }); //indirect sun
-	std::vector<glm::vec3> intensities;
-	intensities.push_back({ 1.5, 1.5, 1.0 }); //sun color
-	intensities.push_back({ 0.11, 0.161, 0.184 }); //sky color
-	intensities.push_back({ 0.15, 0.15, 0.1 }); //indirect sun color
-	_lighting = Lighting(3, directions, intensities);
 	//Set up post processing
 	_post_processing.add_node(std::make_shared<AtmosphereNode>());
 	_post_processing.add_node(std::make_shared<BloomNode>(2, 0.42f, 1.0f, 1.0f));
@@ -31,7 +22,7 @@ void Renderer::initialize() {
 }
 
 void Renderer::render(const Camera &camera, double delta_time) {
-	set_standard_uniform(camera);
+	//set_standard_uniform(camera);
 	_post_processing.capture();
 	draw_queue(camera, delta_time);
 	_post_processing.apply(camera);
@@ -46,15 +37,18 @@ void Renderer::draw_queue(const Camera &camera, double delta_time) {
 		drawable = _render_queue.front();
 		_render_queue.pop();
 		if (drawable != nullptr) {
-			drawable->draw(_lighting, camera, delta_time);
+			drawable->draw(camera, delta_time);
 		}
 	}
 	_render_queue_mutex.unlock();
 }
 
-void Renderer::set_standard_uniform(const Camera &camera) {
+/*void Renderer::set_standard_uniform(const Camera &camera) {
 	//Set up standard shader lighting
 	_standard_shader->use();
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, map.texid);
+	glUniform1i(glGetUniformLocation(_standard_shader->program, "texUnit"), 2);
 	glUniformMatrix4fv(glGetUniformLocation(_standard_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	glUniformMatrix4fv(glGetUniformLocation(_standard_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	if (_lighting.get_num_lights() > 0) {
@@ -66,4 +60,4 @@ void Renderer::set_standard_uniform(const Camera &camera) {
 		glUniform3fv(glGetUniformLocation(_standard_shader->program, "directions"), _lighting.get_num_lights(), &_lighting.view_space_directions[0][0]);
 		glUniform3fv(glGetUniformLocation(_standard_shader->program, "intensities"), _lighting.get_num_lights(), &_lighting.intensities[0][0]);
 	}
-}
+}*/

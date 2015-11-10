@@ -6,8 +6,8 @@
 #include <AntTweakBar\AntTweakBar.h>
 #include "Sphere.h"
 #include "..\Input\Input.h"
-#include "..\View\Renderer.h"
 Sphere::Sphere(const glm::vec3 & origin, double radius) : Primitive(origin), Drawable(), _radius(radius) {
+	set_shader(ShaderStore::instance().get_shader_from_store(STANDARD_SHADER_PATH));
 	//Set up material
 	_material.albedo = glm::vec3(0.5, 0.01, 0.01);
 	_material.absorption = 0.0f;
@@ -15,7 +15,7 @@ Sphere::Sphere(const glm::vec3 & origin, double radius) : Primitive(origin), Dra
 	_material.refraction = 16.0f;
 	//Generate mesh
 	generate_mesh(25, 25);
-	set_shader(Renderer::instance().get_standard_shader(), true);
+
 	//Debug
 	TwAddSeparator(Input::_tw_bar, "Sphere BRDF", NULL);
 	TwAddVarRW(Input::_tw_bar, "Roughness", TW_TYPE_FLOAT, &_material.roughness, " min=0 max=1 step=0.01 ");
@@ -57,7 +57,7 @@ void Sphere::generate_mesh(unsigned int latitudes, unsigned int longitudes) {
 	_mesh.setup_mesh();
 }
 
-void Sphere::draw(const Lighting &lighting, const Camera &camera, double delta_time) {
+void Sphere::draw(const Camera &camera, double delta_time) {
 	//Set up model matrix
 	_model = glm::mat4();
 	_model = glm::scale(_model, glm::vec3((float)_radius));
@@ -66,19 +66,13 @@ void Sphere::draw(const Lighting &lighting, const Camera &camera, double delta_t
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
-	//Enable alpha blending
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glUniform3fv(glGetUniformLocation(_shader->program, "albedo"), 1, glm::value_ptr(_material.albedo));
-	glUniform1f(glGetUniformLocation(_shader->program, "roughness"), _material.roughness);
-	glUniform1f(glGetUniformLocation(_shader->program, "gaussian"), _material.gaussian);
-	glUniform1f(glGetUniformLocation(_shader->program, "absorption"), _material.absorption);
-	glUniform1f(glGetUniformLocation(_shader->program, "refraction"), _material.refraction);
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(_model));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	_mesh.draw(_shader, delta_time);
 }
 
-void Sphere::draw_wireframe(const Lighting &lighting, const Camera &camera, double delta_time) {
+void Sphere::draw_wireframe(const Camera &camera, double delta_time) {
 	//Set up model matrix
 	_model = glm::mat4();
 	_model = glm::scale(_model, glm::vec3((float)_radius));

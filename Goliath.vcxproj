@@ -168,6 +168,7 @@
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Model\Texture.cpp" />
+    <ClCompile Include="Source\Terrain\Planet.cpp" />
     <ClCompile Include="Source\Terrain\QuadTree.cpp" />
     <ClCompile Include="Source\Terrain\Tile.cpp" />
     <ClCompile Include="Source\Thread\MessageSystem.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
     <ClInclude Include="Source\Model\Vertex.h" />
+    <ClInclude Include="Source\Terrain\Planet.h" />
     <ClInclude Include="Source\Terrain\QuadTree.h" />
     <ClInclude Include="Source\Terrain\Skybox.h" />
     <ClInclude Include="Source\Terrain\Tile.h" />
@@ -205,6 +207,7 @@
     <ClInclude Include="Source\View\Renderer.h" />
     <ClInclude Include="Source\View\ScreenQuad.h" />
     <ClInclude Include="Source\View\GammaToneMapNode.h" />
+    <ClInclude Include="Source\View\ShaderStore.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\additiveshader.frag" />
@@ -213,6 +216,8 @@
     <None Include="Shaders\atmosphereshader.vert" />
     <None Include="Shaders\blurfiltershader.frag" />
     <None Include="Shaders\blurfiltershader.vert" />
+    <None Include="Shaders\groundshader.frag" />
+    <None Include="Shaders\groundshader.vert" />
     <None Include="Shaders\plaintextureshader.frag" />
     <None Include="Shaders\plaintextureshader.vert" />
     <None Include="Shaders\skyboxshader.frag" />

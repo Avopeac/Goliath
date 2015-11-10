@@ -1,19 +1,13 @@
 #pragma once
 #include <iostream>
+#include "Application.h"
 #include "View\Renderer.h"
 #include "View\Camera.h"
-#include "Application.h"
+#include "View\ShaderStore.h"
+#include "Terrain\Planet.h"
 #include "Thread\MessageSystem.h"
 #include "Input\Input.h"
 #include "AntTweakBar\AntTweakBar.h"
-//TO BE REMOVED
-#include "Model\Shader.h"
-#include "Drawable\Sphere.h"
-#include "Terrain\Skybox.h"
-#include "Terrain\Tile.h"
-#include "Terrain\QuadTree.h"
-#include <GLM\gtx\transform.hpp>
-#include <GLM\gtc\matrix_transform.hpp>
 
 unsigned int Application::width = WINDOW_WIDTH;
 unsigned int Application::height = WINDOW_HEIGHT;
@@ -73,23 +67,14 @@ int Application::initialize_glew(bool experimental) {
 }
 
 void Application::run() {
+	//Load resources
+	ShaderStore::instance().stock_inventory();
 	//Create input manager
 	Input input(_window_ptr, "TweakBar");
 	//Create a renderer
 	Renderer::instance().initialize();
-	//To be removed
-	std::shared_ptr<Skybox> skybox = std::make_shared<Skybox>();
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(glm::vec3(0, 0, 10), 1.0);
-
-	float scale = 4.0f;
-	float trans = 2.0f;
-	std::shared_ptr<QuadTree> t1 = std::make_shared<QuadTree>(glm::mat4(1), glm::translate(glm::vec3(0, trans, 0)), scale);
-	std::shared_ptr<QuadTree> t2 = std::make_shared<QuadTree>(glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, -trans, 0)), scale);
-	std::shared_ptr<QuadTree> t3 = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(-trans, 0, 0)), scale);
-	std::shared_ptr<QuadTree> t4 = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(trans, 0, 0)), scale);
-	std::shared_ptr<QuadTree> t5 = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, trans)), scale);
-	std::shared_ptr<QuadTree> t6 = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, -trans)), scale);
-
+	//Create planet
+	std::shared_ptr<Planet> planet = std::make_shared<Planet>(4.0f);
 	//Create camera
 	Camera camera(glm::vec3(0, 0, -13), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 10000.0);
 	//Add camera to as a input enabled object
@@ -110,19 +95,11 @@ void Application::run() {
 		accumulated_time += _delta_time;
 		while (accumulated_time >= desired_time)
 			accumulated_time -= desired_time;
-
 		input.update(_delta_time);
 		camera.update(_delta_time);
-		Renderer::instance().add_drawable(skybox);
-		//Renderer::instance().add_drawable(sphere);
-		Renderer::instance().add_drawable(t1);
-		Renderer::instance().add_drawable(t2);
-		Renderer::instance().add_drawable(t3);
-		Renderer::instance().add_drawable(t4);
-		Renderer::instance().add_drawable(t5);
-		Renderer::instance().add_drawable(t6);
+		//Add drawables and render
+		Renderer::instance().add_drawable(planet);
 		Renderer::instance().render(camera, _delta_time);
-
 		glfwSwapInterval(1);
 		glfwSwapBuffers(_window_ptr);
 		glfwPollEvents();

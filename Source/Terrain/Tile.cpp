@@ -4,7 +4,6 @@
 
 Tile::Tile(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &translation, const glm::mat4 &rotation)
 	: Drawable(), _resolution(resolution), _translation(translation), _scale(scale), _rotation(rotation) {
-	set_shader(Renderer::instance().get_standard_shader(), true);
 	_premult_transf = _translation * _rotation * _scale;
 	//Do this last!
 	generate_mesh();
@@ -53,30 +52,20 @@ void Tile::generate_mesh() {
 	_mesh.setup_mesh();
 }
 
-void Tile::setup_draw(const Lighting &lighting, const Camera & camera, double delta_time) {
+void Tile::setup_draw(const Camera & camera, double delta_time) {
 	_shader->use();
-	glDisable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
-	glUniform3fv(glGetUniformLocation(_shader->program, "albedo"), 1, glm::value_ptr(_material.albedo));
-	glUniform1f(glGetUniformLocation(_shader->program, "roughness"), _material.roughness);
-	glUniform1f(glGetUniformLocation(_shader->program, "gaussian"), _material.gaussian);
-	glUniform1f(glGetUniformLocation(_shader->program, "absorption"), _material.absorption);
-	glUniform1f(glGetUniformLocation(_shader->program, "refraction"), _material.refraction);
-	glm::mat4 model;
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-	//These are set in renderer if using standard shader!
-	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 }
 
-void Tile::draw(const Lighting &lighting, const Camera & camera, double delta_time) {
-	setup_draw(lighting, camera, delta_time);
+void Tile::draw(const Camera & camera, double delta_time) {
+	setup_draw(camera, delta_time);
 	_mesh.draw(_shader, delta_time);
 }
 
-void Tile::draw_wireframe(const Lighting &lighting, const Camera & camera, double delta_time) {
-	setup_draw(lighting, camera, delta_time);
+void Tile::draw_wireframe(const Camera & camera, double delta_time) {
+	setup_draw(camera, delta_time);
 	_mesh.draw_wireframe(_shader, delta_time);
 }

@@ -33,10 +33,10 @@ Shader::Shader(const GLchar * vertex_path, const GLchar * fragment_path) {
 		std::cout << "Application failed to read shader file. " << std::endl;
 	}
 	//Send the read shader code to compilation step
-	compile_shader(vertex_code.c_str(), fragment_code.c_str());
+	compile_shader(vertex_path, fragment_path, vertex_code.c_str(), fragment_code.c_str());
 }
 
-void Shader::compile_shader(const char *vertex_code, const char *fragment_code) {
+void Shader::compile_shader(const GLchar *vert, const GLchar *frag, const char *vertex_code, const char *fragment_code) {
 	GLuint vertex, fragment;
 	GLint success;
 	GLchar *log = new GLchar[_log_size];
@@ -47,7 +47,7 @@ void Shader::compile_shader(const char *vertex_code, const char *fragment_code) 
 	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(vertex, _log_size, NULL, log);
-		std::cout << "Application failed to compile vertex shader. " << std::endl;
+		std::cout << "Application failed to compile vertex shader with name \"" << vert << "\". " << std::endl;
 	}
 	//Create fragment shader
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -56,7 +56,7 @@ void Shader::compile_shader(const char *vertex_code, const char *fragment_code) 
 	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(fragment, _log_size, NULL, log);
-		std::cout << "Application failed to compile fragment shader. " << std::endl;
+		std::cout << "Application failed to compile fragment shader with name \"" << frag << "\". " << std::endl;
 	}
 	//Linked the shaders and create program
 	program = glCreateProgram();

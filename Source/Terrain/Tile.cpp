@@ -29,7 +29,7 @@ void Tile::generate_vertex_helper(float offset, float step, unsigned int column,
 
 void Tile::generate_mesh() {
 	//Set up vertices
-	float step = 1.0f / _resolution;
+	/*float step = 1.0f / _resolution;
 	float offset = 0.5f;
 	generate_vertex_helper(offset, step, 0, true);
 	for (unsigned int column = 0; column <= _resolution; ++column) {
@@ -47,7 +47,39 @@ void Tile::generate_mesh() {
 			_mesh.indices.push_back(i + (j + 1) * stride);
 			_mesh.indices.push_back(i + 1 + j * stride);
 		}
+	}*/
+
+	float step = 1.0f / _resolution;
+	float offset = 0.5f;
+	for (unsigned int column = 0; column <= _resolution; ++column) {
+		for (unsigned int row = 0; row <= _resolution; ++row) {
+			Vertex v;
+			float x = column * step;
+			float z = row * step;
+			v.normal = { 0,1,0 };
+			v.position = { x - offset, 0, z - offset };
+			v.texcoord = { x, z };
+
+
+			glm::vec3 pos = glm::vec3(_premult_transf * glm::vec4(v.position, 1.0));
+			v.position = pos;
+			_mesh.vertices.push_back(v);
+		}
 	}
+	
+	//Set up indices
+	unsigned int stride = _resolution + 1;
+	for (unsigned int i = 0; i < _resolution; ++i) {
+		for (unsigned int j = 0; j < _resolution; ++j) {
+			_mesh.indices.push_back(i + 1 + j * stride);
+			_mesh.indices.push_back(i + (j + 1) * stride);
+			_mesh.indices.push_back(i + j * stride);
+			_mesh.indices.push_back(i + 1 + (j + 1) * stride);
+			_mesh.indices.push_back(i + (j + 1) * stride);
+			_mesh.indices.push_back(i + 1 + j * stride);
+		}
+	}
+
 	//Upload mesh
 	_mesh.setup_mesh();
 }

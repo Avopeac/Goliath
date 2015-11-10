@@ -8,13 +8,18 @@ out vec2 ourUv;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
+uniform samplerCube noiseCube;
+uniform samplerCube normalNoiseCube;
 
 void main()
 {
+	vec3 normalizedPos = normalize(position);
+	ourNormal = normalizedPos;
     ourUv = uv;
-	mat4 normal_matrix = inverse(transpose(view * model));
-    ourNormal = mat3(normal_matrix) * normal;
-    vec4 viewPos = view * model * vec4(position, 1.0);
+
+	float radius = 4.0;
+	float height = radius + 0.01 * texture(noiseCube, normalizedPos).r;
+    vec4 viewPos = view * model * vec4(height * normalizedPos, 1.0);
 	ourPosition = viewPos.xyz;
 	float far =	100000.0;
 	float c = 0.001;

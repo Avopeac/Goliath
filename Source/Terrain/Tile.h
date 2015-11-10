@@ -16,7 +16,7 @@ private:
 	void setup_draw(const Camera & camera, double delta_time);
 	void generate_mesh();
 	const unsigned int _skirt_padding = 2;
-	const float _skirt_offset = -0.05f;
+	const float _skirt_offset = -0.10f;
 	unsigned int _resolution;
 	glm::mat4 _premult_transf;
 	glm::mat4 _scale;

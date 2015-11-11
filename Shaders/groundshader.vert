@@ -17,12 +17,13 @@ void main()
 	ourNormal = normalizedPos;
     ourUv = uv;
 
-	float radius = 4.0;
-	float height = radius + 0.01 * texture(noiseCube, normalizedPos).r;
-    vec4 viewPos = view * model * vec4(height * normalizedPos, 1.0);
+	vec4 sampl = texture(noiseCube, normalizedPos);
+	float height = 0.1 * (sampl.r + sampl.g + sampl.b) * 0.3333;
+    //vec4 viewPos = view * model * vec4(height * normalizedPos, 1.0);
+	vec4 viewPos = view * model * vec4(4.0f * height * normalize(position) + position, 1.0);
 	ourPosition = viewPos.xyz;
 	float far =	100000.0;
-	float c = 0.001;
+	float c = 1.0;
 	vec4 clipPos = proj * viewPos;
 	clipPos.z = (2.0 * log(c * clipPos.w + 1.0) / log(c * far +  1) - 1) * clipPos.w;
     gl_Position = clipPos;

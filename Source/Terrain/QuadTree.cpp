@@ -5,7 +5,7 @@
 
 void QuadTree::draw(const Camera &camera, double delta_time) {
 	double rho = compute_level_metric(camera, distance_nearest_corner(camera));
-	if (rho >= 10.0 || _level > 5) {
+	if (rho >= 10 || _level > 5) {
 		if (_has_patch) {
 			_patch->draw(camera, delta_time);
 		}
@@ -38,6 +38,7 @@ void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
 
 void QuadTree::create_patch() {
 	_patch = std::make_shared<Tile>(4, glm::scale(glm::vec3(_extents)), _translation, _rotation);
+	_patch->generate_normalized_mesh();
 	_patch->set_shader(_shader); //Set to quadtree shader
 }
 

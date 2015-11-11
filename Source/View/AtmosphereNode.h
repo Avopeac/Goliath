@@ -76,7 +76,7 @@ private:
 	glm::vec3 _sun_wavelengths = glm::vec3(0.65, 0.57, 0.475);
 	float _sun_intensity = 20.0f;
 	glm::vec3 _planet_world_pos = glm::vec3(0, 0, 0);
-	float _planet_radius = 4.0f;
+	float _planet_radius = 4.5f;
 	float _atmosphere_radius = 1.025f * _planet_radius;
 	float _scale_height = 0.25f;
 	float _mie_phase_g = -0.999f;

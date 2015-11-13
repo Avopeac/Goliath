@@ -32,8 +32,8 @@ public:
 		_skybox = std::make_shared<Skybox>();
 		_skybox->set_shader(ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH));
 
-		_noise1.load_cubemap("Images/noise.png", "Images/noise.png", "Images/noise.png", "Images/noise.png", "Images/noise.png", "Images/noise.png");
-		_normal_noise1.load_cubemap("Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png");
+		//_noise1.load_cubemap("Images/noise.png", "Images/noise.png", "Images/noise.png", "Images/noise.png", "Images/noise.png", "Images/noise.png");
+		//_normal_noise1.load_cubemap("Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png", "Images/normal_map.png");
 	}
 
 	// Inherited via Drawable
@@ -49,6 +49,6 @@ private:
 	std::shared_ptr<QuadTree> _hither;
 	std::shared_ptr<QuadTree> _yon;
 	std::shared_ptr<Shader> _ground_shader;
-	CubeMap _noise1;
-	CubeMap _normal_noise1;
+	//CubeMap _noise1;
+	//CubeMap _normal_noise1;
 };

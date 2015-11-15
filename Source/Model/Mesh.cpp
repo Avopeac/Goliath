@@ -39,6 +39,10 @@ void Mesh::update_vertices() {
 	//Texcoords
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Vertex::texcoord));
+	//Colors
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Vertex::color));
+
 }
 
 void Mesh::draw(std::shared_ptr<Shader> shader, double delta_time) {

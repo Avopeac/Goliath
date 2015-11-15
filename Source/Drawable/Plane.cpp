@@ -17,3 +17,7 @@ Plane::Plane(const glm::vec3 & p1, const glm::vec3 & p2, const glm::vec3 & p3) {
 	d = -(double)glm::dot(normal, p1);
 }
 
+double Plane::distance(const glm::vec3 &point) const {
+	return x * point.x + y * point.y + z * point.z + d;
+}
+

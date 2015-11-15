@@ -4,8 +4,11 @@
 #include <GLM\gtx\transform.hpp>
 
 void QuadTree::draw(const Camera &camera, double delta_time) {
+	if (!camera.intersects_point(glm::vec3(_translation[3])))
+		return;
+
 	double rho = compute_level_metric(camera, distance_nearest_corner(camera));
-	if (_level > 2) {
+	if (rho >= 10 || _level > 5) {
 		if (_has_patch) {
 			_patch->draw(camera, delta_time);
 		}

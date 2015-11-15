@@ -18,7 +18,6 @@ private:
 	float get_height(const glm::vec3 &position, float radius, float scale, float octaves, float lacunarity, float dimension);
 	glm::vec3 get_color_ramp(float min, float max, float height);
 	glm::vec3 get_central_difference_normal(const glm::vec3 & position);
-	glm::vec3 get_forward_difference_normal(const glm::vec3 & position);
 	void generate_skirt_vertex(glm::vec3 position);
 	void generate_vertex_helper(unsigned int column, bool edge);
 	void setup_draw(const Camera & camera, double delta_time);

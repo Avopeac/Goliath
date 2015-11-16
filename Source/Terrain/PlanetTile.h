@@ -23,7 +23,7 @@ private:
 		bool edge = false;
 		bool skirt = false;
 	};
-	const int _resolution = 4;
+	const int _resolution = 32;
 	
 	bool is_edge(int x, int z);
 	static SimplePlanetHeightSampler sampler;

@@ -20,7 +20,7 @@ void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, 
 			current.edge = is_edge(x, z);
 			current.vertex.position = glm::vec3(translation * rotation * scale *  glm::vec4(cx, 0, cz, 1.0));
 			current.vertex.position = glm::normalize(current.vertex.position);
-			current.vertex.position = (4.0f + sampler.sample(current.vertex.position * 0.5f)) * current.vertex.position;
+			current.vertex.position = (4.0f + sampler.sample(current.vertex.position * 0.2f)) * current.vertex.position;
 			vertex_data.push_back(current);
 		}
 	}

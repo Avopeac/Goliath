@@ -8,15 +8,15 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	if (!camera.intersects_point(glm::vec3(_translation[3])))
 		return;
 
+	if (!_has_patch) {
+		create_patch();
+		_has_patch = true;
+	}
+
 	double rho = compute_level_metric(camera, distance_to_patch(camera));
+	
 	if (rho >= _TAU || _level > _DEEPEST_LEVEL) {
-		if (_has_patch) {
-			_patch->draw(camera, delta_time);
-		}
-		else {
-			create_patch();
-			_has_patch = true;
-		}
+		_patch->draw(camera, delta_time);
 	}
 	else {
 		if (_has_children) {
@@ -36,7 +36,8 @@ double QuadTree::distance_nearest_corner(const Camera &camera) {
 }
 
 double QuadTree::distance_to_patch(const Camera &camera) {
-	return glm::max(0.0f, glm::distance(glm::normalize(glm::vec3(_translation[3])), camera.get_eye()) - _extents);
+	glm::vec3 midPoint = _patch->_mesh.vertices[_patch->_mesh.vertices.size() / 2].position;
+	return glm::max(0.0f, glm::distance(midPoint, camera.get_eye()) - _extents);
 }
 
 void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
@@ -49,17 +50,14 @@ void QuadTree::create_patch() {
 	_patch->generate_mesh();
 	_patch->upload_mesh();
 	_patch->set_shader(_shader); //Set to quadtree shader
-
-
-	std::cout << _patch->get_extreme_heights().x << " " << _patch->get_extreme_heights().y << std::endl;
 }
 
 double QuadTree::compute_level_metric(const Camera &camera, double distance) {
 	//double omega = 2.0 * distance * glm::tan(glm::radians(camera.get_horizontal_fov()) * 0.5);
 	//double epsilon = 0.001f;
 	//double rho = epsilon * Application::width / omega;
-	float K = 1.0;
-	float lol_metric = K*(float)distance * (_level + 1.0f);
+	float K = 0.15f; // 0.15f is pretty good
+	float lol_metric = glm::pow((_level + 1.0f), K*(_level + 1.0f)) - 1.0f/(float)distance; // K*(_level + 1.0f)*(_level + 1.0f)
 	return lol_metric;
 }
 

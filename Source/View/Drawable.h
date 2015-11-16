@@ -13,9 +13,10 @@ public:
 	virtual void draw_wireframe(const Camera &camera, double delta_time) = 0;
 	virtual void set_shader(std::shared_ptr<Shader> shader) { _shader = shader; }
 	virtual void set_material(const Material &material) { _material = material; }
+	Mesh _mesh;
 protected:
 	Drawable() {};
 	Material _material;
 	std::shared_ptr<Shader> _shader;
-	Mesh _mesh;
+
 };

@@ -1,5 +1,7 @@
 #include "Camera.h"
 #include <iostream>
+#include <AntTweakBar\AntTweakBar.h>
+#include "..\Input\Input.h"
 
 Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far)
 	: InputEnabled(), _vertical_fov(vertical_fov), _aspect_ratio(aspect_ratio), _near(near), _far(far), _eye(eye) {
@@ -9,6 +11,8 @@ Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &w
 	_base_forward = glm::normalize(center - eye);
 	_base_right = glm::cross(_base_forward, glm::normalize(world_up));
 	_base_up = glm::cross(_base_right, _base_forward);
+
+	TwAddVarRW(Input::_tw_bar, "speed", TW_TYPE_DOUBLE, &_movement_speed, " min=0.00 max=20.0 step=0.001 ");
 }
 
 void Camera::update(double delta_time) {

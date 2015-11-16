@@ -4,27 +4,33 @@
 #include <GLM\gtx\transform.hpp>
 
 void QuadTree::draw(const Camera &camera, double delta_time) {
-
-	//if (!camera.intersects_point(glm::vec3(_translation[3])))
-	//	return;
-
+	// Always create the patch if there is none so we can check bounds and calculate lod metric
 	if (!_has_patch) {
 		create_patch();
 		_has_patch = true;
 	}
 
-	double rho = compute_level_metric(camera, distance_to_patch(camera));
-	
+	// Check if we have to draw this patch
+	glm::vec3 mid_point = _patch->_mesh.vertices[_patch->_mesh.vertices.size() / 2].position;
+	glm::vec3 scale = glm::vec3(_extents, _extents, _extents);
+	if (!camera.intersects_box(mid_point, scale)) {
+		return;
+	}
+
+	// Get LOD metric to see if we should draw child quads or just draw this one
+	double rho = compute_level_metric(camera, distance_to_patch(camera, mid_point));
 	if (rho >= _TAU || _level > _DEEPEST_LEVEL) {
-		_patch->draw(camera, delta_time);
+		_patch->draw_wireframe(camera, delta_time);
 	}
 	else {
+		// If we already have created the childs then just draw them
 		if (_has_children) {
 			_northwest->draw(camera, delta_time);
 			_northeast->draw(camera, delta_time);
 			_southwest->draw(camera, delta_time);
 			_southeast->draw(camera, delta_time);
 		}
+		// else create childs
 		else {
 			subdivide();
 		}
@@ -35,9 +41,9 @@ double QuadTree::distance_nearest_corner(const Camera &camera) {
 	return glm::abs(glm::dot((glm::vec3(_translation[3]) - camera.get_eye()), -glm::vec3(camera.get_view()[2])) - _extents);
 }
 
-double QuadTree::distance_to_patch(const Camera &camera) {
-	glm::vec3 midPoint = _patch->_mesh.vertices[_patch->_mesh.vertices.size() / 2].position;
-	return glm::max(0.0f, glm::distance(midPoint, camera.get_eye()) - _extents);
+double QuadTree::distance_to_patch(const Camera &camera, glm::vec3 mid_point) {
+	//glm::vec3 midPoint = _patch->_mesh.vertices[_patch->_mesh.vertices.size() / 2].position;
+	return glm::max(0.0f, glm::distance(mid_point, camera.get_eye()) - _extents);
 }
 
 void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {

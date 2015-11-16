@@ -33,41 +33,33 @@ void Camera::update(double delta_time) {
 
 bool Camera::intersects_point(const glm::vec3 &point) const {
 	for (unsigned short i = 0; i < 6; ++i) {
-		Plane p(_frustum[i]);
-		glm::vec3 n(p.x, p.y, p.z);
-		if (glm::dot(n, point) + p.d > 0.0f) {
+		if (_frustum[i].distance(point) < 0) {
 			return false;
 		}
 	}
-
 	return true;
 }
 
 bool Camera::intersects_sphere(const glm::vec3 &center, double radius) const {
 	for (unsigned short i = 0; i < 6; ++i) {
-		Plane p(_frustum[i]);
-		glm::vec3 n(p.x, p.y, p.z);
-		if (glm::dot(n, center) + p.d > radius) {
+		if (_frustum[i].distance(center) < -radius) {
 			return false;
 		}
 	}
-
 	return true;
 }
 
 bool Camera::intersects_box(const glm::vec3 &center, const glm::vec3 &extents) const {
 	for (unsigned short i = 0; i < 6; ++i) {
 		unsigned short outside = 0;
-		Plane p(_frustum[i]);
-		glm::vec3 n(p.x, p.y, p.z);
-		outside += glm::dot(n, glm::vec3(center.x + extents.x, center.y + extents.y, center.z + extents.z)) + p.d > 0.0f ? 1 : 0;
-		outside += glm::dot(n, glm::vec3(center.x + extents.x, center.y + extents.y, center.z - extents.z)) + p.d > 0.0f ? 1 : 0;
-		outside += glm::dot(n, glm::vec3(center.x + extents.x, center.y - extents.y, center.z + extents.z)) + p.d > 0.0f ? 1 : 0;
-		outside += glm::dot(n, glm::vec3(center.x + extents.x, center.y - extents.y, center.z - extents.z)) + p.d > 0.0f ? 1 : 0;
-		outside += glm::dot(n, glm::vec3(center.x - extents.x, center.y + extents.y, center.z + extents.z)) + p.d > 0.0f ? 1 : 0;
-		outside += glm::dot(n, glm::vec3(center.x - extents.x, center.y + extents.y, center.z - extents.z)) + p.d > 0.0f ? 1 : 0;
-		outside += glm::dot(n, glm::vec3(center.x - extents.x, center.y - extents.y, center.z + extents.z)) + p.d > 0.0f ? 1 : 0;
-		outside += glm::dot(n, glm::vec3(center.x - extents.x, center.y - extents.y, center.z - extents.z)) + p.d > 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y + extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y + extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y - extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y - extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y + extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y + extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y - extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y - extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
 		if (outside == 8) return false;
 	}
 	return true;
@@ -116,9 +108,6 @@ void Camera::handle_key_inputs(int key, int scan_code, int action, int mods, dou
 
 void Camera::build_frustum() {
 
-	vertices.clear();
-	indices.clear();
-
 	float near_height = 2.0f * glm::tan(glm::radians((float)_vertical_fov) * 0.5f) * (float)_near;
 	float near_width = near_height * (float)_aspect_ratio;
 	float far_height = 2.0f * glm::tan(glm::radians((float)_vertical_fov) * 0.5f) * (float)_far;
@@ -128,7 +117,7 @@ void Camera::build_frustum() {
 	glm::vec3 far_center = _eye + _next_forward * (float)_far;
 
 	_points[0] = near_center - _next_up * near_height - _next_right * near_width; //nbl
-	_points[1] = near_center + _next_up * near_height - _next_right* near_width; //ntl
+	_points[1] = near_center + _next_up * near_height - _next_right * near_width; //ntl
 	_points[2] = near_center + _next_up * near_height + _next_right * near_width; //ntr
 	_points[3] = near_center - _next_up * near_height + _next_right * near_width; //nbr
 
@@ -143,17 +132,6 @@ void Camera::build_frustum() {
 	_frustum[3] = Plane(_points[3], _points[2], _points[7]); //right
 	_frustum[4] = Plane(_points[1], _points[2], _points[3]); //near
 	_frustum[5] = Plane(_points[6], _points[5], _points[4]); //far
-
-	vertices.push_back(_points[4]); //fbl 1
-	vertices.push_back(_points[7]); //fbr 2
-	vertices.push_back(_points[6]); //ftr 3 
-	vertices.push_back(_points[5]); //ftl 4
-	vertices.push_back(near_center); //0
-
-	indices.push_back(2); indices.push_back(4); indices.push_back(3); //top
-	indices.push_back(4); indices.push_back(2); indices.push_back(1); //right
-	indices.push_back(0); indices.push_back(4); indices.push_back(1); //bot
-	indices.push_back(4); indices.push_back(0); indices.push_back(3); //left
 }
 
 

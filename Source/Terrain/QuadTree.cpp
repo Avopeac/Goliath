@@ -5,8 +5,11 @@
 
 void QuadTree::draw(const Camera &camera, double delta_time) {
 
+	if (!camera.intersects_point(glm::vec3(_translation[3])))
+		return;
+
 	double rho = compute_level_metric(camera, distance_to_patch(camera));
-	if (rho >= _TAU || _level > _DEEPEST_LEVEL){
+	if (rho >= _TAU || _level > _DEEPEST_LEVEL) {
 		if (_has_patch) {
 			_patch->draw(camera, delta_time);
 		}
@@ -42,9 +45,13 @@ void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
 }
 
 void QuadTree::create_patch() {
-	_patch = std::make_shared<Tile>(4, glm::scale(glm::vec3(_extents)), _translation, _rotation);
-	_patch->generate_normalized_mesh();
+	_patch = std::make_shared<Tile>(2, glm::scale(glm::vec3(_extents)), _translation, _rotation);
+	_patch->generate_mesh();
+	_patch->upload_mesh();
 	_patch->set_shader(_shader); //Set to quadtree shader
+
+
+	std::cout << _patch->get_extreme_heights().x << " " << _patch->get_extreme_heights().y << std::endl;
 }
 
 double QuadTree::compute_level_metric(const Camera &camera, double distance) {

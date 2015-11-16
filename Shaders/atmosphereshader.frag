@@ -73,7 +73,7 @@ vec4 atmosphere(float samples, vec3 origin, vec3 ray) {
     ta1 = intersection2;
     bool planetIntersection = raySphereIntersection(origin, ray, planetWorldPos, planetRadius);
     //Find planet intersection
-	if (planetIntersection && intersection2 < 0.0) { return vec4(0,0,0,1); } //Under ground
+	//if (planetIntersection && intersection2 < 0.0) { return vec4(0,0,0,1); } //Under ground
 	tp0 = intersection1;
     tp1 = intersection2;
     //Find pa and pb

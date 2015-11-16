@@ -12,7 +12,7 @@ Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &w
 	_base_right = glm::cross(_base_forward, glm::normalize(world_up));
 	_base_up = glm::cross(_base_right, _base_forward);
 
-	TwAddVarRW(Input::_tw_bar, "speed", TW_TYPE_DOUBLE, &_movement_speed, " min=0.00 max=20.0 step=0.001 ");
+	TwAddVarRW(Input::_tw_bar, "speed", TW_TYPE_DOUBLE, &_movement_speed, " min=0.00 max=20.0 step=0.0001 ");
 }
 
 void Camera::update(double delta_time) {

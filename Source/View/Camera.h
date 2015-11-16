@@ -26,6 +26,7 @@ public:
 	bool intersects_box(const glm::vec3 &center, const glm::vec3 &extents) const;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+	void set_camera_speed(double speed) { _movement_speed = speed; }
 
 private:
 	double _vertical_fov, _horizontal_fov, _aspect_ratio;

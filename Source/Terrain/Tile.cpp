@@ -1,4 +1,5 @@
 #include "Tile.h"
+#include <limits>
 #include <GLM/gtc/noise.hpp>
 #include <GLM/gtc/type_ptr.hpp>
 #include <GLM/gtx/compatibility.hpp>
@@ -11,6 +12,8 @@ Tile::Tile() : Drawable() {
 Tile::Tile(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &translation, const glm::mat4 &rotation)
 	: Drawable(), _resolution(resolution), _translation(translation), _scale(scale), _rotation(rotation), _inverse_resolution(1.0f / _resolution) {
 	_premult_transf = _translation * _rotation * _scale;
+	_extreme_heights.x = std::numeric_limits<float>().max();
+	_extreme_heights.y = std::numeric_limits<float>().min();
 }
 
 void Tile::setup(unsigned int resolution, const glm::mat4 &scale, const glm::mat4 &translation, const glm::mat4 &rotation) {
@@ -26,7 +29,18 @@ void Tile::generate_vertex(glm::vec3 position) {
 	Vertex vertex;
 	vertex.position = glm::vec3(_premult_transf * glm::vec4(position, 1.0));
 	glm::vec3 v_pos_n = glm::normalize(vertex.position);
+
+	//Get vertex height
 	float height = get_height(v_pos_n, 4.0f, 0.1f, 12.0f, 2.0f, 0.6f);
+	//Find min height
+	if (height < _extreme_heights.x) {
+		_extreme_heights.x = height;
+	}
+	//Find max height
+	if (height > _extreme_heights.y) {
+		_extreme_heights.y = height;
+	}
+
 	vertex.color = get_color_ramp(4.0f, 5.0f, height);
 	vertex.position = v_pos_n * height;
 	vertex.normal = get_central_difference_normal(position);

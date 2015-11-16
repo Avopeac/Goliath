@@ -12,6 +12,7 @@ public:
 	virtual void draw_wireframe(const Camera & camera, double delta_time) override;
 	void generate_mesh();
 	void upload_mesh();
+	const glm::vec2 &get_extreme_heights() const { return _extreme_heights; }
 private:
 
 	void generate_vertex(glm::vec3 position);
@@ -25,6 +26,7 @@ private:
 	const unsigned int _skirt_padding = 2;
 	const float _skirt_offset = -0.10f;
 	const float _skirt_ratio = 0.95f;
+	glm::vec2 _extreme_heights;
 	unsigned int _resolution;
 	float _inverse_resolution;
 	const float offset = 0.5f;

@@ -4,8 +4,9 @@
 #include <GLM\gtx\transform.hpp>
 
 void QuadTree::draw(const Camera &camera, double delta_time) {
-	double rho = compute_level_metric(camera, distance_nearest_corner(camera));
-	if (rho >= 10 || _level > 5) {
+
+	double rho = compute_level_metric(camera, distance_to_patch(camera));
+	if (rho >= _TAU || _level > _DEEPEST_LEVEL){
 		if (_has_patch) {
 			_patch->draw(camera, delta_time);
 		}
@@ -31,6 +32,10 @@ double QuadTree::distance_nearest_corner(const Camera &camera) {
 	return glm::abs(glm::dot((glm::vec3(_translation[3]) - camera.get_eye()), -glm::vec3(camera.get_view()[2])) - _extents);
 }
 
+double QuadTree::distance_to_patch(const Camera &camera) {
+	return glm::max(0.0f, glm::distance(glm::normalize(glm::vec3(_translation[3])), camera.get_eye()) - _extents);
+}
+
 void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
 	//Just draw as usual
 	draw(camera, delta_time);
@@ -46,7 +51,8 @@ double QuadTree::compute_level_metric(const Camera &camera, double distance) {
 	//double omega = 2.0 * distance * glm::tan(glm::radians(camera.get_horizontal_fov()) * 0.5);
 	//double epsilon = 0.001f;
 	//double rho = epsilon * Application::width / omega;
-	float lol_metric = (float)distance * (_level + 1.0f);
+	float K = 1.0;
+	float lol_metric = K*(float)distance * (_level + 1.0f);
 	return lol_metric;
 }
 

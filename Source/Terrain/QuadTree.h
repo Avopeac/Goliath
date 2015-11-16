@@ -20,6 +20,11 @@ private:
 	void create_patch();
 	double compute_level_metric(const Camera & camera, double distance);
 	double distance_nearest_corner(const Camera & camera);
+	double distance_to_patch(const Camera & camera);
+	// Threshold for LOD error metric
+	const float _TAU = 5.0;
+	// The deepest level we're allowed to go in the quadtree
+	const int _DEEPEST_LEVEL = 5;
 	//The axis aligned bounding box
 	glm::mat4 _translation;
 	glm::mat4 _rotation;

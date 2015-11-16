@@ -4,7 +4,7 @@
 #include "..\Terrain\Skybox.h"
 #include "..\View\ShaderStore.h"
 #include "..\Model\CubeMap.h"
-
+#include <GLM\gtx\transform.hpp>
 class Planet : public Drawable {
 public:
 	Planet(double radius) : Drawable() {

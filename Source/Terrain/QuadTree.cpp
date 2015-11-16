@@ -5,8 +5,8 @@
 
 void QuadTree::draw(const Camera &camera, double delta_time) {
 
-	if (!camera.intersects_point(glm::vec3(_translation[3])))
-		return;
+	//if (!camera.intersects_point(glm::vec3(_translation[3])))
+	//	return;
 
 	if (!_has_patch) {
 		create_patch();
@@ -46,9 +46,8 @@ void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
 }
 
 void QuadTree::create_patch() {
-	_patch = std::make_shared<Tile>(2, glm::scale(glm::vec3(_extents)), _translation, _rotation);
-	_patch->generate_mesh();
-	_patch->upload_mesh();
+	_patch = std::make_shared<PlanetTile>();
+	_patch->generate(_translation, glm::scale(glm::vec3(_extents)), _rotation);
 	_patch->set_shader(_shader); //Set to quadtree shader
 }
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Tile.h"
+#include "PlanetTile.h"
 #include "..\View\Drawable.h"
 #include <memory>
 #include <GLM\glm.hpp>
@@ -37,7 +37,7 @@ private:
 	//The parent quad tree
 	QuadTree *_parent = nullptr;
 	//The object contained in a leaf of the quad tree
-	std::shared_ptr<Tile> _patch;
+	std::shared_ptr<PlanetTile> _patch;
 	//The child quad trees
 	std::shared_ptr<QuadTree> _northwest = nullptr;
 	std::shared_ptr<QuadTree> _northeast = nullptr;

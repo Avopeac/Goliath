@@ -87,6 +87,9 @@
     <ClCompile Include="Source\Terrain\Planet.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Terrain\PlanetTile.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Drawable\Plane.h">
@@ -180,6 +183,15 @@
       <Filter>Source Files\View\Post Processing</Filter>
     </ClInclude>
     <ClInclude Include="Source\Terrain\Planet.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\PlanetTile.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\PlanetHeightSampler.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>

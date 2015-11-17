@@ -4,6 +4,7 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 color;
 out vec3 ourPosition;
+out vec3 ourWorldPosition;
 out vec3 ourNormal;
 out vec2 ourUv;
 out vec3 ourColor;
@@ -14,6 +15,7 @@ void main()
 {
 	vec4 viewPos = view * model * vec4(position, 1.0);
 	ourPosition = viewPos.xyz;
+	ourWorldPosition = (model * vec4(position, 1.0)).xyz;
 	ourNormal = normalize(normal);
     ourUv = uv;
 	ourColor = color;

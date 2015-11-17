@@ -61,7 +61,7 @@ double QuadTree::compute_level_metric(const Camera &camera, double distance) {
 	//double omega = 2.0 * distance * glm::tan(glm::radians(camera.get_horizontal_fov()) * 0.5);
 	//double epsilon = 0.001f;
 	//double rho = epsilon * Application::width / omega;
-	float K = 0.15f; // 0.15f is pretty good
+	float K = 0.25f; // 0.25f is pretty good
 	float lol_metric = glm::pow((_level + 1.0f), K*(_level + 1.0f)) - 1.0f/(float)distance; // K*(_level + 1.0f)*(_level + 1.0f)
 	return lol_metric;
 }

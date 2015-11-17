@@ -20,7 +20,7 @@ void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, 
 			current.vertex.position = glm::vec3(translation * rotation * scale *  glm::vec4(cx, 0, cz, 1.0));
 			current.vertex.position = glm::normalize(current.vertex.position);
 			float height = sampler.sample(current.vertex.position);
-			current.vertex.position = (4.0f + height * 0.05f) * current.vertex.position;
+			current.vertex.position = (4.0f + pow(height, 4) * 0.15f) * current.vertex.position; //Pow 4 gives us more exaggerations
 			current.vertex.color.r = height; //Save terrain height in red-channel
 			vertex_data.push_back(current);
 		}

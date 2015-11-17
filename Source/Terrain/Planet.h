@@ -4,6 +4,7 @@
 #include "..\Terrain\Skybox.h"
 #include "..\View\ShaderStore.h"
 #include "..\Model\CubeMap.h"
+#include <SOIL\SOIL.h>
 #include <GLM\gtx\transform.hpp>
 class Planet : public Drawable {
 public:
@@ -31,6 +32,22 @@ public:
 		//Set up skybox shader
 		_skybox = std::make_shared<Skybox>();
 		_skybox->set_shader(ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH));
+
+		glGenTextures(1, &_color_ramp_id);
+		glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		int w, h, c;
+		unsigned char *data = SOIL_load_image("Images/color_ramp_terrain.png", &w, &h, &c, SOIL_LOAD_RGB);
+		if (data != 0) {
+			std::cout << "Loaded color ramp texture. " << std::endl;
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		}
+		else {
+			std::cout << "Failed to load color ramp texture. " << std::endl;
+		}
 	}
 
 	// Inherited via Drawable
@@ -46,4 +63,7 @@ private:
 	std::shared_ptr<QuadTree> _hither;
 	std::shared_ptr<QuadTree> _yon;
 	std::shared_ptr<Shader> _ground_shader;
+
+	GLuint _color_ramp_id;
+
 };

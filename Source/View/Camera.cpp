@@ -17,8 +17,16 @@ Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &w
 
 void Camera::update(double delta_time) {
 	//Apply the individual axis rotations
-	_next_rotation_quat = glm::angleAxis((float)_yaw, _base_up);
+	//_next_rotation_quat = glm::angleAxis((float)_yaw, _base_up);
+	//_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_pitch, _base_right);
+	_next_rotation_quat = glm::angleAxis((float)_roll, _base_forward);
+	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_yaw, _base_up);
 	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_pitch, _base_right);
+
+
+
+
+
 	//TODO: Apply roll somewhere
 	//The scale on third parameter to SLERP determines speed of interpolation
 	_rotation_quat = glm::slerp(_rotation_quat, _next_rotation_quat, (float)delta_time * 5.0f);

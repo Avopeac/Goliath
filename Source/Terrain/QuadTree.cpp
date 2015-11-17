@@ -20,7 +20,7 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	// Get LOD metric to see if we should draw child quads or just draw this one
 	double rho = compute_level_metric(camera, distance_to_patch(camera, mid_point));
 	if (rho >= _TAU || _level > _DEEPEST_LEVEL) {
-		_patch->draw_wireframe(camera, delta_time);
+		_patch->draw(camera, delta_time);
 	}
 	else {
 		// If we already have created the childs then just draw them

@@ -19,7 +19,7 @@ public:
 			value += (glm::simplex(p) + _offset) * _exponentials[i];
 			p *= _lacunarity;
 		}
-		return value;
+		return 1.0f - glm::exp(-value);
 	}
 
 private:

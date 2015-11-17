@@ -4,6 +4,9 @@
 void Planet::draw(const Camera & camera, double delta_time)
 {
 	_ground_shader->use();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "colorRampTex"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	_skybox->draw(camera, delta_time);
@@ -13,6 +16,8 @@ void Planet::draw(const Camera & camera, double delta_time)
 	_east->draw(camera, delta_time);
 	_hither->draw(camera, delta_time);
 	_yon->draw(camera, delta_time);
+
+	
 }
 
 void Planet::draw_wireframe(const Camera & camera, double delta_time)

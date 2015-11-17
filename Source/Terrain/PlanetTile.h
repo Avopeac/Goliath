@@ -13,8 +13,6 @@ public:
 	virtual void draw(const Camera & camera, double delta_time) override;
 	virtual void draw_wireframe(const Camera & camera, double delta_time) override;
 
-
-
 private:
 	struct VertexData {
 		VertexData(){}
@@ -23,7 +21,7 @@ private:
 		bool edge = false;
 		bool skirt = false;
 	};
-	const int _resolution = 32;
+	const int _resolution = 64;
 	
 	bool is_edge(int x, int z);
 	static SimplePlanetHeightSampler sampler;

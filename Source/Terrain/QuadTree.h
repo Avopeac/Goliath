@@ -6,8 +6,12 @@
 
 class QuadTree : public Drawable {
 public:
-	QuadTree() : Drawable() {}
-	QuadTree(const glm::mat4 &rotation, const glm::mat4 &translation, float extents) : Drawable(), _rotation(rotation), _translation(translation), _extents(extents) {};
+	QuadTree();
+	QuadTree(const glm::mat4& rotation, const glm::mat4& translation, float extents);
+	QuadTree(const glm::mat4& rotation, const glm::mat4& translation, float extents, std::shared_ptr<Shader> shader);
+
+	QuadTree(const QuadTree&) = delete;
+
 	void set_rotation(const glm::mat4 &rotation) { _rotation = rotation; }
 	void set_translation(const glm::mat4 &translation) { _translation = translation; }
 	void set_extents(float extents) { _extents = extents; }
@@ -15,6 +19,8 @@ public:
 	// Inherited via Drawable
 	virtual void draw(const Camera & camera, double delta_time) override;
 	virtual void draw_wireframe(const Camera &camera, double delta_time) override;
+
+	bool setup_done() const { return _has_patch && _patch->setup_done(); }
 	
 private:
 	void subdivide();
@@ -29,7 +35,7 @@ private:
 	//The axis aligned bounding box
 	glm::mat4 _translation;
 	glm::mat4 _rotation;
-	float _extents;
+	float _extents; // Needs default ?
 	//The current recursion level
 	unsigned int _level = 0;
 	bool _has_children = false;
@@ -38,7 +44,7 @@ private:
 	//The parent quad tree
 	QuadTree *_parent = nullptr;
 	//The object contained in a leaf of the quad tree
-	std::shared_ptr<PlanetTile> _patch;
+	std::shared_ptr<PlanetTile> _patch = nullptr;
 	//The child quad trees
 	std::shared_ptr<QuadTree> _northwest = nullptr;
 	std::shared_ptr<QuadTree> _northeast = nullptr;

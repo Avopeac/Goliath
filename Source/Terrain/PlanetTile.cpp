@@ -1,16 +1,52 @@
 #include "PlanetTile.h"
 #include <iostream>
-#include "GLM\gtc\type_ptr.hpp"
+#include "GLM/gtc/type_ptr.hpp"
+#include <Thread/Message.h>
+#include <Thread/MessageSystem.h>
 
 SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0f, 20.0f, 0.7f, 0.0f);
 
 
-void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation)
+class PlanetTile::PlanetTileMessage : public Message {
+public:
+	explicit PlanetTileMessage(PlanetTile *tile) : _tile(tile) { }
+
+	virtual void process() override { 
+		_tile->generate();
+	}
+private:
+	PlanetTile *_tile;
+};
+
+class PlanetTile::VertexData
+{
+public:
+	VertexData() {}
+	~VertexData() {}
+	Vertex vertex;
+	bool edge = false;
+	bool skirt = false;
+	glm::vec3 own_position;
+	glm::vec3 parent_position;
+};
+
+PlanetTile::PlanetTile(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation)
+	: Drawable(), _translation(translation), _scale(scale), _rotation(rotation) {
+	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
+}
+
+PlanetTile::PlanetTile(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation, std::shared_ptr<Shader> shader)
+	: PlanetTile(translation, scale, rotation) {
+	set_shader(shader);
+	_message_ref = MessageSystem::instance().post(std::make_shared<PlanetTileMessage>(this));
+}
+
+void PlanetTile::generate()
 {
 	int x, z;
 	float step = 1.0f / _resolution;
 	float offset = 0.5f;
-	glm::mat4 trans = translation * rotation * scale;
+	glm::mat4 trans = _translation * _rotation * _scale;
 
 	//Set up vertices with the edge case
 	for (x = -1; x <= _resolution + 1; ++x) {
@@ -19,7 +55,6 @@ void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, 
 			float cx = x * step - offset;
 			float cz = z * step - offset;
 			current.edge = is_edge(x, z);
-
 			current.vertex.position = glm::vec3(trans *  glm::vec4(cx, 0, cz, 1.0));
 			current.vertex.position = glm::normalize(current.vertex.position);
 			float height = sampler.sample(current.vertex.position);
@@ -77,8 +112,9 @@ void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, 
 		_mesh.vertices.push_back(it->vertex);
 	}
 
-	_mesh.setup_mesh();
+	_setup_done = true;
 }
+
 
 void PlanetTile::morph_vertices(float alpha) {
 	for (int i = 0; i < vertex_data.size(); i++) {
@@ -146,26 +182,54 @@ bool PlanetTile::is_edge(int x, int z) {
 	return (x == -1) || (z == -1) || (x == _resolution + 1) || (z == _resolution + 1);
 }
 
-void PlanetTile::draw(const Camera & camera, double delta_time)
-{
+void PlanetTile::predraw() {
+	if (_message_ref != -1) {
+		auto message = MessageSystem::instance().get(_message_ref);
+		if (message) {
+			// Setup mesh once
+			_mesh.setup_mesh();
+			_message_ref = -1;
+			_setup_done = true;
+		}
+		else {
+			std::cerr << "PlanetTile: No return message from MessageSystem" << std::endl;
+			return;
+		}
+	}
+
+
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
+
 	_shader->use();
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+}
+
+bool PlanetTile::is_edge(int x, int z) {
+	return (x == -1) || (z == -1) || (x == _resolution + 1) || (z == _resolution + 1);
+}
+
+void PlanetTile::draw(const Camera & camera, double delta_time)
+{
+	if (!_setup_done) {
+		return;
+	}
+
+	predraw();
+
 	_mesh.draw(_shader, delta_time);
 }
 
 void PlanetTile::draw_wireframe(const Camera & camera, double delta_time)
 {
-	glDisable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glEnable(GL_DEPTH_TEST);
-	_shader->use();
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+	if (!_setup_done) {
+		return;
+	}
+
+	predraw();
+
 	_mesh.draw_wireframe(_shader, delta_time);
 }

@@ -7,6 +7,25 @@
 #include <SOIL/SOIL.h>
 #include <GLM/gtx/transform.hpp>
 
+#ifndef RIGHT_SKYBOX_IMAGE
+#define RIGHT_SKYBOX_IMAGE "Images/skybox_space_right1.png"
+#endif 
+#ifndef LEFT_SKYBOX_IMAGE
+#define LEFT_SKYBOX_IMAGE "Images/skybox_space_left2.png"
+#endif 
+#ifndef TOP_SKYBOX_IMAGE
+#define TOP_SKYBOX_IMAGE "Images/skybox_space_top3.png"
+#endif 
+#ifndef BOTTOM_SKYBOX_IMAGE
+#define BOTTOM_SKYBOX_IMAGE "Images/skybox_space_bottom4.png"
+#endif 
+#ifndef FRONT_SKYBOX_IMAGE
+#define FRONT_SKYBOX_IMAGE "Images/skybox_space_front5.png"
+#endif 
+#ifndef BACK_SKYBOX_IMAGE
+#define BACK_SKYBOX_IMAGE "Images/skybox_space_back6.png"
+#endif
+
 Planet::Planet(double radius) : Drawable() {
 
 	_ground_shader = ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH);
@@ -22,7 +41,7 @@ Planet::Planet(double radius) : Drawable() {
 	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, -trans)), scale, _ground_shader);
 
 	//Set up skybox shader
-	_skybox = std::make_shared<Skybox>();
+	_skybox = std::make_shared<Skybox>(RIGHT_SKYBOX_IMAGE, LEFT_SKYBOX_IMAGE, TOP_SKYBOX_IMAGE, BOTTOM_SKYBOX_IMAGE, FRONT_SKYBOX_IMAGE, BACK_SKYBOX_IMAGE);
 	_skybox->set_shader(ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH));
 
 	glGenTextures(1, &_color_ramp_id);

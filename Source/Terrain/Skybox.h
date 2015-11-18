@@ -1,38 +1,19 @@
 #pragma once
 #include <GLM\gtc\type_ptr.hpp>
-#include <SOIL\SOIL.h>
 #include <memory>
-#include "..\Model\CubeMap.h"
-#include "..\Drawable\Cube.h"
-
-#ifndef RIGHT_SKYBOX_IMAGE
-#define RIGHT_SKYBOX_IMAGE "Images/skybox_space_right1.png"
-#endif 
-
-#ifndef LEFT_SKYBOX_IMAGE
-#define LEFT_SKYBOX_IMAGE "Images/skybox_space_left2.png"
-#endif 
-
-#ifndef TOP_SKYBOX_IMAGE
-#define TOP_SKYBOX_IMAGE "Images/skybox_space_top3.png"
-#endif 
-
-#ifndef BOTTOM_SKYBOX_IMAGE
-#define BOTTOM_SKYBOX_IMAGE "Images/skybox_space_bottom4.png"
-#endif 
-
-#ifndef FRONT_SKYBOX_IMAGE
-#define FRONT_SKYBOX_IMAGE "Images/skybox_space_front5.png"
-#endif 
-
-#ifndef BACK_SKYBOX_IMAGE
-#define BACK_SKYBOX_IMAGE "Images/skybox_space_back6.png"
-#endif 
+#include "Drawable/Cube.h"
+#include "Model/CubeMap.h"
 
 class Skybox : public Cube {
 public:
-	Skybox() : Cube() {
-		_skybox_cubemap.load_cubemap(RIGHT_SKYBOX_IMAGE, LEFT_SKYBOX_IMAGE, TOP_SKYBOX_IMAGE, BOTTOM_SKYBOX_IMAGE, FRONT_SKYBOX_IMAGE, BACK_SKYBOX_IMAGE );
+	Skybox() = delete;
+	Skybox(const std::string& right_path, const std::string& left_path, 
+		const std::string& top_path, const std::string& bottom_path, 
+		const std::string& front_path, const std::string& back_path) : Cube() {
+
+		_skybox_cubemap.load_cubemap(right_path.c_str(), left_path.c_str(), top_path.c_str(),
+			bottom_path.c_str(), front_path.c_str(), back_path.c_str());
+
 		std::shared_ptr<Shader> skybox_shader = ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH);
 		set_shader(skybox_shader);
 	}

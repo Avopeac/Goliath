@@ -143,9 +143,6 @@
     <ClInclude Include="Source\Model\Material.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Terrain\Skybox.h">
-      <Filter>Source Files\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Model\CubeMap.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
@@ -196,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="Semaphore.h">
       <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\Skybox.h">
+      <Filter>Source Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

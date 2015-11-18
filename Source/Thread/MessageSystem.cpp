@@ -28,7 +28,7 @@ void MessageSystem::thread_func(int id) {
 			_request_mutex.unlock();
 		}
 		//Process message
-		if (mp._message != nullptr) {
+		if (working && mp._message != nullptr) {
 			mp._message->process();
 			_done_mutex.lock();
 			_done_collection.insert({ mp._id, mp });

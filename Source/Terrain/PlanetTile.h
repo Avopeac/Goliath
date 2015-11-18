@@ -5,24 +5,29 @@
 #include "..\Terrain\SimplePlanetHeightSampler.h"
 class PlanetTile : public Drawable {
 public:
-	PlanetTile() : Drawable() {
-		set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
-	}
+	PlanetTile(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation);
+	PlanetTile(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation, std::shared_ptr<Shader> shader);
 
-	void generate(const glm::mat4 & translation, const glm::mat4 & scale, const glm::mat4 & rotation);
+	PlanetTile(const PlanetTile&) = delete;
+
+	void generate();
 	virtual void draw(const Camera & camera, double delta_time) override;
 	virtual void draw_wireframe(const Camera & camera, double delta_time) override;
+	bool setup_done() const { return _setup_done; }
 
 private:
-	struct VertexData {
-		VertexData(){}
-		~VertexData(){}
-		Vertex vertex;
-		bool edge = false;
-		bool skirt = false;
-	};
+	class PlanetTileMessage;
+	class VertexData;
+
 	const int _resolution = 64;
+	bool _setup_done = false;
+	int _message_ref = -1;
+
+	glm::mat4 _translation;
+	glm::mat4 _scale;
+	glm::mat4 _rotation;
 	
+	void predraw();
 	bool is_edge(int x, int z);
 	static SimplePlanetHeightSampler sampler;
 };

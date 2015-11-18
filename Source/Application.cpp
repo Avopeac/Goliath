@@ -29,7 +29,7 @@ int Application::initialize() {
 	TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(width, height);
 	//Initialize the message passing system
-	//MessageSystem::instance();
+	MessageSystem::instance();
 	return status;
 }
 
@@ -105,7 +105,7 @@ void Application::run() {
 		glfwPollEvents();
 	}
 	//Stop the threads
-	//MessageSystem::instance().clean_up();
+	MessageSystem::instance().clean_up();
 	//Clean up AntTweakBar	
 	TwTerminate();
 	//Shut down glfw 

@@ -2,18 +2,21 @@
 #include <sstream>
 #include <iostream>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) {
+Mesh::Mesh() {
+	glGenVertexArrays(1, &_VAO);
+	glGenBuffers(1, &_VBO);
+	glGenBuffers(1, &_EBO);
+}
+
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
+	: Mesh() {
 	this->vertices = vertices;
 	this->indices = indices;
 	this->textures = textures;
-	setup_mesh();
 }
 
 void Mesh::setup_mesh() {
 	//Generate buffers and bind buffer data
-	glGenVertexArrays(1, &_VAO);
-	glGenBuffers(1, &_VBO);
-	glGenBuffers(1, &_EBO);
 	update_indices();
 	update_vertices();
 }
@@ -29,19 +32,19 @@ void Mesh::update_vertices() {
 	//Re-upload buffer data
 	glBindVertexArray(_VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(struct Vertex), &vertices[0], GL_STATIC_DRAW);
 	//Vertices
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
 	//Normals
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Vertex::normal));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::normal));
 	//Texcoords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Vertex::texcoord));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::texcoord));
 	//Colors
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Vertex::color));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::color));
 
 }
 

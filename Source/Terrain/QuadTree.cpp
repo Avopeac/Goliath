@@ -51,7 +51,7 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 			_patch->morph_vertices(_morph_value);
 		}
 
-		_patch->draw_wireframe(camera, delta_time);
+		_patch->draw(camera, delta_time);
 	}
 	else {
 

@@ -208,10 +208,6 @@ void PlanetTile::predraw() {
 	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 }
 
-bool PlanetTile::is_edge(int x, int z) {
-	return (x == -1) || (z == -1) || (x == _resolution + 1) || (z == _resolution + 1);
-}
-
 void PlanetTile::draw(const Camera & camera, double delta_time)
 {
 	if (!_setup_done) {

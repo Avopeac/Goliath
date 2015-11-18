@@ -2,14 +2,16 @@
 #include <iostream>
 #include "GLM\gtc\type_ptr.hpp"
 
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0f, 12.0f, 0.8f, 0.0f);
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0f, 20.0f, 0.7f, 0.0f);
+
 
 void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation)
 {
 	int x, z;
-	std::vector<VertexData> vertex_data;
 	float step = 1.0f / _resolution;
 	float offset = 0.5f;
+	glm::mat4 trans = translation * rotation * scale;
+
 	//Set up vertices with the edge case
 	for (x = -1; x <= _resolution + 1; ++x) {
 		for (z = -1; z <= _resolution + 1; ++z) {
@@ -17,12 +19,25 @@ void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, 
 			float cx = x * step - offset;
 			float cz = z * step - offset;
 			current.edge = is_edge(x, z);
-			current.vertex.position = glm::vec3(translation * rotation * scale *  glm::vec4(cx, 0, cz, 1.0));
+
+			current.vertex.position = glm::vec3(trans *  glm::vec4(cx, 0, cz, 1.0));
 			current.vertex.position = glm::normalize(current.vertex.position);
 			float height = sampler.sample(current.vertex.position);
 			current.vertex.position = (4.0f + pow(height, 4) * 0.15f) * current.vertex.position; //Pow 4 gives us more exaggerations
+
+			current.own_position = current.vertex.position;
+
 			current.vertex.color.r = height; //Save terrain height in red-channel
+
 			vertex_data.push_back(current);
+
+		}
+	}
+
+	// Set up parent positions
+	for (x = -1; x <= _resolution + 1; ++x) {
+		for (z = -1; z <= _resolution + 1; ++z) {
+			set_parent_position(x, z, trans);
 		}
 	}
 
@@ -54,6 +69,7 @@ void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, 
 		vertex_data[i3].vertex.normal += normal;
 	}
 
+	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
 		if (it->edge) {
 			it->vertex.position *= 0.9f;
@@ -63,6 +79,68 @@ void PlanetTile::generate(const glm::mat4 &translation, const glm::mat4 &scale, 
 
 	_mesh.setup_mesh();
 }
+
+void PlanetTile::morph_vertices(float alpha) {
+	for (int i = 0; i < vertex_data.size(); i++) {
+		vertex_data[i].vertex.position = glm::vec3(0, 0, 0);// vertex_data[i].parent_position*(1.0f - alpha) + vertex_data[i].own_position*alpha;
+		/*if (i == 11) {
+			std::cout << "vertex_data[i].vertex.position " << vertex_data[i].vertex.position.x << "  " << vertex_data[i].vertex.position.y << "  " << vertex_data[i].vertex.position.z << std::endl;
+		}*/
+	}
+	_mesh.update_vertices();
+}
+
+void PlanetTile::set_parent_position(int x, int z, glm::mat4 transform) {
+	float step = 1.0f / _resolution;
+	float offset = 0.5f;
+	glm::vec3 parent_position = glm::vec3(0, 0, 0);
+	float cx = x * step - offset;
+	float cz = z * step - offset;
+	int counter = 0;
+
+	int current_idx = (z + 1) + (x + 1)*(_resolution + 3);
+
+	// If it's an even vertex then parent pos is same as the vertex pos
+	if (!glm::mod(((float)(x + 1) + (z + 1)), 2.0f)) {
+		parent_position = vertex_data[current_idx].vertex.position;
+		counter++;
+	}
+	// Else get the average of the near vertices
+	else {
+		int start_z = glm::max(-1, z - 1);
+		int end_z = glm::min(z + 1, (_resolution + 3)); // + 3 cause actual amount of vertices are _res + 1 and then + 2 for edges
+		int start_x = glm::max(-1, x - 1);
+		int end_x = glm::min(x + 1, (_resolution + 3));
+
+		float cx_ = x * step - offset;
+		float cz_ = z * step - offset;
+
+		glm::vec3 test_pos;
+		test_pos = glm::vec3(transform *  glm::vec4(cx_, 0, cz_, 1.0));
+		test_pos = glm::normalize(test_pos);
+		float height = sampler.sample(test_pos);
+		test_pos = (4.0f + pow(height, 4) * 0.15f) * test_pos;
+
+		for (int x_idx = start_x; x_idx <= end_x; x_idx++) {
+			if (x_idx == x) { continue; }
+
+			for (int z_idx = start_z; z_idx <= end_z; z_idx++) {
+				if (z_idx == z) { continue; }
+				counter++;
+				cx = x_idx * step - offset;
+				cz = z_idx * step - offset;
+
+				glm::vec3 tmp_pos;
+				tmp_pos = glm::vec3(transform *  glm::vec4(cx, 0, cz, 1.0));
+				tmp_pos = glm::normalize(tmp_pos);
+				float height = sampler.sample(tmp_pos);
+				parent_position += (4.0f + pow(height, 4) * 0.15f) * tmp_pos;
+			}
+		}
+	}
+	vertex_data[current_idx].parent_position = parent_position / (float)counter;
+}
+
 
 bool PlanetTile::is_edge(int x, int z) {
 	return (x == -1) || (z == -1) || (x == _resolution + 1) || (z == _resolution + 1);

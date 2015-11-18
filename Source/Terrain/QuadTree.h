@@ -3,6 +3,7 @@
 #include "..\View\Drawable.h"
 #include <memory>
 #include <GLM\glm.hpp>
+
 class QuadTree : public Drawable {
 public:
 	QuadTree() : Drawable() {}
@@ -43,4 +44,6 @@ private:
 	std::shared_ptr<QuadTree> _northeast = nullptr;
 	std::shared_ptr<QuadTree> _southwest = nullptr;
 	std::shared_ptr<QuadTree> _southeast = nullptr;
+
+	float _morph_value = 0;
 };

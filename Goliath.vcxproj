@@ -178,6 +178,7 @@
     <ClCompile Include="Source\View\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Drawable\Cube.h" />
     <ClInclude Include="Source\Drawable\Plane.h" />

@@ -6,6 +6,8 @@
 #include <queue>
 #include <memory>
 #include "Message.h"
+#include "../../Semaphore.h"
+
 ///A message pair is used to identify a message after processing
 typedef struct MessagePair {
 	MessagePair(std::shared_ptr<Message> message = nullptr, int id = 0) : _message(message), _id(id) {}
@@ -45,6 +47,7 @@ private:
 	std::queue<MessagePair> _request_queue;
 	std::map<int, MessagePair> _done_collection;
 
+	Semaphore _work_semaphore;
 	//Locks for shared data-structures
 	std::mutex _request_mutex;
 	std::mutex _done_mutex;

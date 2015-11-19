@@ -172,13 +172,14 @@
     <ClCompile Include="Source\Terrain\PlanetTile.cpp" />
     <ClCompile Include="Source\Terrain\QuadTree.cpp" />
     <ClCompile Include="Source\Terrain\Tile.cpp" />
+    <ClCompile Include="Source\Terrain\Water.cpp" />
     <ClCompile Include="Source\Thread\MessageSystem.cpp" />
     <ClCompile Include="Source\View\Camera.cpp" />
     <ClCompile Include="Source\View\Renderer.cpp" />
     <ClCompile Include="Source\View\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Semaphore.h" />
+    <ClInclude Include="Source\Thread\Semaphore.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Drawable\Cube.h" />
     <ClInclude Include="Source\Drawable\Plane.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h" />
     <ClInclude Include="Source\Terrain\Skybox.h" />
     <ClInclude Include="Source\Terrain\Tile.h" />
+    <ClInclude Include="Source\Terrain\Water.h" />
     <ClInclude Include="Source\Thread\Message.h" />
     <ClInclude Include="Source\Thread\MessageSystem.h" />
     <ClInclude Include="Source\View\AtmosphereNode.h" />

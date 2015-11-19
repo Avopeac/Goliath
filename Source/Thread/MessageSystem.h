@@ -5,13 +5,16 @@
 #include <vector>
 #include <queue>
 #include <memory>
-#include "Message.h"
-#include "../../Semaphore.h"
+
+#include <Thread/Semaphore.h>
+#include <Thread/Message.h>
 
 ///A message pair is used to identify a message after processing
 typedef struct MessagePair {
-	MessagePair(std::shared_ptr<Message> message = nullptr, int id = 0) : _message(message), _id(id) {}
+	MessagePair(std::shared_ptr<Message> message = nullptr, int id = 0, bool noreturn = false) 
+		: _message(message), _id(id), _noreturn(noreturn) {}
 	std::shared_ptr<Message> _message;
+	bool _noreturn;
 	int _id;
 } MessagePair;
 
@@ -26,6 +29,8 @@ public:
 	}
 	//Post a message to the request queue, returns the id of the message pair
 	int post(std::shared_ptr<Message> message);
+	//Post a message to the request queue, discards message after completion
+	void post_noreturn(std::shared_ptr<Message> message);
 	//Get a message from the done collection, null if no such message exists
 	std::shared_ptr<Message> get(int id);
 	//Shut down the threads
@@ -38,6 +43,15 @@ private:
 	void initialize();
 	//The looping function that picks work
 	void thread_func(int id);
+
+	// Synchronized functions
+	int push_request(std::shared_ptr<Message> message, bool noreturn);
+	MessagePair pop_request();
+	void push_done(MessagePair message);
+	std::shared_ptr<Message> pop_done(int id);
+
+	//Message identifier
+	int _id;
 	//How many hardware threads that will be used
 	int _hardware_concurrency;
 	//Need to clean up, exit condition for threads

@@ -23,26 +23,59 @@ void MessageSystem::thread_func(int id) {
 			break;
 		}
 
-		// Create an empty message pair
-		MessagePair mp;
-
-		// Fetch work
-		_request_mutex.lock();
-		mp = _request_queue.front();
-		_request_queue.pop();
-		_request_mutex.unlock();
+		MessagePair mp = pop_request();
 
 		// Process message
 		if (mp._message != nullptr) {
 			mp._message->process();
-			_done_mutex.lock();
-			_done_collection.insert({ mp._id, mp });
-			_done_mutex.unlock();
 		}
+
+		push_done(mp);
 	}
 }
 
+int MessageSystem::push_request(std::shared_ptr<Message> message, bool noreturn) {
+	std::unique_lock<std::mutex> lock(_request_mutex);
+
+	// Increase counter
+	int id = ++_id;
+	//Add a request
+	_request_queue.push(MessagePair(message, id, noreturn));
+	// Notify workers
+	_work_semaphore.notify();
+
+	return id;
+}
+
+MessagePair MessageSystem::pop_request() {
+	std::unique_lock<std::mutex> lock(_request_mutex);
+
+	auto message = _request_queue.front();
+	_request_queue.pop();
+	return message;
+}
+
+void MessageSystem::push_done(MessagePair message) {
+	std::unique_lock<std::mutex> lock(_done_mutex);
+
+	_done_collection.insert({ message._id, message });
+}
+
+std::shared_ptr<Message> MessageSystem::pop_done(int id) {
+	std::unique_lock<std::mutex> lock(_done_mutex);
+
+	auto it = _done_collection.find(id);
+	if (it != _done_collection.end()) {
+		//Remove it from the done collection
+		auto message = (*it).second._message;
+		_done_collection.erase(id);
+		return message;
+	}
+	return nullptr;
+}
+
 void MessageSystem::initialize() {
+	_id = 0;
 	//Use almost all of the hardware threads, using all causes some lag to occur
 	_hardware_concurrency = std::thread::hardware_concurrency();
 	if (_hardware_concurrency >= 2) {
@@ -55,33 +88,16 @@ void MessageSystem::initialize() {
 }
 
 int MessageSystem::post(std::shared_ptr<Message> message) {
-	//Message identifier
-	static int id = 0;
-	//Add a request
-	_request_mutex.lock();
-	_request_queue.push(MessagePair(message, ++id));
-	_request_mutex.unlock();
+	return push_request(message, false);
+}
 
-	// Notify workers
-	_work_semaphore.notify();
-
-	return id;
+void MessageSystem::post_noreturn(std::shared_ptr<Message> message) {
+	push_request(message, true);
 }
 
 /**
  * If the argument message exists, return the data
  */
 std::shared_ptr<Message> MessageSystem::get(int id) {
-	std::shared_ptr<Message> message = nullptr;
-
-	_done_mutex.lock();
-	auto it = _done_collection.find(id);
-	if (it != _done_collection.end()) {
-		//Remove it from the done collection
-		message = (*it).second._message;
-		_done_collection.erase(id);
-	}
-	_done_mutex.unlock();
-
-	return message;
+	return pop_done(id);
 }

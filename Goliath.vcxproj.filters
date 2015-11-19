@@ -90,6 +90,9 @@
     <ClCompile Include="Source\Terrain\PlanetTile.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Terrain\Water.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Drawable\Plane.h">
@@ -191,11 +194,14 @@
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="Semaphore.h">
-      <Filter>Source Files\Thread</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Terrain\Skybox.h">
       <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\Water.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Thread\Semaphore.h">
+      <Filter>Source Files\Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

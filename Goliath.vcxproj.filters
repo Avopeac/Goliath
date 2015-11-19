@@ -259,5 +259,7 @@
     <None Include="Shaders\groundshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
+    <None Include="Shaders\water.frag" />
+    <None Include="Shaders\water.vert" />
   </ItemGroup>
 </Project>

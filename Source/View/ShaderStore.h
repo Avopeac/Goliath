@@ -41,6 +41,10 @@
 #define GROUND_SHADER_PATH "Shaders/groundshader"
 #endif GROUND_SHADER_PATH
 
+#ifndef WATER_SHADER_PATH 
+#define WATER_SHADER_PATH "Shaders/water"
+#endif WATER_SHADER_PATH 
+
 class ShaderStore {
 public:
 	static ShaderStore &instance() {
@@ -58,6 +62,7 @@ public:
 		add_shader_to_store(PLAIN_TEXTURE_SHADER_PATH);
 		add_shader_to_store(GROUND_SHADER_PATH);
 		add_shader_to_store(STANDARD_SHADER_PATH);
+		add_shader_to_store(WATER_SHADER_PATH);
 	}
 
 	void add_shader_to_store(const std::string &item) {

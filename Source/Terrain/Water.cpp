@@ -34,7 +34,7 @@ void Water::_init() {
 	glGenBuffers(1, &_VBO);
 	glGenBuffers(1, &_EBO);
 
-	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
+	set_shader(ShaderStore::instance().get_shader_from_store(WATER_SHADER_PATH));
 
 	MessageSystem::instance().post_noreturn(std::make_shared<WaterMessage>(this));
 }
@@ -125,7 +125,8 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 	glEnable(GL_DEPTH_TEST);
 
 	_shader->use();
-	// Might be worth uploading proj and view here instead. Now depends on being called from Planet class
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
 	//Draw with index list

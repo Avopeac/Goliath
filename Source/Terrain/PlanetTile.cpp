@@ -69,13 +69,6 @@ void PlanetTile::generate()
 		}
 	}
 
-	// Set up parent positions
-	for (x = -1; x <= _resolution + 1; ++x) {
-		for (z = -1; z <= _resolution + 1; ++z) {
-			set_parent_position(x, z, trans);
-		}
-	}
-
 	//Set up indices with the edge case
 	int stride = _resolution + 2 + 1;
 	for (x = 0; x < _resolution + 2; ++x) {
@@ -104,6 +97,14 @@ void PlanetTile::generate()
 		vertex_data[i3].vertex.normal += normal;
 	}
 
+
+	// Set up parent positions
+	for (x = -1; x <= _resolution + 1; ++x) {
+		for (z = -1; z <= _resolution + 1; ++z) {
+			set_parent_position(x, z, trans);
+		}
+	}
+
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
 		if (it->edge) {
@@ -118,7 +119,9 @@ void PlanetTile::generate()
 
 void PlanetTile::morph_vertices(float alpha) {
 	for (int i = 0; i < vertex_data.size(); i++) {
-		vertex_data[i].vertex.position = glm::vec3(0, 0, 0);// vertex_data[i].parent_position*(1.0f - alpha) + vertex_data[i].own_position*alpha;
+		if (!vertex_data[i].edge){
+			_mesh.vertices[i].position = vertex_data[i].parent_position *(1.0f - alpha) + vertex_data[i].own_position*alpha; // glm::vec3(0,0,0)
+		}
 		/*if (i == 11) {
 			std::cout << "vertex_data[i].vertex.position " << vertex_data[i].vertex.position.x << "  " << vertex_data[i].vertex.position.y << "  " << vertex_data[i].vertex.position.z << std::endl;
 		}*/
@@ -144,37 +147,35 @@ void PlanetTile::set_parent_position(int x, int z, glm::mat4 transform) {
 	// Else get the average of the near vertices
 	else {
 		int start_z = glm::max(-1, z - 1);
-		int end_z = glm::min(z + 1, (_resolution + 3)); // + 3 cause actual amount of vertices are _res + 1 and then + 2 for edges
+		int end_z = glm::min(z + 1, (_resolution + 3)); // + 2 cause actual amount of vertices are _res + 1 and then + 1 for left / upper skirt
 		int start_x = glm::max(-1, x - 1);
 		int end_x = glm::min(x + 1, (_resolution + 3));
-
-		float cx_ = x * step - offset;
-		float cz_ = z * step - offset;
-
-		glm::vec3 test_pos;
-		test_pos = glm::vec3(transform *  glm::vec4(cx_, 0, cz_, 1.0));
-		test_pos = glm::normalize(test_pos);
-		float height = sampler.sample(test_pos);
-		test_pos = (4.0f + pow(height, 4) * 0.15f) * test_pos;
 
 		for (int x_idx = start_x; x_idx <= end_x; x_idx++) {
 			if (x_idx == x) { continue; }
 
 			for (int z_idx = start_z; z_idx <= end_z; z_idx++) {
 				if (z_idx == z) { continue; }
-				counter++;
-				cx = x_idx * step - offset;
-				cz = z_idx * step - offset;
 
-				glm::vec3 tmp_pos;
-				tmp_pos = glm::vec3(transform *  glm::vec4(cx, 0, cz, 1.0));
-				tmp_pos = glm::normalize(tmp_pos);
-				float height = sampler.sample(tmp_pos);
-				parent_position += (4.0f + pow(height, 4) * 0.15f) * tmp_pos;
+					counter++;
+					cx = x_idx * step - offset;
+					cz = z_idx * step - offset;
+
+					glm::vec3 tmp_pos;
+					tmp_pos = glm::vec3(transform *  glm::vec4(cx, 0, cz, 1.0));
+					tmp_pos = glm::normalize(tmp_pos);
+					float height = sampler.sample(tmp_pos);
+					parent_position += (4.0f + pow(height, 4) * 0.15f) * tmp_pos;
 			}
 		}
 	}
+	
 	vertex_data[current_idx].parent_position = parent_position / (float)counter;
+
+	//std::cout << "parent: " << vertex_data[current_idx].parent_position.x << "  " << vertex_data[current_idx].parent_position.y << "  " << vertex_data[current_idx].parent_position.z << "  " << std::endl;
+	//std::cout << "real: " << vertex_data[current_idx].own_position.x << "  " << vertex_data[current_idx].own_position.y << "  " << vertex_data[current_idx].own_position.z << "  " << std::endl;
+	//Calculate vertex normals, simple version, only averages over one triangle
+
 }
 
 

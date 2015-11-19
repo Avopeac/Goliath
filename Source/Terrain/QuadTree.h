@@ -52,4 +52,5 @@ private:
 	std::shared_ptr<QuadTree> _southeast = nullptr;
 
 	float _morph_value = 0;
+	bool dont_morph = false;
 };

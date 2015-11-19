@@ -142,7 +142,7 @@ void main(void)
     worldSpacePos.xyz /= worldSpacePos.w;
 	//Compute the atmospheric scattering and add to previous texture
 	vec4 scatteredRadiance = atmosphere(5, cameraWorldPos, normalize(worldSpacePos.xyz - cameraWorldPos));
-    color = texture2D(texUnit, ourUv) + scatteredRadiance;
+    color = texture2D(texUnit, ourUv) + vec4(scatteredRadiance.rgb, scatteredRadiance.a);
 }
 
 

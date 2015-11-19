@@ -194,6 +194,9 @@
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Semaphore.h">
+      <Filter>Source Files\Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\standard.frag">

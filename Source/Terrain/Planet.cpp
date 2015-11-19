@@ -1,34 +1,38 @@
-#include "..\Terrain\Planet.h"
-#include "..\View\Renderer.h"
+#include "Planet.h"
+#include "View/Renderer.h"
+#include "View/ShaderStore.h"
+#include "Model/CubeMap.h"
+#include "Terrain/QuadTree.h"
 #include <GLM\gtc\random.hpp>
+#include <GLM\gtx\transform.hpp>
+#include <SOIL/SOIL.h>
 #include <iterator>
 #include <algorithm>
 #include <set>
 
+Planet::Planet(double radius) : Drawable(), _radius(radius) {
+	setup_cube();
+	setup_skybox();
+	create_color_ramp_texture();
+	create_gradient_array();
+	create_permutation_array();
+	create_permutation_texture();
+}
+
+
 void Planet::setup_cube() {
 	float scale = (float)_radius;
 	float trans = (float)_radius * 0.5f;
-	_north = std::make_shared<QuadTree>(glm::mat4(1), glm::translate(glm::vec3(0, trans, 0)), scale);
-	_south = std::make_shared<QuadTree>(glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, -trans, 0)), scale);
-	_west = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(-trans, 0, 0)), scale);
-	_east = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(trans, 0, 0)), scale);
-	_hither = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, trans)), scale);
-	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, -trans)), scale);
-}
-
-void Planet::setup_terrain() {
-	//Set up ground shaders
 	_ground_shader = ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH);
-	_north->set_shader(_ground_shader);
-	_south->set_shader(_ground_shader);
-	_west->set_shader(_ground_shader);
-	_east->set_shader(_ground_shader);
-	_hither->set_shader(_ground_shader);
-	_yon->set_shader(_ground_shader);
+	_north = std::make_shared<QuadTree>(glm::mat4(1), glm::translate(glm::vec3(0, trans, 0)), scale, _ground_shader);
+	_south = std::make_shared<QuadTree>(glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, -trans, 0)), scale, _ground_shader);
+	_west = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(-trans, 0, 0)), scale, _ground_shader);
+	_east = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(trans, 0, 0)), scale, _ground_shader);
+	_hither = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, trans)), scale, _ground_shader);
+	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, -trans)), scale, _ground_shader);
 }
 
 void Planet::create_color_ramp_texture() {
-	// Generate color ramp
 	glGenTextures(1, &_color_ramp_id);
 	glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

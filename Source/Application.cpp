@@ -29,7 +29,7 @@ int Application::initialize() {
 	TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(width, height);
 	//Initialize the message passing system
-	//MessageSystem::instance();
+	MessageSystem::instance();
 	return status;
 }
 
@@ -76,7 +76,7 @@ void Application::run() {
 	//Create planet
 	std::shared_ptr<Planet> planet = std::make_shared<Planet>(4.0f);
 	//Create camera
-	Camera camera(glm::vec3(0, 0, 13), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.00000000001, 1000.0);
+	Camera camera(glm::vec3(0, 0, 13), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.01, 1000.0);
 	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);
 
@@ -105,7 +105,7 @@ void Application::run() {
 		glfwPollEvents();
 	}
 	//Stop the threads
-	//MessageSystem::instance().clean_up();
+	MessageSystem::instance().clean_up();
 	//Clean up AntTweakBar	
 	TwTerminate();
 	//Shut down glfw 

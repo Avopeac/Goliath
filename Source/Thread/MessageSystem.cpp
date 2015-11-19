@@ -2,6 +2,8 @@
 
 void MessageSystem::clean_up() {
 	_clean_up = true;
+
+	_work_semaphore.disable();
 	
 	//Join threads
 	for (unsigned int i = 0; i < _threads.size(); ++i) {
@@ -12,28 +14,30 @@ void MessageSystem::clean_up() {
 }
 
 void MessageSystem::thread_func(int id) {
-	bool working = false;
-	//Loop continuously
-	while (!_clean_up) {
-		//Create an empty message pair
-		MessagePair mp;
-		if (!working) {
-			//Request work if not working
-			_request_mutex.lock();
-			if (_request_queue.size() > 0) {
-				mp = _request_queue.front();
-				_request_queue.pop();
-				working = true;
-			}
-			_request_mutex.unlock();
+	while (true) {
+		// Wait for work notification
+		_work_semaphore.wait();
+
+		// Stop if stopping
+		if (_clean_up) {
+			break;
 		}
-		//Process message
+
+		// Create an empty message pair
+		MessagePair mp;
+
+		// Fetch work
+		_request_mutex.lock();
+		mp = _request_queue.front();
+		_request_queue.pop();
+		_request_mutex.unlock();
+
+		// Process message
 		if (mp._message != nullptr) {
 			mp._message->process();
 			_done_mutex.lock();
 			_done_collection.insert({ mp._id, mp });
 			_done_mutex.unlock();
-			working = false;
 		}
 	}
 }
@@ -57,19 +61,27 @@ int MessageSystem::post(std::shared_ptr<Message> message) {
 	_request_mutex.lock();
 	_request_queue.push(MessagePair(message, ++id));
 	_request_mutex.unlock();
+
+	// Notify workers
+	_work_semaphore.notify();
+
 	return id;
 }
 
+/**
+ * If the argument message exists, return the data
+ */
 std::shared_ptr<Message> MessageSystem::get(int id) {
-	//If the argument message exists, return the data
+	std::shared_ptr<Message> message = nullptr;
+
 	_done_mutex.lock();
 	auto it = _done_collection.find(id);
-	std::shared_ptr<Message> message = nullptr;
 	if (it != _done_collection.end()) {
 		//Remove it from the done collection
 		message = (*it).second._message;
 		_done_collection.erase(id);
 	}
 	_done_mutex.unlock();
+
 	return message;
 }

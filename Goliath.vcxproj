@@ -236,6 +236,9 @@
     <None Include="Shaders\gammatonemapshader.frag" />
     <None Include="Shaders\gammatonemapshader.vert" />
     <None Include="Shaders\water.frag" />
+    <None Include="Shaders\water.geom" />
+    <None Include="Shaders\water.tesc.glsl" />
+    <None Include="Shaders\water.tese.glsl" />
     <None Include="Shaders\water.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

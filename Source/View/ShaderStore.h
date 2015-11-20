@@ -62,7 +62,7 @@ public:
 		add_shader_to_store(PLAIN_TEXTURE_SHADER_PATH);
 		add_shader_to_store(GROUND_SHADER_PATH);
 		add_shader_to_store(STANDARD_SHADER_PATH);
-		add_shader_to_store(WATER_SHADER_PATH);
+		add_shader_to_store_full(WATER_SHADER_PATH);
 	}
 
 	void add_shader_to_store(const std::string &item) {
@@ -72,6 +72,22 @@ public:
 		frag_name.append(".frag");
 		std::pair<std::string, std::shared_ptr<Shader>> pair;
 		pair = std::make_pair(item, std::make_shared<Shader>(vert_name.c_str(), frag_name.c_str()));
+		_store.insert(pair);
+	}
+
+	void add_shader_to_store_full(const std::string &item) {
+		std::string vert_name = item;
+		vert_name.append(".vert");
+		std::string frag_name = item;
+		frag_name.append(".frag");
+		std::string tess_ctrl_name = item;
+		tess_ctrl_name.append(".tesc.glsl");
+		std::string tess_eval_name = item;
+		tess_eval_name.append(".tese.glsl");
+		std::string geom_name = item;
+		geom_name.append(".geom");
+		std::pair<std::string, std::shared_ptr<Shader>> pair;
+		pair = std::make_pair(item, std::make_shared<Shader>(vert_name.c_str(), frag_name.c_str(), geom_name.c_str(), tess_ctrl_name.c_str(), tess_eval_name.c_str()));
 		_store.insert(pair);
 	}
 

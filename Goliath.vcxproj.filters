@@ -261,5 +261,8 @@
     </None>
     <None Include="Shaders\water.frag" />
     <None Include="Shaders\water.vert" />
+    <None Include="Shaders\water.geom" />
+    <None Include="Shaders\water.tesc.glsl" />
+    <None Include="Shaders\water.tese.glsl" />
   </ItemGroup>
 </Project>

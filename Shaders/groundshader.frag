@@ -48,7 +48,7 @@ float heightFunction(vec3 p, float l, float d, float o, float x) {
         v += (abs(noise(p)) + x) * pow(l, -d * i);
         p *= l;
     }
-	return 4.0 + (pow(v, 2) - 1.0) * 0.15;
+	return 4.0 + pow(v, 2) * 0.15;
 }
 
 void main()
@@ -57,9 +57,9 @@ void main()
 	vec3 normalDir = normalize(ourNormal);
 	vec3 sphereDir = normalize(ourWorldPosition);
 	//Perturbing normal with noise
-	const float epsilon = 0.01 * -ourPosition.z; //Do some distance function here
+	const float epsilon = 0.015 * -ourPosition.z; //Do some distance function here
 	const float oneOverEpsilon = 1.0 / epsilon;
-	const float scaleFactor = 0.1;
+	const float scaleFactor = 0.25;
 	const float lacunarity = 2.0;
 	const float dimensionality = 0.9;
 	const float octaves = 16;
@@ -68,17 +68,17 @@ void main()
 	float hx = heightFunction(ourWorldPosition + vec3(epsilon,0,0), lacunarity, dimensionality, octaves, offset);
     float hy = heightFunction(ourWorldPosition + vec3(0,epsilon,0), lacunarity, dimensionality, octaves, offset);
     float hz = heightFunction(ourWorldPosition + vec3(0,0,epsilon), lacunarity, dimensionality, octaves, offset);
-    vec3 df = vec3(hx - h0, hy - h0, hz - h0) * scaleFactor * oneOverEpsilon;
-	normalDir = normalize(sphereDir - df);
+    vec3 df = vec3(hx - h0, hy - h0, hz - h0) / epsilon;
+	normalDir = normalize(sphereDir - df * scaleFactor);
 
 	//Coloring things
-	float height = h0 - 4.0;
-	vec3 texColor = texture(colorRampTex, vec2(height + 0.1, 0)).rgb;
+	float height = length(ourWorldPosition) - 4.0;
+	vec3 texColor = texture(colorRampTex, vec2(height, 0)).rgb;
 
 	//Lighting
     vec3 lightDir = normalize(vec3(0,1,0));
     float ndotl = clamp(dot(normalDir, lightDir), 0.0, 1.0);
-    float ndots = clamp(0.5 + 0.5 * dot(lightDir, normalize(ourPosition)), 0.0, 1.0);
+    float ndots = clamp(0.5 + 0.5 * dot(lightDir, normalize(normalDir)), 0.0, 1.0);
     float ndoti = clamp(dot(normalDir, normalize(lightDir * vec3(-1, 0, -1))), 0.0, 1.0);
 	float specular = 0.0;
 	if (ndotl > 0.0){
@@ -86,7 +86,7 @@ void main()
 		vec3 reflDir = normalize(reflect(-lightDir, normalDir));
 		vec3 halfDir = normalize(normalDir + reflDir);
 		specular = clamp(dot(halfDir, viewDir), 0.0, 1.0);
-		specular = pow(specular, 90);
+		specular = pow(specular, 200);
 	}
 
 	//Light colors	
@@ -96,7 +96,7 @@ void main()
     vec3 lighting =  sunColor * ndotl;
 	lighting += skyColor * ndots;
     lighting += reflSunColor * ndoti;
-    vec3 final = texColor * lighting + sunColor * specular;
+    vec3 final = texColor * (lighting + sunColor * specular);
     color = vec4(final, 1.0);
 }
 

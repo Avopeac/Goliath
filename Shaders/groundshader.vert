@@ -53,7 +53,7 @@ float heightFunction(vec3 p, float l, float d, float o, float x) {
         v += (abs(noise(p)) + x) * pow(l, -d * i);
         p *= l;
     }
-	return 4.0 + (pow(v, 2) - 1.0) * 0.15;
+	return 4.0 + pow(v, 3) * 0.15;
 }
 
 void main()
@@ -62,7 +62,7 @@ void main()
 	vec4 modelPos = model * vec4(position, 1);
 	if (color.b < 1.0){
 		vec3 normalizedPos = normalize(vec3(modelPos));
-		modelPos = vec4(heightFunction(normalizedPos, 2.0, 0.9, 32, 0) * normalizedPos, 1);  //Just trying offsetting vertex positions in shader, comment out if you need to test CPU code.
+		modelPos = vec4(heightFunction(normalizedPos, 2.0, 1.2, 32, 0) * normalizedPos, 1);  //Just trying offsetting vertex positions in shader, comment out if you need to test CPU code.
 	}
 
     vec4 viewPos = view * modelPos;

@@ -1,4 +1,5 @@
 #include "Terrain\Noise3D.h"
+#include <GLM\gtc\random.hpp>
 #include <iostream>
 #include <SOIL\SOIL.h>
 
@@ -10,21 +11,23 @@ void Noise3D::initialize(unsigned int seed) {
 
 void Noise3D::initialize_permutations() {
 	unsigned int i;
-	std::srand(_seed);
+	std::srand(time(NULL));
 	std::vector<int> temp_permutations;
 	//Fill 1D array of permutation values of 255
 	for (i = 0; i < PERMUTATION_NUMBER; ++i) { temp_permutations.push_back(-1); }
 	for (i = 0; i < PERMUTATION_NUMBER; ++i) {
 		for (;;) {
-			int perm = std::rand() % PERMUTATION_NUMBER;
+			int perm = glm::linearRand(0, PERMUTATION_NUMBER) % PERMUTATION_NUMBER;
 			if (temp_permutations.at(perm) == -1) {
 				temp_permutations.at(perm) = i;
 				break;
 			}
 		}
 	}
+
 	for (i = 0; i < PERMUTATION_NUMBER; ++i) {
 		unsigned char convert_perm = static_cast<unsigned char>(temp_permutations.at(i));
+		_permutations.push_back(convert_perm);
 		_permutation_bytes.push_back(convert_perm);
 		_permutation_bytes.push_back(convert_perm);
 		_permutation_bytes.push_back(convert_perm);

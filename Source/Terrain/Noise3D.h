@@ -28,11 +28,15 @@ public:
 private:
 	void initialize_permutations();
 	void initialize_gradients();
+	std::vector<unsigned char> _permutations;
 	std::vector<unsigned char> _permutation_bytes;
-	std::vector<unsigned char> _permutations_2d;
+	std::vector<unsigned char> _permutation_bytes_2d;
 	std::vector<unsigned char> _gradients;
 	std::vector<unsigned char> _gradient_bytes;
+	std::vector<unsigned char> _gradient_perm_bytes;
 	unsigned int _seed;
 	GLuint _p_tex_id;
+	GLuint _p2d_tex_id;
 	GLuint _g_tex_id;
+	GLuint _gp_tex_id;
 };

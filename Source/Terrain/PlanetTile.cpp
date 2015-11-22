@@ -55,18 +55,15 @@ void PlanetTile::generate()
 			float cx = x * step - offset;
 			float cz = z * step - offset;
 			current.edge = is_edge(x, z);
-			
 			current.vertex.position = glm::vec3(trans *  glm::vec4(cx, 0, cz, 1.0));
 			current.vertex.position = glm::normalize(current.vertex.position);
 			float height = sampler.sample(current.vertex.position);
 			current.vertex.position = (4.0f + height * 0.1f) * current.vertex.position; //Pow 4 gives us more exaggerations
 			current.vertex.texcoord = { cx + offset, cz + offset };
+			current.vertex.color.r = height;
+			current.vertex.color.b = current.edge ? 1.0 : 0.0;
 			current.own_position = current.vertex.position;
-
-			current.vertex.color.r = height; //Save terrain height in red-channel
-
 			vertex_data.push_back(current);
-
 		}
 	}
 
@@ -109,7 +106,7 @@ void PlanetTile::generate()
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
 		if (it->edge) {
-			it->vertex.position *= 0.9f;
+			it->vertex.position *= 0.95f;
 		}
 		_mesh.vertices.push_back(it->vertex);
 	}

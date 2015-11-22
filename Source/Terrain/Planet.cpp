@@ -18,6 +18,7 @@ Planet::Planet(double radius) : Drawable(), _radius(radius) {
 	noise_maker.initialize(std::time(NULL));
 	noise_maker.generate_gradient_texture();
 	noise_maker.generate_permutation_texture();
+	noise_maker.save_textures_to_disk("Images/permutations", "Images/gradients");
 }
 
 

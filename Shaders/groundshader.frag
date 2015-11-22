@@ -62,7 +62,7 @@ void main()
 	const float scaleFactor = 0.1;
 	const float lacunarity = 2.0;
 	const float dimensionality = 0.9;
-	const float octaves = 12.0;
+	const float octaves = 16;
 	const float offset = 0.0;
 	float h0 = heightFunction(ourWorldPosition, lacunarity, dimensionality, octaves, offset);
 	float hx = heightFunction(ourWorldPosition + vec3(epsilon,0,0), lacunarity, dimensionality, octaves, offset);
@@ -72,10 +72,8 @@ void main()
 	normalDir = normalize(sphereDir - df);
 
 	//Coloring things
-	float height = length(ourWorldPosition) - 4.0;
-	float slope = (1.0 + dot(sphereDir, normalDir)) * 0.5;
-	float equatorial = abs(sphereDir.y);
-	vec3 texColor = slope * texture(colorRampTex, vec2(h0, 0)).rgb;
+	float height = h0 - 4.0;
+	vec3 texColor = texture(colorRampTex, vec2(height + 0.1, 0)).rgb;
 
 	//Lighting
     vec3 lightDir = normalize(vec3(0,1,0));
@@ -98,7 +96,7 @@ void main()
     vec3 lighting =  sunColor * ndotl;
 	lighting += skyColor * ndots;
     lighting += reflSunColor * ndoti;
-    vec3 final = (texColor * lighting + 0.5 * sunColor * specular);
+    vec3 final = texColor * lighting + sunColor * specular;
     color = vec4(final, 1.0);
 }
 

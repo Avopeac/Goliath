@@ -62,7 +62,7 @@ void main()
 	vec4 modelPos = model * vec4(position, 1);
 	if (color.b < 1.0){
 		vec3 normalizedPos = normalize(vec3(modelPos));
-		modelPos = vec4(heightFunction(normalizedPos, 2.0, 0.9, 14, 0) * normalizedPos, 1);  //Just trying offsetting vertex positions in shader, comment out if you need to test CPU code.
+		modelPos = vec4(heightFunction(normalizedPos, 2.0, 0.9, 32, 0) * normalizedPos, 1);  //Just trying offsetting vertex positions in shader, comment out if you need to test CPU code.
 	}
 
     vec4 viewPos = view * modelPos;

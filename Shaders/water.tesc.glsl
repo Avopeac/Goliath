@@ -7,7 +7,7 @@ out vec3 tcNormal[];
 out vec3 tcPosition[];
 
 float TessLevelInner = 1;
-float TessLevelOuter = 3;
+float TessLevelOuter = 1;
 
 #define ID gl_InvocationID
 

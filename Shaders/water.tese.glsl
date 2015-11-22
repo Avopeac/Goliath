@@ -1,6 +1,6 @@
 #version 450
 
-layout(triangles, equal_spacing, cw) in;
+layout(triangles, equal_spacing, ccw) in;
 
 in vec3 tcPosition[];
 in vec3 tcNormal[];

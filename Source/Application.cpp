@@ -5,6 +5,7 @@
 #include "View\Camera.h"
 #include "View\ShaderStore.h"
 #include "Terrain\Planet.h"
+#include "Terrain\Noise3D.h"
 #include "Thread\MessageSystem.h"
 #include "Input\Input.h"
 #include "AntTweakBar\AntTweakBar.h"

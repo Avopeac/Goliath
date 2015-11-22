@@ -90,6 +90,9 @@
     <ClCompile Include="Source\Terrain\PlanetTile.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Terrain\Noise3D.cpp">
+      <Filter>Source Files\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Drawable\Plane.h">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="Semaphore.h">
       <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\Noise3D.h">
+      <Filter>Source Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

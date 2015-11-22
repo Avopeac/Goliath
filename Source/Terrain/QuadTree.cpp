@@ -24,8 +24,6 @@ QuadTree::QuadTree(const glm::mat4& rotation, const glm::mat4& translation, floa
 	_has_patch = true;
 }
 
-
-
 void QuadTree::draw(const Camera &camera, double delta_time) {
 
 	if (!setup_done()) {

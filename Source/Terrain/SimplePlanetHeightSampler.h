@@ -15,11 +15,11 @@ public:
 	float sample(const glm::vec3 &position) override {
 		float value = 1.0;
 		glm::vec3 p(position);
-		for (int i = 1; i < _octaves; ++i) {
-			value += (glm::simplex(p) + _offset) * _exponentials[i];
+		for (int i = 0; i < _octaves; ++i) {
+			value += (glm::perlin(p) + _offset) * _exponentials[i];
 			p *= _lacunarity;
 		}
-		return 1.0 - glm::abs(value);
+		return value;
 	}
 
 private:

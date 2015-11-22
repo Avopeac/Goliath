@@ -1,7 +1,8 @@
 #pragma once
-#include "..\View\Drawable.h"
-#include "..\Terrain\QuadTree.h"
-#include "Terrain/Skybox.h"
+#include "View\Drawable.h"
+#include "Terrain\QuadTree.h"
+#include "Terrain\Skybox.h"
+#include "Terrain\Noise3D.h"
 
 class Planet : public Drawable {
 public:
@@ -11,6 +12,7 @@ public:
 	virtual void draw(const Camera & camera, double delta_time) override;
 	virtual void draw_wireframe(const Camera & camera, double delta_time) override;
 private:
+	Noise3D noise_maker;
 	std::vector<glm::vec3> gradients;
 	std::vector<unsigned char> permutations;
 	std::shared_ptr<Skybox> _skybox;
@@ -24,10 +26,6 @@ private:
 	void setup_cube();
 	void setup_skybox();
 	void create_color_ramp_texture();
-	void create_gradient_array();
-	void create_permutation_array();
-	void create_permutation_texture();
 	GLuint _color_ramp_id;
-	GLuint _permutation_id;
 	float _radius;
 };

@@ -1,4 +1,4 @@
-#version 450
+#version 430
 
 layout(triangles, equal_spacing, ccw) in;
 
@@ -20,8 +20,8 @@ void main()
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
-    tePatchDistance = gl_TessCoord;
-    tePosition = normalize(p0 + p1 + p2);
+    tePosition = p0 + p1 + p2;
     teNormal = normalize(n0 + n1 + n2);
-    gl_Position = proj * view * model * vec4(tePosition, 1);
+    tePatchDistance = gl_TessCoord;
+    gl_Position = proj * view * model * vec4(tePosition, 1.0);
 }

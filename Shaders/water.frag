@@ -1,6 +1,7 @@
-#version 450
+#version 430
 
 out vec4 FragColor;
+in vec3 gNormal;
 in vec3 gFacetNormal;
 in vec3 gTriDistance;
 in vec3 gPatchDistance;
@@ -30,5 +31,5 @@ void main()
     //float d2 = min(min(gPatchDistance.x, gPatchDistance.y), gPatchDistance.z);
     //color = amplify(d1, 40, -0.5) * amplify(d2, 60, -0.5) * color;
 
-    FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    FragColor = vec4(1.0);
 }

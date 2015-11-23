@@ -1,4 +1,4 @@
-#version 450
+#version 430
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -12,4 +12,5 @@ uniform mat4 proj;
 void main()
 {
     vPosition = position;
+	vNormal = normal;
 }

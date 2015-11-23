@@ -90,8 +90,8 @@
     <ClCompile Include="Source\Terrain\PlanetTile.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Terrain\Water.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Source\Terrain\Noise3D.cpp">
+      <Filter>Source Files\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +146,9 @@
     <ClInclude Include="Source\Model\Material.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Terrain\Skybox.h">
+      <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Model\CubeMap.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
@@ -194,14 +197,11 @@
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Terrain\Skybox.h">
-      <Filter>Source Files\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Terrain\Water.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Thread\Semaphore.h">
+    <ClInclude Include="Semaphore.h">
       <Filter>Source Files\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\Noise3D.h">
+      <Filter>Source Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -259,10 +259,5 @@
     <None Include="Shaders\groundshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
-    <None Include="Shaders\water.frag" />
-    <None Include="Shaders\water.vert" />
-    <None Include="Shaders\water.geom" />
-    <None Include="Shaders\water.tesc.glsl" />
-    <None Include="Shaders\water.tese.glsl" />
   </ItemGroup>
 </Project>

@@ -58,14 +58,12 @@ void PlanetTile::generate()
 			current.vertex.position = glm::vec3(trans *  glm::vec4(cx, 0, cz, 1.0));
 			current.vertex.position = glm::normalize(current.vertex.position);
 			float height = sampler.sample(current.vertex.position);
-			current.vertex.position = (4.0f + pow(height, 4) * 0.15f) * current.vertex.position; //Pow 4 gives us more exaggerations
-
+			current.vertex.position = (4.0f + height * 0.1f) * current.vertex.position; //Pow 4 gives us more exaggerations
+			current.vertex.texcoord = { cx + offset, cz + offset };
+			current.vertex.color.r = height;
+			current.vertex.color.b = current.edge ? 1.0 : 0.0;
 			current.own_position = current.vertex.position;
-
-			current.vertex.color.r = height; //Save terrain height in red-channel
-
 			vertex_data.push_back(current);
-
 		}
 	}
 
@@ -108,7 +106,7 @@ void PlanetTile::generate()
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
 		if (it->edge) {
-			it->vertex.position *= 0.9f;
+			it->vertex.position *= 0.95f;
 		}
 		_mesh.vertices.push_back(it->vertex);
 	}
@@ -165,7 +163,7 @@ void PlanetTile::set_parent_position(int x, int z, glm::mat4 transform) {
 					tmp_pos = glm::vec3(transform *  glm::vec4(cx, 0, cz, 1.0));
 					tmp_pos = glm::normalize(tmp_pos);
 					float height = sampler.sample(tmp_pos);
-					parent_position += (4.0f + pow(height, 4) * 0.15f) * tmp_pos;
+					parent_position += (4.0f + height * 0.1f) * tmp_pos;
 			}
 		}
 	}
@@ -198,15 +196,11 @@ void PlanetTile::predraw() {
 		}
 	}
 
-
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
-
 	_shader->use();
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-	//glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 }
 
 void PlanetTile::draw(const Camera & camera, double delta_time)
@@ -227,6 +221,5 @@ void PlanetTile::draw_wireframe(const Camera & camera, double delta_time)
 	}
 
 	predraw();
-
 	_mesh.draw_wireframe(_shader, delta_time);
 }

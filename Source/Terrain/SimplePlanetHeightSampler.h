@@ -13,13 +13,23 @@ public:
 		}
 	}
 	float sample(const glm::vec3 &position) override {
-		float value = 1.0;
+		float i, v = 1.0f;
 		glm::vec3 p(position);
-		for (int i = 1; i < _octaves; ++i) {
-			value += (glm::simplex(p) + _offset) * _exponentials[i];
+		v += (glm::perlin(p) + _offset);
+		p *= _lacunarity;
+		for (i = 1.0f; i <= _octaves; ++i) {
+			v += (glm::abs(glm::perlin(p)) + _offset) * glm::pow(_lacunarity, -_dimensionality * i);
 			p *= _lacunarity;
 		}
-		return 1.0 - glm::abs(value);
+		return pow(v, 2.0f) - 1.5f;
+
+		/*float value = 1.0;
+		glm::vec3 p(position);
+		for (int i = 0; i < _octaves; ++i) {
+			value += (glm::perlin(p) + _offset) * _exponentials[i];
+			p *= _lacunarity;
+		}
+		return value;*/
 	}
 
 private:

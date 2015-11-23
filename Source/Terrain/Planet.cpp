@@ -1,49 +1,40 @@
-#include "Terrain/Planet.h"
-#include "View/Drawable.h"
-#include "Terrain/QuadTree.h"
-#include "Terrain/Skybox.h"
+#include "Planet.h"
+#include "View/Renderer.h"
 #include "View/ShaderStore.h"
 #include "Model/CubeMap.h"
+#include "Terrain/QuadTree.h"
+#include <GLM\gtc\random.hpp>
+#include <GLM\gtx\transform.hpp>
 #include <SOIL/SOIL.h>
-#include <GLM/gtx/transform.hpp>
+#include <iterator>
+#include <algorithm>
+#include <set>
+#include "Noise3D.h"
 
-#ifndef RIGHT_SKYBOX_IMAGE
-#define RIGHT_SKYBOX_IMAGE "Images/skybox_space_right1.png"
-#endif 
-#ifndef LEFT_SKYBOX_IMAGE
-#define LEFT_SKYBOX_IMAGE "Images/skybox_space_left2.png"
-#endif 
-#ifndef TOP_SKYBOX_IMAGE
-#define TOP_SKYBOX_IMAGE "Images/skybox_space_top3.png"
-#endif 
-#ifndef BOTTOM_SKYBOX_IMAGE
-#define BOTTOM_SKYBOX_IMAGE "Images/skybox_space_bottom4.png"
-#endif 
-#ifndef FRONT_SKYBOX_IMAGE
-#define FRONT_SKYBOX_IMAGE "Images/skybox_space_front5.png"
-#endif 
-#ifndef BACK_SKYBOX_IMAGE
-#define BACK_SKYBOX_IMAGE "Images/skybox_space_back6.png"
-#endif
+Planet::Planet(double radius) : Drawable(), _radius(radius) {
+	setup_cube();
+	setup_skybox();
+	create_color_ramp_texture();
+	noise_maker.initialize(std::time(NULL));
+	noise_maker.generate_gradient_texture();
+	noise_maker.generate_permutation_texture();
+	noise_maker.save_textures_to_disk("Images/permutations", "Images/gradients");
+}
 
-Planet::Planet(double radius) : Drawable() {
 
+void Planet::setup_cube() {
+	float scale = (float)_radius;
+	float trans = (float)_radius * 0.5f;
 	_ground_shader = ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH);
-
-	float scale = (float)radius;
-	float trans = (float)radius * 0.5f;
-	//Set up planet "cube"
 	_north = std::make_shared<QuadTree>(glm::mat4(1), glm::translate(glm::vec3(0, trans, 0)), scale, _ground_shader);
 	_south = std::make_shared<QuadTree>(glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, -trans, 0)), scale, _ground_shader);
 	_west = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(-trans, 0, 0)), scale, _ground_shader);
 	_east = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(trans, 0, 0)), scale, _ground_shader);
 	_hither = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, trans)), scale, _ground_shader);
 	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, -trans)), scale, _ground_shader);
+}
 
-	//Set up skybox shader
-	_skybox = std::make_shared<Skybox>(RIGHT_SKYBOX_IMAGE, LEFT_SKYBOX_IMAGE, TOP_SKYBOX_IMAGE, BOTTOM_SKYBOX_IMAGE, FRONT_SKYBOX_IMAGE, BACK_SKYBOX_IMAGE);
-	_skybox->set_shader(ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH));
-
+void Planet::create_color_ramp_texture() {
 	glGenTextures(1, &_color_ramp_id);
 	glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -55,18 +46,40 @@ Planet::Planet(double radius) : Drawable() {
 	if (data != 0) {
 		std::cout << "Loaded color ramp texture. " << std::endl;
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		SOIL_free_image_data(data);
 	}
 	else {
 		std::cout << "Failed to load color ramp texture. " << std::endl;
 	}
 }
 
+void Planet::setup_skybox() {
+	//Set up skybox shader
+	_skybox = std::make_shared<Skybox>("Images/skybox_space_right1.png", 
+		"Images/skybox_space_left2.png", "Images/skybox_space_top3.png", 
+		"Images/skybox_space_bottom4.png", "Images/skybox_space_front5.png", 
+		"Images/skybox_space_back6.png");
+	_skybox->set_shader(ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH));
+}
+
 void Planet::draw(const Camera & camera, double delta_time)
 {
 	_ground_shader->use();
+
+	//Upload textures
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "colorRampTex"), 0);
+
+	//Noise helper
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_1D, noise_maker.get_permutation_texture_id());
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "permutationTex"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_1D, noise_maker.get_gradient_texture_id());
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "gradientTex"), 2);
+
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	_skybox->draw(camera, delta_time);
@@ -76,8 +89,6 @@ void Planet::draw(const Camera & camera, double delta_time)
 	_east->draw(camera, delta_time);
 	_hither->draw(camera, delta_time);
 	_yon->draw(camera, delta_time);
-
-	
 }
 
 void Planet::draw_wireframe(const Camera & camera, double delta_time)

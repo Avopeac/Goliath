@@ -40,6 +40,22 @@ void main()
         tessLevelOuter[1] = 3.0 / (cameraDist[0] + cameraDist[2]);
         tessLevelOuter[2] = 3.0 / (cameraDist[0] + cameraDist[1]);
 
+		if (false && tessLevelOuter[0] > 10.0) {
+			// When closer, use height over ground to get infinizoom
+            vec3 toCamera[3];
+            toCamera[0] = wCameraPos - vPosition[0];
+            toCamera[1] = wCameraPos - vPosition[1];
+            toCamera[2] = wCameraPos - vPosition[2];
+            float cameraHeight[3];
+            cameraHeight[0] = abs(dot(toCamera[0], vNormal[0]));
+            cameraHeight[1] = abs(dot(toCamera[1], vNormal[1]));
+            cameraHeight[2] = abs(dot(toCamera[2], vNormal[2]));
+
+            tessLevelOuter[0] += 1.0 / (cameraHeight[1] + cameraHeight[2]);
+            tessLevelOuter[1] += 1.0 / (cameraHeight[0] + cameraHeight[2]);
+            tessLevelOuter[2] += 1.0 / (cameraHeight[0] + cameraHeight[1]);
+        }
+
         gl_TessLevelOuter[0] = tessLevelOuter[0];
         gl_TessLevelOuter[1] = tessLevelOuter[1];
         gl_TessLevelOuter[2] = tessLevelOuter[2];

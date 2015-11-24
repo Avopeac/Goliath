@@ -12,5 +12,5 @@ uniform mat4 proj;
 void main()
 {
     vPosition = position;
-	vNormal = normal;
+	vNormal = normalize(normal);
 }

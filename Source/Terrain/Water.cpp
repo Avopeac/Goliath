@@ -84,14 +84,12 @@ void Water::_gl_setup() {
 	buffer.resize(3 * (_vertices.size() + _normals.size()));
 
 	for (int i = 0; i < _vertices.size(); ++i) {
-		buffer[i * 3] = _vertices[i].x;
-		buffer[i * 3 + 1] = _vertices[i].y;
-		buffer[i * 3 + 2] = _vertices[i].z;
-	}
-	for (int i = _vertices.size(); i < _vertices.size() + _normals.size(); ++i) {
-		buffer[i * 3] = _normals[i].x;
-		buffer[i * 3 + 1] = _normals[i].y;
-		buffer[i * 3 + 2] = _normals[i].z;
+		buffer[i * 6] = _vertices[i].x;
+		buffer[i * 6 + 1] = _vertices[i].y;
+		buffer[i * 6 + 2] = _vertices[i].z;
+		buffer[i * 6 + 3] = _normals[i].x;
+		buffer[i * 6 + 4] = _normals[i].y;
+		buffer[i * 6 + 5] = _normals[i].z;
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
@@ -99,10 +97,10 @@ void Water::_gl_setup() {
 
 	// Vertices
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
 	// Normals
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), reinterpret_cast<GLvoid *>(3 * sizeof(GLfloat) * _vertices.size()));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), reinterpret_cast<GLvoid *>(3 * sizeof(GLfloat)));
 	// Indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(GLuint), _indices.data(), GL_STATIC_DRAW);

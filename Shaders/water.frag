@@ -7,6 +7,10 @@ in vec3 gTriDistance;
 in vec3 gPatchDistance;
 in float gPrimitive;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 proj;
+
 //uniform vec3 LightPosition;
 //uniform vec3 DiffuseMaterial;
 //uniform vec3 AmbientMaterial;
@@ -31,5 +35,10 @@ void main()
     //float d2 = min(min(gPatchDistance.x, gPatchDistance.y), gPatchDistance.z);
     //color = amplify(d1, 40, -0.5) * amplify(d2, 60, -0.5) * color;
 
-    FragColor = vec4(1.0);
+	vec3 lightDir = normalize(vec3(1.0));
+	vec3 wNormal = normalize(vec3(vec4(gNormal, 1.0) * model));
+
+	float light = 0.3 + max(0.0, dot(lightDir, wNormal));
+
+    FragColor = vec4(light, light, light, 1.0);
 }

@@ -12,10 +12,12 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
 
+uniform float time;
+
 #define M_PI 3.1415926535897932384626433832795
 
 float height(vec2 pos) {
-	return abs(1.0 * pos.y);
+	return 0.1 * sin(10.0 * (time + pos.x + pos.y));
 }
 
 void main()

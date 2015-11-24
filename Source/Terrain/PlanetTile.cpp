@@ -4,8 +4,7 @@
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
 
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0f, 20.0f, 0.7f, 0.0f);
-
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0f, 24.0f, 0.9f, 0.0f);
 
 class PlanetTile::PlanetTileMessage : public Message {
 public:
@@ -61,7 +60,6 @@ void PlanetTile::generate()
 			current.vertex.position = (4.0f + height * 0.1f) * current.vertex.position; //Pow 4 gives us more exaggerations
 			current.vertex.texcoord = { cx + offset, cz + offset };
 			current.vertex.color.r = height;
-			current.vertex.color.b = current.edge ? 1.0 : 0.0;
 			current.own_position = current.vertex.position;
 			vertex_data.push_back(current);
 		}

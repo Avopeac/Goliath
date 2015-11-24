@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Noise3D.h"
 #include "PlanetHeightSampler.h"
 class SimplePlanetHeightSampler : public PlanetHeightSampler {
 public:
@@ -18,18 +19,10 @@ public:
 		v += (glm::perlin(p) + _offset);
 		p *= _lacunarity;
 		for (i = 1.0f; i <= _octaves; ++i) {
-			v += (glm::abs(glm::perlin(p)) + _offset) * glm::pow(_lacunarity, -_dimensionality * i);
+			v += (glm::abs(Noise3D::get_noise(p.x, p.y, p.z) + _offset) * glm::pow(_lacunarity, -_dimensionality * i));
 			p *= _lacunarity;
 		}
-		return pow(v, 2.0f) - 1.5f;
-
-		/*float value = 1.0;
-		glm::vec3 p(position);
-		for (int i = 0; i < _octaves; ++i) {
-			value += (glm::perlin(p) + _offset) * _exponentials[i];
-			p *= _lacunarity;
-		}
-		return value;*/
+		return pow(v, 3.0f) - 1.5f;
 	}
 
 private:

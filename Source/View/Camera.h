@@ -33,7 +33,7 @@ private:
 	double _near, _far;
 	double _time;
 	double _yaw, _pitch, _roll;
-	double _movement_speed = 1.0;
+	double _movement_speed = 25.0;
 	glm::mat4 _view, _perspective;
 	glm::quat _rotation_quat, _next_rotation_quat;
 	glm::vec3 _eye, _base_forward, _base_right, _base_up;

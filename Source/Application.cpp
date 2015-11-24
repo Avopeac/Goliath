@@ -75,12 +75,11 @@ void Application::run() {
 	//Create a renderer
 	Renderer::instance().initialize();
 	//Create planet
-	std::shared_ptr<Planet> planet = std::make_shared<Planet>(4.0f);
+	std::shared_ptr<Planet> planet = std::make_shared<Planet>(2500.0f);
 	//Create camera
-	Camera camera(glm::vec3(0, 0, 13), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.01, 1000.0);
+	Camera camera(glm::vec3(0, 0, 3000), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.01, 10000.0);
 	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);
-
 	//Set viewport settings
 	glViewport(0, 0, width, height);
 	glClearColor(1.0, 1.0, 1.0, 1.0);

@@ -1,8 +1,8 @@
 #pragma once
-#include <GLM\glm.hpp>
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
-#include "..\Model\Vertex.h"
+#include <GLM/glm.hpp>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include "Model/Vertex.h"
 class ScreenQuad {
 public:
 	ScreenQuad() {

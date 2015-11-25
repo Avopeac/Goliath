@@ -3,10 +3,10 @@
 #include "ScreenQuad.h"
 #include "RenderTexture.h"
 #include "PostProcessingNode.h"
+#include "ShaderStore.h"
 class PostProcessing {
 public:
 	PostProcessing() {}
-		
 	~PostProcessing() {
 		_temp_render_texture1.release();
 		_temp_render_texture2.release();
@@ -50,14 +50,14 @@ private:
 	ScreenQuad _quad;
 	RenderTexture _temp_render_texture1;
 	RenderTexture _temp_render_texture2;
-	Shader _plain_texture_shader = Shader("Shaders/plaintextureshader.vert", "Shaders/plaintextureshader.frag");
+	std::shared_ptr<Shader> _plain_texture_shader = ShaderStore::instance().get_shader_from_store(PLAIN_TEXTURE_SHADER_PATH);
 
 	void draw_to_display(RenderTexture &render_texture) {
 		//Draw to display
 		RenderTexture::use(nullptr, &render_texture, nullptr);
-		_plain_texture_shader.use();
+		_plain_texture_shader->use();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUniform1i(glGetUniformLocation(_plain_texture_shader.program, "texUnit"), 0);
+		glUniform1i(glGetUniformLocation(_plain_texture_shader->program, "texUnit"), 0);
 		glBindTexture(GL_TEXTURE_2D, render_texture.color);
 		_quad.draw();
 	}

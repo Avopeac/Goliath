@@ -1,3 +1,3 @@
 #include "RenderTexture.h"
-GLint RenderTexture::last_width = 0;
-GLint RenderTexture::last_height = 0;
+GLint RenderTexture::_last_width = 0;
+GLint RenderTexture::_last_height = 0;

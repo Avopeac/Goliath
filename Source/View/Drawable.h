@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
-#include "..\Model\Shader.h"
-#include "..\Model\Mesh.h"
-#include "..\Model\Material.h"
-#include "..\Model\Lighting.h"
-#include "..\View\Camera.h"
-#include "..\View\ShaderStore.h"
+#include "Model/Shader.h"
+#include "Model/Mesh.h"
+#include "Model/Material.h"
+#include "Model/Lighting.h"
+#include "View/Camera.h"
+#include "View/ShaderStore.h"
 class Drawable {
 public:
 	virtual ~Drawable() = default;

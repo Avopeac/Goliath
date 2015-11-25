@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
-#include <GLFW\glfw3.h>
-#include <GLM\glm.hpp>
-#include <GLM\gtc\quaternion.hpp>
-#include <GLM\gtx\quaternion.hpp>
-#include <GLM\gtc\matrix_transform.hpp>
-#include "..\Drawable\Plane.h"
-#include "..\Model\Vertex.h"
-#include "..\Input\InputEnabled.h"
+#include <GLFW/glfw3.h>
+#include <GLM/glm.hpp>
+#include <GLM/gtc/quaternion.hpp>
+#include <GLM/gtx/quaternion.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
+#include "Drawable/Plane.h"
+#include "Model/Vertex.h"
+#include "Input/InputEnabled.h"
 
 class Camera : public InputEnabled {
 public:

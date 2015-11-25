@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include <iostream>
 #include <AntTweakBar\AntTweakBar.h>
-#include "..\Input\Input.h"
+#include "Input/Input.h"
 
 Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far)
 	: InputEnabled(), _vertical_fov(vertical_fov), _aspect_ratio(aspect_ratio), _near(near), _far(far), _eye(eye) {
@@ -22,10 +22,6 @@ void Camera::update(double delta_time) {
 	_next_rotation_quat = glm::angleAxis((float)_roll, _base_forward);
 	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_yaw, _base_up);
 	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_pitch, _base_right);
-
-
-
-
 
 	//TODO: Apply roll somewhere
 	//The scale on third parameter to SLERP determines speed of interpolation

@@ -36,9 +36,9 @@ void main()
 
 		// Calculate tessellation level based on camera distance.
         float tessLevelOuter[3];
-        tessLevelOuter[0] = 5.0 / (cameraDist[1] + cameraDist[2]);
-        tessLevelOuter[1] = 5.0 / (cameraDist[0] + cameraDist[2]);
-        tessLevelOuter[2] = 5.0 / (cameraDist[0] + cameraDist[1]);
+        tessLevelOuter[0] = 1000.0 / (cameraDist[1] + cameraDist[2]);
+        tessLevelOuter[1] = 1000.0 / (cameraDist[0] + cameraDist[2]);
+        tessLevelOuter[2] = 1000.0 / (cameraDist[0] + cameraDist[1]);
 
 		if (false && tessLevelOuter[0] > 10.0) {
 			// When closer, use height over ground to get infinizoom

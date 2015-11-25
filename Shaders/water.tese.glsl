@@ -132,12 +132,16 @@ float pnoise(vec2 P, vec2 rep)
 }
 
 float height(vec2 pos, float time) {
-	const vec2 anim_vec = vec2(0.03);
-	const float alpha = 0.25;
+	const float angle_offset = M_PI / 3.0;
+	const float anim_speed = 0.05;
+	const float alpha = 0.4;
 	float sum = 0;
+	float angle = 0;
 
-	for (int oct = 1; oct <= 4; ++oct) {
-		pos.x += M_PI / 2.0;
+	for (int oct = 1; oct <= 32; ++oct) {
+		angle += angle_offset;
+        vec2 anim_vec = anim_speed * vec2(cos(angle), sin(angle));
+        pos.x += M_PI / 2.0;
 		sum += pow(alpha, oct) * pnoise(pow(2, oct) * (pos + time * anim_vec), pow(0.5, oct) * vec2(M_PI));
 	}
 
@@ -153,7 +157,7 @@ void main()
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
 
-    tePosition = p0 + p1 + p2;
+    tePosition = normalize(p0 + p1 + p2);
     teNormal = normalize(n0 + n1 + n2);
     tePatchDistance = gl_TessCoord;
 
@@ -168,8 +172,11 @@ void main()
 		sphere_coord.z = atan(tePosition.y / tePosition.x);
 	}
 
-	teDisplacement = height(sphere_coord.yz, globTime);
+	// Displacement should be [0,1], applied to normalized position
+	teDisplacement = 0.1 * height(sphere_coord.yz, globTime);
 	tePosition += teDisplacement * teNormal;
+	// Set proper height
+	tePosition *= length(tcPosition[0]);
 
     gl_Position = proj * view * model * vec4(tePosition, 1.0);
 }

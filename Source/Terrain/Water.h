@@ -14,8 +14,8 @@ public:
 private:
 	class WaterMessage;
 
-	const unsigned int _base_resolution = 64;
-	const float _water_level = 4;
+	const unsigned int _base_resolution = 512;
+	const float _water_level = 2500;
 
 	const glm::mat4 _translation;
 	const glm::mat4 _scale;

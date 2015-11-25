@@ -27,13 +27,13 @@ public:
 	bool edge = false;
 };
 
-PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation)
-	: Drawable(), _translation(translation), _scale(scale), _rotation(rotation) {
+PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii)
+	: Drawable(), _translation(translation), _scale(scale), _rotation(rotation), _radii(radii) {
 	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
 }
 
-PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, std::shared_ptr<Shader> shader)
-	: PlanetTile(translation, scale, rotation) {
+PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii, std::shared_ptr<Shader> shader)
+	: PlanetTile(translation, scale, rotation, radii) {
 	set_shader(shader);
 	_message_ref = MessageSystem::instance().post(std::make_shared<PlanetTileMessage>(this));
 }
@@ -55,10 +55,10 @@ void PlanetTile::generate()
 			current.edge = is_edge(x, z);
 			current.position = glm::dvec3(trans *  glm::dvec4(cx, 0, cz, 1.0));
 			current.position = glm::normalize(current.position);
-			double height = sampler.sample(current.position);
-			current.position = (2500.0 + 20.0 * height) * current.position; //Pow 4 gives us more exaggerations
+			double height = height_scaler(current.position);
+			current.position = height * current.position; //Pow 4 gives us more exaggerations
 			current.uv = { cx + offset, cz + offset };
-			current.color.r = static_cast<float>(height);
+			current.color.r = (height - _radii) * 0.05;
 			vertex_data.push_back(current);
 
 			//Find max points
@@ -161,8 +161,7 @@ void PlanetTile::set_parent_position(int x, int z, const glm::dmat4 &transform) 
 				glm::dvec3 tmp_pos;
 				tmp_pos = glm::vec3(transform *  glm::dvec4(cx, 0, cz, 1.0));
 				tmp_pos = glm::normalize(tmp_pos);
-				double height = sampler.sample(tmp_pos);
-				parent_position += (2500.0 + height * 2.0) * tmp_pos;
+				parent_position += height_scaler(tmp_pos) * tmp_pos;
 			}
 		}
 	}

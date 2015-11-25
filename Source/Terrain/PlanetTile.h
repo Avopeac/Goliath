@@ -5,8 +5,8 @@
 #include "..\Terrain\SimplePlanetHeightSampler.h"
 class PlanetTile : public Drawable {
 public:
-	PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation);
-	PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, std::shared_ptr<Shader> shader);
+	PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii);
+	PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii, std::shared_ptr<Shader> shader);
 	PlanetTile(const PlanetTile&) = delete;
 
 	void generate();
@@ -33,6 +33,7 @@ private:
 	glm::dmat4 _translation;
 	glm::dmat4 _scale;
 	glm::dmat4 _rotation;
+	double _radii;
 	
 	void predraw(const Camera &camera);
 	bool is_edge(int x, int z);
@@ -40,4 +41,5 @@ private:
 	static SimplePlanetHeightSampler sampler;
 	
 	void set_parent_position(int x, int z, const glm::dmat4 &transform);
+	inline double height_scaler(const glm::dvec3 &pos) { return _radii + sampler.sample(pos) * 20.0; }
 };

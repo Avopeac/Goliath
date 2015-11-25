@@ -3,7 +3,7 @@
 
 class Water : public Drawable {
 public:
-	Water(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation);
+	Water(float radius, const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation);
 
 	Water() = delete;
 	Water(const Water&) = delete;
@@ -15,7 +15,7 @@ private:
 	class WaterMessage;
 
 	const unsigned int _base_resolution = 512;
-	const float _water_level = 2500;
+	float _water_level;
 
 	const glm::mat4 _translation;
 	const glm::mat4 _scale;

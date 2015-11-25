@@ -1,13 +1,13 @@
 #include "Plane.h"
 
-Plane::Plane(const glm::dvec3 & normal, const glm::dvec3 & point) {
+Plane::Plane(const glm::dvec3 &normal, const glm::dvec3 &point) {
 	x = normal.x;
 	y = normal.y;
 	z = normal.z;
 	d = -glm::dot(normal, point);
 }
 
-Plane::Plane(const glm::dvec3 & p1, const glm::dvec3 & p2, const glm::dvec3 & p3) {
+Plane::Plane(const glm::dvec3 &p1, const glm::dvec3 &p2, const glm::dvec3 &p3) {
 	glm::dvec3 v1 = p2 - p1;
 	glm::dvec3 v2 = p3 - p1;
 	glm::dvec3 normal = glm::normalize(glm::cross(v1, v2));

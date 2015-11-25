@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include <array>
-#include <SOIL\soil.h>
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
+#include <SOIL/soil.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #ifndef CUBEMAP_FACES
 #define CUBEMAP_FACES 6
 #endif
@@ -24,7 +24,7 @@ public:
 		for (int i = 0; i < cubemap_images.size(); ++i) {
 			data = SOIL_load_image(cubemap_images[i], &width, &height, &channels, SOIL_LOAD_RGB);
 			if (data == 0) {
-				std::cout << "Error loading cubemap image with name \"" << cubemap_images[i] << "\". Please check filename. " << std::endl;
+				std::cerr << "Error loading cubemap image with name \"" << cubemap_images[i] << "\". Please check filename. " << std::endl;
 			} else {
 				std::cout << "Loaded cubemap image with name \"" << cubemap_images[i] << "\"." << std::endl;
 			}

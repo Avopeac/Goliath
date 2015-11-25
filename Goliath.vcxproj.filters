@@ -51,9 +51,6 @@
     <ClCompile Include="Source\Model\Shader.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Model\Texture.cpp">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Input\Input.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -102,9 +99,6 @@
       <Filter>Source Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\Model\Shader.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Model\Texture.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="Source\Model\Vertex.h">

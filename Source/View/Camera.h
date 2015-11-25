@@ -14,11 +14,13 @@ public:
 	Camera(const glm::dvec3 &eye, const glm::dvec3 &center, const glm::dvec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far);
 
 	//Get double precision view data
+	const glm::dmat4 &get_dview_proj() const { return _view_proj; }
 	const glm::dmat4 &get_dprojection() const { return _projection; }
 	const glm::dmat4 &get_dview() const { return _view; }
 	const glm::dvec3 &get_deye() const { return _eye; }
 
 	//Get float precision view data
+	const glm::mat4 get_fview_proj() const { return glm::mat4(_view_proj); }
 	const glm::mat4 get_fprojection() const { return glm::mat4(_projection); }
 	const glm::mat4 get_fview() const { return glm::mat4(_view); }
 	const glm::vec3 get_feye() const { return glm::vec3(_eye); }
@@ -60,6 +62,7 @@ private:
 	double _movement_speed = 200.0;
 
 	//View data
+	glm::dmat4 _view_proj;
 	glm::dmat4 _view;
 	glm::dmat4 _projection;
 	glm::dvec3 _eye;

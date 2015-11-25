@@ -2,9 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <GL\glew.h>
-#include <GL\GL.h>
-#include <GLFW\glfw3.h>
+#include <GL/glew.h>
+#include <GL/GL.h>
+#include <GLFW/glfw3.h>
 #include "Shader.h"
 
 unsigned int Shader::_log_size = 512;
@@ -30,7 +30,7 @@ Shader::Shader(const GLchar * vertex_path, const GLchar * fragment_path) {
 		fragment_code = fss.str();
 	}
 	catch (std::ifstream::failure e) {
-		std::cout << "Application failed to read shader file. " << std::endl;
+		std::cerr << "Application failed to read shader file. " << std::endl;
 	}
 	//Send the read shader code to compilation step
 	compile_shader(vertex_path, fragment_path, vertex_code.c_str(), fragment_code.c_str());
@@ -77,7 +77,7 @@ Shader::Shader(const GLchar* vertex_path, const GLchar* fragment_path, const GLc
 		tess_eval_code = tess.str();
 	}
 	catch (std::ifstream::failure e) {
-		std::cout << "Application failed to read shader file. " << std::endl;
+		std::cerr << "Application failed to read shader file. " << std::endl;
 	}
 	//Send the read shader code to compilation step
 	compile_shader(vertex_path, fragment_path,  geometry_path, tess_ctrl_path, tess_eval_path, vertex_code.c_str(), fragment_code.c_str(), geometry_code.c_str(), tess_ctrl_code.c_str(), tess_eval_code.c_str());
@@ -98,7 +98,7 @@ void Shader::compile_shader(const GLchar *vert, const GLchar *frag, const GLchar
 	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(vertex, _log_size, nullptr, log);
-		std::cout << "Application failed to compile vertex shader with name \"" << vert << "\". " << std::endl;
+		std::cerr << "Application failed to compile vertex shader with name \"" << vert << "\". " << std::endl;
 	}
 	//Create fragment shader
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -107,7 +107,7 @@ void Shader::compile_shader(const GLchar *vert, const GLchar *frag, const GLchar
 	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(fragment, _log_size, nullptr, log);
-		std::cout << "Application failed to compile fragment shader with name \"" << frag << "\". " << std::endl;
+		std::cerr << "Application failed to compile fragment shader with name \"" << frag << "\". " << std::endl;
 	}
 	//Create tessellation control shader
 	if (geometry_code != nullptr) {
@@ -117,7 +117,7 @@ void Shader::compile_shader(const GLchar *vert, const GLchar *frag, const GLchar
 		glGetShaderiv(geometry, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(geometry, _log_size, nullptr, log);
-			std::cout << "Application failed to compile geometry shader with name \"" << geom << "\". " << std::endl;
+			std::cerr << "Application failed to compile geometry shader with name \"" << geom << "\". " << std::endl;
 		}
 	}
 	//Create tessellation control shader
@@ -128,7 +128,7 @@ void Shader::compile_shader(const GLchar *vert, const GLchar *frag, const GLchar
 		glGetShaderiv(tess_ctrl, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(tess_ctrl, _log_size, nullptr, log);
-			std::cout << "Application failed to compile tessellation control shader with name \"" << tess_c << "\". " << std::endl;
+			std::cerr << "Application failed to compile tessellation control shader with name \"" << tess_c << "\". " << std::endl;
 		}
 	}
 	//Create tessellation evaluation shader
@@ -139,7 +139,7 @@ void Shader::compile_shader(const GLchar *vert, const GLchar *frag, const GLchar
 		glGetShaderiv(tess_eval, GL_COMPILE_STATUS, &success);
 		if (!success) {
 			glGetShaderInfoLog(tess_eval, _log_size, nullptr, log);
-			std::cout << "Application failed to compile tessellation evaluation shader with name \"" << tess_e << "\". " << std::endl;
+			std::cerr << "Application failed to compile tessellation evaluation shader with name \"" << tess_e << "\". " << std::endl;
 		}
 	}
 	//Linked the shaders and create program
@@ -159,7 +159,7 @@ void Shader::compile_shader(const GLchar *vert, const GLchar *frag, const GLchar
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(program, _log_size, nullptr, log);
-		std::cout << "Application failed to link shaders and create program. " << std::endl;
+		std::cerr << "Application failed to link shaders and create program. " << std::endl;
 	}
 	//Clean up
 	delete log;

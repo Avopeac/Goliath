@@ -32,6 +32,7 @@ void Camera::update(double delta_time) {
 	_next_up = glm::rotate(_rotation_quat, _base_up);
 	//Multiply rotation and translation matrices to get view matrix, keeping to quaternions to avoid Gimbal locking
 	_view = glm::lookAt(_eye, _eye + _next_forward, _next_up);
+	_view_proj = _projection * _view;
 
 	if (_update_frustum) { build_frustum(); }
 

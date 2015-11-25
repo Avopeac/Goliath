@@ -8,11 +8,9 @@ Mesh::Mesh() {
 	glGenBuffers(1, &_EBO);
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures)
-	: Mesh() {
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) : Mesh() {
 	this->vertices = vertices;
 	this->indices = indices;
-	this->textures = textures;
 }
 
 void Mesh::setup_mesh() {
@@ -49,26 +47,6 @@ void Mesh::update_vertices() {
 }
 
 void Mesh::draw(std::shared_ptr<Shader> shader, double delta_time) {
-	GLuint diffuse_nr = 1;
-	GLuint specular_nr = 1;
-	//Set textures to texture units
-	for (GLuint i = 0; i < textures.size(); ++i) {
-		std::stringstream ss;
-		std::string number;
-		std::string name = textures[i]._type;
-		if (name == Texture::_diffuse_id) {
-			ss << diffuse_nr++;
-		}
-		else if (name == Texture::_specular_id) {
-			ss << specular_nr++;
-		}
-		number = ss.str();
-		std::string uniform = name + number;
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, textures[i]._id);
-		glUniform1i(glGetUniformLocation(shader->program, uniform.c_str()), i);
-	}
-	//Reset active texture unit
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(_VAO);
 	//Draw with index list

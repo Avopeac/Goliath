@@ -4,7 +4,7 @@
 #include "PlanetHeightSampler.h"
 class SimplePlanetHeightSampler : public PlanetHeightSampler {
 public:
-	SimplePlanetHeightSampler(float lacunarity, float octaves, float dimensionality, float offset) 
+	SimplePlanetHeightSampler(double lacunarity, double octaves, double dimensionality, double offset)
 		: PlanetHeightSampler(), _offset(offset){
 		set_lacunarity(lacunarity);
 		set_dimensionality(dimensionality);
@@ -13,19 +13,19 @@ public:
 			_exponentials.push_back(glm::pow(_lacunarity, -_dimensionality * i));
 		}
 	}
-	float sample(const glm::vec3 &position) override {
-		float i, v = 1.0f;
-		glm::vec3 p(position);
+	double sample(const glm::dvec3 &position) override {
+		double i, v = 1.0;
+		glm::dvec3 p(position);
 		v += (glm::perlin(p) + _offset);
 		p *= _lacunarity;
-		for (i = 1.0f; i <= _octaves; ++i) {
+		for (i = 1.0; i <= _octaves; ++i) {
 			v += (glm::abs(Noise3D::get_noise(p.x, p.y, p.z) + _offset) * glm::pow(_lacunarity, -_dimensionality * i));
 			p *= _lacunarity;
 		}
-		return pow(v, 3.0f) - 1.5f;
+		return pow(v, 3.0) - 1.5;
 	}
 
 private:
-	std::vector<float> _exponentials;
-	float _offset;
+	std::vector<double> _exponentials;
+	double _offset;
 };

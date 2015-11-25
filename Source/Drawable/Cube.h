@@ -1,5 +1,5 @@
 #pragma once
-#include "..\View\Drawable.h"
+#include "View/Drawable.h"
 class Cube : public Drawable {
 public:
 	Cube() : Drawable() {

@@ -1,8 +1,8 @@
 #pragma once
 #include "PlanetTile.h"
-#include "..\View\Drawable.h"
 #include <memory>
 #include <GLM\glm.hpp>
+#include "View/Drawable.h"
 
 class QuadTree : public Drawable {
 public:
@@ -19,7 +19,7 @@ public:
 	virtual void draw(const Camera & camera, double delta_time) override;
 	virtual void draw_wireframe(const Camera &camera, double delta_time) override;
 
-	bool setup_done() const { return _has_patch && _patch->setup_done(); }
+	bool setup_done() const { return _patch->setup_done(); }
 	
 private:
 	void subdivide();
@@ -27,28 +27,33 @@ private:
 	double compute_level_metric(const Camera & camera, double distance);
 	double distance_nearest_corner(const Camera & camera);
 	double distance_to_patch(const Camera &camera, glm::dvec3 mid_point);
-	// Threshold for LOD error metric
-	const double _TAU = 0.0;
-	// The deepest level we're allowed to go in the quadtree
-	const unsigned int _DEEPEST_LEVEL = 20;
+	
 	//The axis aligned bounding box
 	glm::dmat4 _translation;
 	glm::dmat4 _rotation;
 	double _extents; // Needs default ?
+	
 	//The current recursion level
 	unsigned int _level = 0;
-	bool _has_children = false;
-	bool _has_patch = false;
+	// The deepest level we're allowed to go in the quadtree
+	const unsigned int _deepest_level = 20;
+	// Threshold for LOD error metric
+	const double _tau = 0.0;
+
 	//The parent quad tree
 	QuadTree *_parent = nullptr;
+
 	//The object contained in a leaf of the quad tree
 	std::shared_ptr<PlanetTile> _patch = nullptr;
+
 	//The child quad trees
+	bool _has_children = false;
 	std::shared_ptr<QuadTree> _northwest = nullptr;
 	std::shared_ptr<QuadTree> _northeast = nullptr;
 	std::shared_ptr<QuadTree> _southwest = nullptr;
 	std::shared_ptr<QuadTree> _southeast = nullptr;
 
+	//Morphing
 	double _morph_value = 0;
 	bool dont_morph = false;
 };

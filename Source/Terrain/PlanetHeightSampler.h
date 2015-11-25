@@ -3,13 +3,13 @@
 class PlanetHeightSampler {
 public:
 	virtual ~PlanetHeightSampler() {}
-	virtual float sample(const glm::vec3 &position) = 0;
-	virtual void set_lacunarity(float lacunarity) { _lacunarity = lacunarity; }
-	virtual void set_dimensionality(float dimensionality) { _dimensionality = dimensionality; }
-	virtual void set_octaves(float octaves) { _octaves = octaves; }
+	virtual double sample(const glm::dvec3 &position) = 0;
+	virtual void set_lacunarity(double lacunarity) { _lacunarity = lacunarity; }
+	virtual void set_dimensionality(double dimensionality) { _dimensionality = dimensionality; }
+	virtual void set_octaves(double octaves) { _octaves = octaves; }
 protected:
 	PlanetHeightSampler() {}
-	float _octaves = 0;
-	float _lacunarity = 0;
-	float _dimensionality = 0;
+	double _octaves = 0;
+	double _lacunarity = 0;
+	double _dimensionality = 0;
 };

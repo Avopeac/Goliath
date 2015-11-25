@@ -1,7 +1,7 @@
 #pragma once
 //#include <string>
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #ifndef PERMUTATION_NUMBER 
 #define PERMUTATION_NUMBER 512
 #endif
@@ -16,9 +16,9 @@ public:
 	Noise3D() {}
 	~Noise3D() {}
 	void initialize();
-	static inline float get_noise(float x, float y, float z) {
+	static inline double get_noise(double x, double y, double z) {
 		int i, j, k;
-		float u, v, w;
+		double u, v, w;
 		//Get lattice points
 		i = fast_floor(x);
 		j = fast_floor(y);
@@ -41,26 +41,26 @@ public:
 		int g110 = _permutations[i + 1 + _permutations[j + 1 + _permutations[k]]] % GRADIENT_NUMBER;
 		int g111 = _permutations[i + 1 + _permutations[j + 1 + _permutations[k + 1]]] % GRADIENT_NUMBER;
 		//Get noise contributions from each corner
-		float n000 = dot(_gradients[g000], u, v, w);
-		float n100 = dot(_gradients[g100], u - 1.0f, v, w);
-		float n010 = dot(_gradients[g010], u, v - 1.0f, w);
-		float n110 = dot(_gradients[g110], u - 1.0f, v - 1.0f, w);
-		float n001 = dot(_gradients[g001], u, v, w - 1.0f);
-		float n101 = dot(_gradients[g101], u - 1.0f, v, w - 1.0f);
-		float n011 = dot(_gradients[g011], u, v - 1.0f, w - 1.0f);
-		float n111 = dot(_gradients[g111], u - 1.0f, v - 1.0f, w - 1.0f);
+		double n000 = dot(_gradients[g000], u, v, w);
+		double n100 = dot(_gradients[g100], u - 1.0, v, w);
+		double n010 = dot(_gradients[g010], u, v - 1.0, w);
+		double n110 = dot(_gradients[g110], u - 1.0, v - 1.0, w);
+		double n001 = dot(_gradients[g001], u, v, w - 1.0);
+		double n101 = dot(_gradients[g101], u - 1.0, v, w - 1.0);
+		double n011 = dot(_gradients[g011], u, v - 1.0, w - 1.0);
+		double n111 = dot(_gradients[g111], u - 1.0, v - 1.0, w - 1.0);
 		//Get quintic curve values
 		u = quintic(u);
 		v = quintic(v);
 		w = quintic(w);
 		//Interpolate along x-axis
-		float nx00 = mix(n000, n100, u);
-		float nx01 = mix(n001, n101, u);
-		float nx10 = mix(n010, n110, u);
-		float nx11 = mix(n011, n111, u);
+		double nx00 = mix(n000, n100, u);
+		double nx01 = mix(n001, n101, u);
+		double nx10 = mix(n010, n110, u);
+		double nx11 = mix(n011, n111, u);
 		//Interpolate along y-axis
-		float nxy0 = mix(nx00, nx10, v);
-		float nxy1 = mix(nx01, nx11, v);
+		double nxy0 = mix(nx00, nx10, v);
+		double nxy1 = mix(nx01, nx11, v);
 		//Interpolate along z-axis
 		return mix(nxy0, nxy1, w);
 	};
@@ -76,8 +76,8 @@ private:
 	//Texture id's for GPU noise
 	GLuint _p_tex_id, _g_tex_id;
 	//Helper functions for CPU noise
-	static inline int fast_floor(float f) { return f > 0 ? (int)f : (int)f - 1; }
-	static inline float dot(const int g[], float x, float y, float z) { return g[0] * x + g[1] * y + g[2] * z; }
-	static inline float mix(float a, float b, float t) { return a * (1.0f - t) + b * t; }
-	static inline float quintic(float x) { return x * x * x * (x * (x * 6.0f - 15.0f) + 10.0f); }
+	static inline int fast_floor(double f) { return f > 0 ? (int)f : (int)f - 1; }
+	static inline double dot(const int g[], double x, double y, double z) { return g[0] * x + g[1] * y + g[2] * z; }
+	static inline double mix(double a, double b, double t) { return a * (1.0 - t) + b * t; }
+	static inline double quintic(double x) { return x * x * x * (x * (x * 6.0 - 15.0) + 10.0); }
 };

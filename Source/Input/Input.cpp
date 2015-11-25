@@ -1,7 +1,7 @@
 #include "Input.h"
 #include <iostream>
 #include <GLM\glm.hpp>
-#include "AntTweakBar\AntTweakBar.h"
+#include "AntTweakBar/AntTweakBar.h"
 
 Input::Input(GLFWwindow *window, std::string tweak_bar_name) {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

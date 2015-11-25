@@ -25,6 +25,7 @@ void main()
 	gNormal = teNormal[0];
     gPatchDistance = tePatchDistance[0];
     gTriDistance = vec3(1, 0, 0);
+
     gl_Position = gl_in[0].gl_Position; EmitVertex();
 
 	gDisplacement = teDisplacement[1];

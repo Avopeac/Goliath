@@ -137,8 +137,7 @@ float height(vec3 pos, float time) {
 		angle += angle_offset;
         vec3 anim_vec = anim_speed * vec3(cos(angle), sin(angle), tan(angle));
         pos.x += M_PI / 2.0;
-		sum += pow(alpha, oct) * //(sin(pow(2, oct) * anim_speed * time + sin(angle_offset) * pos.x + cos(angle_offset) * pos.y + tan(angle_offset) * pos.z));
-			cnoise(pow(2, oct) * (freq_scale * pos + time * anim_vec));
+		sum += pow(alpha, oct) * cnoise(pow(2, oct) * (freq_scale * pos + time * anim_vec));
 	}
 
 	return sum;
@@ -163,5 +162,9 @@ void main()
 	// Set proper height
 	tePosition *= length(tcPosition[0]);
 
-    gl_Position = proj * view * model * vec4(tePosition, 1.0);
+	vec4 viewPos = view * model * vec4(tePosition, 1.0);
+	float far = 10000.0;
+	float c = 1.01 - clamp(length(-viewPos.z), 0, 1);
+    gl_Position = proj * viewPos;
+	gl_Position.z = (2.0 * log(c * gl_Position.w + 1.0) / log(c * far +  1) - 1) * gl_Position.w;
 }

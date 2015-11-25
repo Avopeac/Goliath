@@ -15,15 +15,15 @@ Planet::Planet(double radius) : Drawable(), _radius(radius) {
 }
 
 void Planet::setup_cube() {
-	float scale = (float)_radius;
-	float trans = (float)_radius * 0.5f;
+	double scale = _radius;
+	double trans = _radius * 0.5;
 	_ground_shader = ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH);
-	_north = std::make_shared<QuadTree>(glm::mat4(1), glm::translate(glm::vec3(0, trans, 0)), scale, _ground_shader);
-	_south = std::make_shared<QuadTree>(glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(0, -trans, 0)), scale, _ground_shader);
-	_west = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(-trans, 0, 0)), scale, _ground_shader);
-	_east = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::translate(glm::vec3(trans, 0, 0)), scale, _ground_shader);
-	_hither = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, trans)), scale, _ground_shader);
-	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::translate(glm::vec3(0, 0, -trans)), scale, _ground_shader);
+	_north = std::make_shared<QuadTree>(glm::dmat4(1), glm::translate(glm::dvec3(0, trans, 0)), scale, _ground_shader);
+	_south = std::make_shared<QuadTree>(glm::rotate(glm::pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(0, -trans, 0)), scale, _ground_shader);
+	_west = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(-trans, 0, 0)), scale, _ground_shader);
+	_east = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(trans, 0, 0)), scale, _ground_shader);
+	_hither = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<double>(), glm::dvec3(1, 0, 0)), glm::translate(glm::dvec3(0, 0, trans)), scale, _ground_shader);
+	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(1, 0, 0)), glm::translate(glm::dvec3(0, 0, -trans)), scale, _ground_shader);
 }
 
 void Planet::create_color_ramp_texture() {
@@ -69,8 +69,9 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	glBindTexture(GL_TEXTURE_1D, noise_maker.get_gradient_texture_id());
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "gradientTex"), 2);
 	//Upload uniforms
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+	
+	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
+	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
 	_skybox->draw(camera, delta_time);
 	_north->draw(camera, delta_time);
 	_south->draw(camera, delta_time);
@@ -83,8 +84,8 @@ void Planet::draw(const Camera & camera, double delta_time) {
 void Planet::draw_wireframe(const Camera & camera, double delta_time)
 {
 	_ground_shader->use();
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
+	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
 	_skybox->draw(camera, delta_time);
 	_north->draw(camera, delta_time);
 	_south->draw(camera, delta_time);

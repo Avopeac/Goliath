@@ -23,6 +23,7 @@ void main()
 	ourNormal = normalize(normal);
     ourUv = uv;
 	ourColor = color;
+	
 	float far =	10000.0;
 	float c = 1.01 - clamp(length(-ourPosition.z), 0, 1);
     gl_Position = mvp * vec4(position, 1);

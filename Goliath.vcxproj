@@ -162,7 +162,6 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Drawable\Plane.cpp" />
-    <ClCompile Include="Source\Drawable\Sphere.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Model\Mesh.cpp" />
@@ -172,7 +171,6 @@
     <ClCompile Include="Source\Terrain\Planet.cpp" />
     <ClCompile Include="Source\Terrain\PlanetTile.cpp" />
     <ClCompile Include="Source\Terrain\QuadTree.cpp" />
-    <ClCompile Include="Source\Terrain\Tile.cpp" />
     <ClCompile Include="Source\Terrain\Water.cpp" />
     <ClCompile Include="Source\Thread\MessageSystem.cpp" />
     <ClCompile Include="Source\View\Camera.cpp" />
@@ -185,12 +183,9 @@
     <ClInclude Include="Source\Drawable\Cube.h" />
     <ClInclude Include="Source\Drawable\Plane.h" />
     <ClInclude Include="Source\Drawable\Primitive.h" />
-    <ClInclude Include="Source\Drawable\Sphere.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Input\InputEnabled.h" />
     <ClInclude Include="Source\Model\CubeMap.h" />
-    <ClInclude Include="Source\Model\Lighting.h" />
-    <ClInclude Include="Source\Model\Material.h" />
     <ClInclude Include="Source\Model\Mesh.h" />
     <ClInclude Include="Source\Model\Shader.h" />
     <ClInclude Include="Source\Model\Texture.h" />
@@ -202,11 +197,9 @@
     <ClInclude Include="Source\Terrain\QuadTree.h" />
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h" />
     <ClInclude Include="Source\Terrain\Skybox.h" />
-    <ClInclude Include="Source\Terrain\Tile.h" />
     <ClInclude Include="Source\Terrain\Water.h" />
     <ClInclude Include="Source\Thread\Message.h" />
     <ClInclude Include="Source\Thread\MessageSystem.h" />
-    <ClInclude Include="Source\View\AtmosphereNode.h" />
     <ClInclude Include="Source\View\BloomNode.h" />
     <ClInclude Include="Source\View\Camera.h" />
     <ClInclude Include="Source\View\Drawable.h" />

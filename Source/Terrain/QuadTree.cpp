@@ -10,14 +10,14 @@ QuadTree::QuadTree(): Drawable() {
 	_has_patch = true; // TODO: Remove ?
 }
 
-QuadTree::QuadTree(const glm::mat4& rotation, const glm::mat4& translation, float extents)
+QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents)
 	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents) {
 	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
 	create_patch();
 	_has_patch = true;
 }
 
-QuadTree::QuadTree(const glm::mat4& rotation, const glm::mat4& translation, float extents, std::shared_ptr<Shader> shader)
+QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, std::shared_ptr<Shader> shader)
 	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents) {
 	set_shader(shader);
 	create_patch();
@@ -32,8 +32,8 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 
 	// Check if we have to draw this patch
 	// TODO Calculate this without generated mesh if possible ?
-	glm::vec3 mid_point = _patch->_mesh.vertices[_patch->_mesh.vertices.size() / 2].position;
-	glm::vec3 scale = glm::vec3(_extents, _extents, _extents);
+	glm::dvec3 mid_point = _patch->mesh.vertices[_patch->mesh.vertices.size() / 2].position;
+	glm::dvec3 scale = glm::vec3(_extents, _extents, _extents);
 	if (!camera.intersects_box(mid_point, scale)) {
 		return;
 	}
@@ -80,11 +80,11 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 }
 
 double QuadTree::distance_nearest_corner(const Camera &camera) {
-	return glm::abs(glm::dot((glm::vec3(_translation[3]) - camera.get_eye()), -glm::vec3(camera.get_view()[2])) - _extents);
+	return glm::abs(glm::dot((glm::dvec3(_translation[3]) - camera.get_deye()), -glm::dvec3(camera.get_dview()[2])) - _extents);
 }
 
-double QuadTree::distance_to_patch(const Camera &camera, glm::vec3 mid_point) {
-	return glm::max(0.0f, glm::distance(mid_point, camera.get_eye()));
+double QuadTree::distance_to_patch(const Camera &camera, glm::dvec3 mid_point) {
+	return glm::max(0.0, glm::distance(mid_point, camera.get_deye()));
 }
 
 void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
@@ -96,27 +96,19 @@ void QuadTree::create_patch() {
 	_patch = std::make_shared<PlanetTile>(_translation, glm::scale(glm::vec3(_extents)), _rotation, _shader);
 }
 
-
-int clevel = 0;
 double QuadTree::compute_level_metric(const Camera &camera, double distance) {
-	//double omega = 2.0 * distance * glm::tan(glm::radians(camera.get_horizontal_fov()) * 0.5);
-	//double epsilon = 0.001f;
-	//double rho = epsilon * Application::width / omega;
-
-	float K = 4.0f; // increase this for higher detail
-	float lol_metric = distance - K*_extents;
-	
-	return lol_metric;
+	double K = 4.0; // increase this for higher detail
+	return distance - K*_extents;
 }
 
 void QuadTree::subdivide() {
-	float scale = _extents * 0.5f;
-	float offset = _extents * 0.25f;
-	glm::vec3 nw_rotated_offset = glm::vec3(_rotation * glm::vec4(glm::vec3(offset, 0, -offset), 1.0f));
-	glm::vec3 ne_rotated_offset = glm::vec3(_rotation * glm::vec4(glm::vec3(-offset, 0, -offset), 1.0f));
-	glm::vec3 sw_rotated_offset = glm::vec3(_rotation * glm::vec4(glm::vec3(offset, 0, offset), 1.0f));
-	glm::vec3 se_rotated_offset = glm::vec3(_rotation * glm::vec4(glm::vec3(-offset, 0, offset), 1.0f));
-	glm::vec3 origin = glm::vec3(_translation[3]);
+	double scale = _extents * 0.5;
+	double offset = _extents * 0.25;
+	glm::dvec3 nw_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(offset, 0, -offset), 1.0));
+	glm::dvec3 ne_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(-offset, 0, -offset), 1.0));
+	glm::dvec3 sw_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(offset, 0, offset), 1.0));
+	glm::dvec3 se_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(-offset, 0, offset), 1.0));
+	glm::dvec3 origin = glm::dvec3(_translation[3]);
 	//Create 4 sub-quadtrees, pass on shaders
 	_northwest = std::make_shared<QuadTree>(_rotation, glm::translate(origin + nw_rotated_offset), scale, _shader);
 	_northwest->_level = _level + 1;

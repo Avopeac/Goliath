@@ -27,5 +27,5 @@ private:
 	void setup_skybox();
 	void create_color_ramp_texture();
 	GLuint _color_ramp_id;
-	float _radius;
+	double _radius;
 };

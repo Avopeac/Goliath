@@ -7,14 +7,13 @@
 class QuadTree : public Drawable {
 public:
 	QuadTree();
-	QuadTree(const glm::mat4& rotation, const glm::mat4& translation, float extents);
-	QuadTree(const glm::mat4& rotation, const glm::mat4& translation, float extents, std::shared_ptr<Shader> shader);
-
+	QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents);
+	QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, std::shared_ptr<Shader> shader);
 	QuadTree(const QuadTree&) = delete;
 
-	void set_rotation(const glm::mat4 &rotation) { _rotation = rotation; }
-	void set_translation(const glm::mat4 &translation) { _translation = translation; }
-	void set_extents(float extents) { _extents = extents; }
+	void set_rotation(const glm::dmat4 &rotation) { _rotation = rotation; }
+	void set_translation(const glm::dmat4 &translation) { _translation = translation; }
+	void set_extents(double extents) { _extents = extents; }
 
 	// Inherited via Drawable
 	virtual void draw(const Camera & camera, double delta_time) override;
@@ -27,20 +26,19 @@ private:
 	void create_patch();
 	double compute_level_metric(const Camera & camera, double distance);
 	double distance_nearest_corner(const Camera & camera);
-	double distance_to_patch(const Camera & camera, glm::vec3 mid_point);
+	double distance_to_patch(const Camera &camera, glm::dvec3 mid_point);
 	// Threshold for LOD error metric
-	const float _TAU = 0.0;
+	const double _TAU = 0.0;
 	// The deepest level we're allowed to go in the quadtree
-	const int _DEEPEST_LEVEL = 20;
+	const unsigned int _DEEPEST_LEVEL = 20;
 	//The axis aligned bounding box
-	glm::mat4 _translation;
-	glm::mat4 _rotation;
-	float _extents; // Needs default ?
+	glm::dmat4 _translation;
+	glm::dmat4 _rotation;
+	double _extents; // Needs default ?
 	//The current recursion level
 	unsigned int _level = 0;
 	bool _has_children = false;
 	bool _has_patch = false;
-	double _screen_space_error = 0.05f;
 	//The parent quad tree
 	QuadTree *_parent = nullptr;
 	//The object contained in a leaf of the quad tree
@@ -51,6 +49,6 @@ private:
 	std::shared_ptr<QuadTree> _southwest = nullptr;
 	std::shared_ptr<QuadTree> _southeast = nullptr;
 
-	float _morph_value = 0;
+	double _morph_value = 0;
 	bool dont_morph = false;
 };

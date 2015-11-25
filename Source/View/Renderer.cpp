@@ -2,7 +2,6 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include <AntTweakBar/AntTweakBar.h>
-#include "AtmosphereNode.h"
 #include "BloomNode.h"
 #include "GammaToneMapNode.h"
 

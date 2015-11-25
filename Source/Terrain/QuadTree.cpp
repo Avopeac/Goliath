@@ -43,20 +43,19 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	if (rho >= _TAU || _level > _DEEPEST_LEVEL) {
 		// morph stuff
 
-		if (!dont_morph) {
+		/*if (!dont_morph) {
 				_morph_value += delta_time / 0.5f;
 			_morph_value = glm::min(1.0f, _morph_value);
 			_patch->morph_vertices(_morph_value);
 		}
 		if (_morph_value == 1.0f) {
 			dont_morph = true;
-		}
-
+		}*/
 
 		_patch->draw(camera, delta_time);
 	}
 	else {
-		dont_morph = false;
+		//dont_morph = false;
 
 		// If we already have created the childs then just draw them
 		if (_has_children) {
@@ -85,8 +84,7 @@ double QuadTree::distance_nearest_corner(const Camera &camera) {
 }
 
 double QuadTree::distance_to_patch(const Camera &camera, glm::vec3 mid_point) {
-	//glm::vec3 midPoint = _patch->_mesh.vertices[_patch->_mesh.vertices.size() / 2].position;
-	return glm::max(0.0f, glm::distance(mid_point, camera.get_eye()) - _extents);
+	return glm::max(0.0f, glm::distance(mid_point, camera.get_eye()));
 }
 
 void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
@@ -98,12 +96,16 @@ void QuadTree::create_patch() {
 	_patch = std::make_shared<PlanetTile>(_translation, glm::scale(glm::vec3(_extents)), _rotation, _shader);
 }
 
+
+int clevel = 0;
 double QuadTree::compute_level_metric(const Camera &camera, double distance) {
 	//double omega = 2.0 * distance * glm::tan(glm::radians(camera.get_horizontal_fov()) * 0.5);
 	//double epsilon = 0.001f;
 	//double rho = epsilon * Application::width / omega;
-	float K = 0.25f; // 0.25f is pretty good
-	float lol_metric = glm::pow((_level + 1.0f), K*(_level + 1.0f)) - 1.0f/(float)distance; // K*(_level + 1.0f)*(_level + 1.0f)
+
+	float K = 4.0f; // increase this for higher detail
+	float lol_metric = distance - K*_extents;
+	
 	return lol_metric;
 }
 

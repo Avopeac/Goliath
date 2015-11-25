@@ -200,8 +200,8 @@ void PlanetTile::predraw(const Camera &camera) {
 	//TODO: Evaluate if this works, could be used to simulate large distances?
 	float distance = glm::distance(camera.get_eye(), glm::vec3(0, 0, 0));
 	float fpc = 0.5 * camera.get_far();
-	model = glm::scale(glm::vec3(glm::exp(-distance / fpc)));
-	model = glm::translate(model, glm::vec3(glm::exp(-distance / fpc)));
+	//model = glm::scale(glm::vec3(glm::exp(-distance / fpc)));
+	//model = glm::translate(model, glm::vec3(glm::exp(-distance / fpc)));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective() * camera.get_view() * model));
 }

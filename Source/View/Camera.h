@@ -56,9 +56,9 @@ private:
 	double _far;
 
 	//Orientation
-	double _yaw;
-	double _pitch;
-	double _roll;
+	double _yaw = 0.0;
+	double _pitch = 0.0;
+	double _roll = 0.0;
 	double _movement_speed = 200.0;
 
 	//View data

@@ -1,19 +1,15 @@
 #pragma once
 #include "PlanetTile.h"
 #include <memory>
-#include <GLM\glm.hpp>
+#include <GLM/glm.hpp>
 #include "View/Drawable.h"
 
 class QuadTree : public Drawable {
 public:
 	QuadTree();
-	QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents);
-	QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, std::shared_ptr<Shader> shader);
+	QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, double radii);
+	QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, double radii, std::shared_ptr<Shader> shader);
 	QuadTree(const QuadTree&) = delete;
-
-	void set_rotation(const glm::dmat4 &rotation) { _rotation = rotation; }
-	void set_translation(const glm::dmat4 &translation) { _translation = translation; }
-	void set_extents(double extents) { _extents = extents; }
 
 	// Inherited via Drawable
 	virtual void draw(const Camera & camera, double delta_time) override;
@@ -32,6 +28,7 @@ private:
 	glm::dmat4 _translation;
 	glm::dmat4 _rotation;
 	double _extents; // Needs default ?
+	double _radii; // Whole planet radii
 	
 	//The current recursion level
 	unsigned int _level = 0;

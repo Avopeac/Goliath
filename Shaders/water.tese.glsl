@@ -133,7 +133,7 @@ float height(vec3 pos, float time) {
 	float sum = 0;
 	float angle = 0;
 
-	for (int oct = 1; oct <= 4; ++oct) {
+	for (int oct = 1; oct <= 1; ++oct) {
 		angle += angle_offset;
         vec3 anim_vec = anim_speed * vec3(cos(angle), sin(angle), tan(angle));
         pos.x += M_PI / 2.0;

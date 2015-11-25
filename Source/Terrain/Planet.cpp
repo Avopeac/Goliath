@@ -19,14 +19,14 @@ void Planet::setup_cube() {
 	double scale = _radius;
 	double trans = _radius * 0.5;
 	_ground_shader = ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH);
-	_north = std::make_shared<QuadTree>(glm::dmat4(1), glm::translate(glm::dvec3(0, trans, 0)), scale, _ground_shader);
-	_south = std::make_shared<QuadTree>(glm::rotate(glm::pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(0, -trans, 0)), scale, _ground_shader);
-	_west = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(-trans, 0, 0)), scale, _ground_shader);
-	_east = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(trans, 0, 0)), scale, _ground_shader);
-	_hither = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<double>(), glm::dvec3(1, 0, 0)), glm::translate(glm::dvec3(0, 0, trans)), scale, _ground_shader);
-	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(1, 0, 0)), glm::translate(glm::dvec3(0, 0, -trans)), scale, _ground_shader);
+	_north = std::make_shared<QuadTree>(glm::dmat4(1), glm::translate(glm::dvec3(0, trans, 0)), scale, _radius, _ground_shader);
+	_south = std::make_shared<QuadTree>(glm::rotate(glm::pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(0, -trans, 0)), scale, _radius, _ground_shader);
+	_west = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(-trans, 0, 0)), scale, _radius, _ground_shader);
+	_east = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(0, 0, 1)), glm::translate(glm::dvec3(trans, 0, 0)), scale, _radius, _ground_shader);
+	_hither = std::make_shared<QuadTree>(glm::rotate(glm::half_pi<double>(), glm::dvec3(1, 0, 0)), glm::translate(glm::dvec3(0, 0, trans)), scale, _radius, _ground_shader);
+	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(1, 0, 0)), glm::translate(glm::dvec3(0, 0, -trans)), scale, _radius, _ground_shader);
 
-	float water_level = _radius;
+	double water_level = _radius;
 	_north_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, trans, 0)), glm::scale(glm::vec3(scale)), glm::mat4(1));
 	_south_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, -trans, 0)), glm::scale(glm::vec3(scale)), glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)));
 	_west_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(-trans, 0, 0)), glm::scale(glm::vec3(scale)), glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)));

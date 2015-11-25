@@ -9,14 +9,14 @@ QuadTree::QuadTree(): Drawable() {
 	create_patch();
 }
 
-QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents)
-	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents) {
+QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, double radii)
+	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents), _radii(radii) {
 	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
 	create_patch();
 }
 
-QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, std::shared_ptr<Shader> shader)
-	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents) {
+QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, double radii, std::shared_ptr<Shader> shader)
+	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents), _radii(radii) {
 	set_shader(shader);
 	create_patch();
 }
@@ -79,7 +79,7 @@ void QuadTree::draw_wireframe(const Camera &camera, double delta_time) {
 }
 
 void QuadTree::create_patch() {
-	_patch = std::make_shared<PlanetTile>(_translation, glm::scale(glm::dvec3(_extents)), _rotation, _shader);
+	_patch = std::make_shared<PlanetTile>(_translation, glm::scale(glm::dvec3(_extents)), _rotation, _radii, _shader);
 }
 
 double QuadTree::compute_level_metric(const Camera &camera, double distance) {
@@ -95,10 +95,10 @@ void QuadTree::subdivide() {
 	glm::dvec3 sw_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(offset, 0, offset), 1.0));
 	glm::dvec3 se_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(-offset, 0, offset), 1.0));
 	//Create 4 sub-quadtrees, pass on shaders
-	_northwest = std::make_shared<QuadTree>(_rotation, glm::translate(origin + nw_rotated_offset), scale, _shader); _northwest->_level = _level + 1; _northwest->_parent = this;
-	_northeast = std::make_shared<QuadTree>(_rotation, glm::translate(origin + ne_rotated_offset), scale, _shader); _northeast->_level = _level + 1; _northeast->_parent = this;
-	_southwest = std::make_shared<QuadTree>(_rotation, glm::translate(origin + sw_rotated_offset), scale, _shader); _southwest->_level = _level + 1; _southwest->_parent = this;
-	_southeast = std::make_shared<QuadTree>(_rotation, glm::translate(origin + se_rotated_offset), scale, _shader); _southeast->_level = _level + 1; _southeast->_parent = this;
+	_northwest = std::make_shared<QuadTree>(_rotation, glm::translate(origin + nw_rotated_offset), scale, _radii, _shader); _northwest->_level = _level + 1; _northwest->_parent = this;
+	_northeast = std::make_shared<QuadTree>(_rotation, glm::translate(origin + ne_rotated_offset), scale, _radii, _shader); _northeast->_level = _level + 1; _northeast->_parent = this;
+	_southwest = std::make_shared<QuadTree>(_rotation, glm::translate(origin + sw_rotated_offset), scale, _radii, _shader); _southwest->_level = _level + 1; _southwest->_parent = this;
+	_southeast = std::make_shared<QuadTree>(_rotation, glm::translate(origin + se_rotated_offset), scale, _radii, _shader); _southeast->_level = _level + 1; _southeast->_parent = this;
 	//This quadtree now has children
 	_has_children = true;
 }

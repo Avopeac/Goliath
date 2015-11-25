@@ -132,17 +132,18 @@ float pnoise(vec2 P, vec2 rep)
 }
 
 float height(vec2 pos, float time) {
-	const float angle_offset = M_PI / 3.0;
-	const float anim_speed = 0.05;
-	const float alpha = 0.4;
+	const float angle_offset = M_PI / 1.7;
+	const float anim_speed = 0.04;
+	const float alpha = 0.5;
 	float sum = 0;
 	float angle = 0;
 
-	for (int oct = 1; oct <= 32; ++oct) {
+	for (int oct = 1; oct <= 4; ++oct) {
 		angle += angle_offset;
         vec2 anim_vec = anim_speed * vec2(cos(angle), sin(angle));
         pos.x += M_PI / 2.0;
-		sum += pow(alpha, oct) * pnoise(pow(2, oct) * (pos + time * anim_vec), pow(0.5, oct) * vec2(M_PI));
+		sum += pow(alpha, oct) * (sin(pow(2, oct) * anim_speed * time + sin(angle_offset) * pos.x + cos(angle_offset) * pos.y) + 
+			alpha * pnoise(pow(2, oct) * (pos + time * anim_vec), pow(0.5, oct) * vec2(M_PI)));
 	}
 
 	return sum;

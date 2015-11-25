@@ -5,9 +5,7 @@
 #include <GLFW/glfw3.h>
 #include "Application.h"
 struct RenderTexture {
-	RenderTexture(unsigned int width = Application::width, unsigned int height = Application::height) : width(width), height(height) {
-		initialize();
-	}
+	RenderTexture(unsigned int width = Application::width, unsigned int height = Application::height) : width(width), height(height) { initialize(); }
 
 	void initialize() {
 		glGenRenderbuffers(1, &renderbuffer);
@@ -38,15 +36,13 @@ struct RenderTexture {
 		glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth, 0);
-		//Render depth
-		//glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
 		//Print status
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status == GL_FRAMEBUFFER_COMPLETE) {
 			std::cout << "RenderTexture creation is completed." << std::endl;
 		}
 		else {
-			std::cout << "RenderTexture creation failed." << std::endl;
+			std::cerr << "RenderTexture creation failed." << std::endl;
 		}
 		//Switch back to screen
 		glActiveTexture(GL_TEXTURE0);
@@ -63,8 +59,7 @@ struct RenderTexture {
 			glGetIntegerv(GL_VIEWPORT, viewport);
 			w = viewport[2] - viewport[0];
 			h = viewport[3] - viewport[1];
-			if ((w > 0) && (h > 0) && (w < 65536) && (h < 65536))
-			{
+			if ((w > 0) && (h > 0) && (w < 65536) && (h < 65536)) {
 				_last_width = viewport[2] - viewport[0];
 				_last_height = viewport[3] - viewport[1];
 			}

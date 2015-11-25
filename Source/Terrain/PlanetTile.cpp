@@ -21,8 +21,6 @@ public:
 	~VertexData() {}
 	Vertex vertex;
 	bool edge = false;
-	bool skirt = false;
-	glm::vec3 own_position;
 	glm::vec3 parent_position;
 };
 
@@ -58,7 +56,6 @@ void PlanetTile::generate()
 			current.vertex.position = (2500.0f + height * 0.1f) * current.vertex.position; //Pow 4 gives us more exaggerations
 			current.vertex.texcoord = { cx + offset, cz + offset };
 			current.vertex.color.r = height;
-			current.own_position = current.vertex.position;
 			vertex_data.push_back(current);
 		}
 	}
@@ -67,21 +64,21 @@ void PlanetTile::generate()
 	int stride = _resolution + 2 + 1;
 	for (x = 0; x < _resolution + 2; ++x) {
 		for (z = 0; z < _resolution + 2; ++z) {
-			_mesh.indices.push_back(x + 1 + z * stride);
-			_mesh.indices.push_back(x + (z + 1) * stride);
-			_mesh.indices.push_back(x + z * stride);
-			_mesh.indices.push_back(x + 1 + (z + 1) * stride);
-			_mesh.indices.push_back(x + (z + 1) * stride);
-			_mesh.indices.push_back(x + 1 + z * stride);
+			mesh.indices.push_back(x + 1 + z * stride);
+			mesh.indices.push_back(x + (z + 1) * stride);
+			mesh.indices.push_back(x + z * stride);
+			mesh.indices.push_back(x + 1 + (z + 1) * stride);
+			mesh.indices.push_back(x + (z + 1) * stride);
+			mesh.indices.push_back(x + 1 + z * stride);
 		}
 	}
 
 	//Calculate vertex normals, simple version, only averages over one triangle
-	z = (int)_mesh.indices.size();
+	z = (int)mesh.indices.size();
 	for (x = 0; x < z; x += 3) {
-		int i1(_mesh.indices[x + 0]);
-		int i2(_mesh.indices[x + 1]);
-		int i3(_mesh.indices[x + 2]);
+		int i1(mesh.indices[x + 0]);
+		int i2(mesh.indices[x + 1]);
+		int i3(mesh.indices[x + 2]);
 		glm::vec3 p1(vertex_data[i1].vertex.position);
 		glm::vec3 p2(vertex_data[i2].vertex.position);
 		glm::vec3 p3(vertex_data[i3].vertex.position);
@@ -90,7 +87,6 @@ void PlanetTile::generate()
 		vertex_data[i2].vertex.normal += normal;
 		vertex_data[i3].vertex.normal += normal;
 	}
-
 
 	// Set up parent positions
 	for (x = -1; x <= _resolution + 1; ++x) {
@@ -104,7 +100,7 @@ void PlanetTile::generate()
 		if (it->edge) {
 			it->vertex.position *= 0.95f;
 		}
-		_mesh.vertices.push_back(it->vertex);
+		mesh.vertices.push_back(it->vertex);
 	}
 
 	_setup_done = true;
@@ -114,13 +110,13 @@ void PlanetTile::generate()
 void PlanetTile::morph_vertices(float alpha) {
 	for (int i = 0; i < vertex_data.size(); i++) {
 		if (!vertex_data[i].edge) {
-			_mesh.vertices[i].position = vertex_data[i].parent_position *(1.0f - alpha) + vertex_data[i].own_position*alpha; // glm::vec3(0,0,0)
+			mesh.vertices[i].position = vertex_data[i].parent_position *(1.0f - alpha) + vertex_data[i].vertex.position*alpha; // glm::vec3(0,0,0)
 		}
 		/*if (i == 11) {
 			std::cout << "vertex_data[i].vertex.position " << vertex_data[i].vertex.position.x << "  " << vertex_data[i].vertex.position.y << "  " << vertex_data[i].vertex.position.z << std::endl;
 		}*/
 	}
-	_mesh.update_vertices();
+	mesh.update_vertices();
 }
 
 void PlanetTile::set_parent_position(int x, int z, const glm::mat4 &transform) {
@@ -182,7 +178,7 @@ void PlanetTile::predraw(const Camera &camera) {
 		auto message = MessageSystem::instance().get(_message_ref);
 		if (message) {
 			// Setup mesh once
-			_mesh.setup_mesh();
+			mesh.setup_mesh();
 			_message_ref = -1;
 			_setup_done = true;
 		}
@@ -196,24 +192,20 @@ void PlanetTile::predraw(const Camera &camera) {
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	_shader->use();
-	glm::mat4 model(1);
-	//TODO: Evaluate if this works, could be used to simulate large distances?
-	float distance = glm::distance(camera.get_eye(), glm::vec3(0, 0, 0));
-	float fpc = 0.5 * camera.get_far();
-	//model = glm::scale(glm::vec3(glm::exp(-distance / fpc)));
-	//model = glm::translate(model, glm::vec3(glm::exp(-distance / fpc)));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective() * camera.get_view() * model));
+	glm::dmat4 model(1);
+	glm::mat4 mvp(camera.get_dprojection() * camera.get_dview() * model);
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(model)));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp));
 }
 
 void PlanetTile::draw(const Camera & camera, double delta_time) {
 	if (!_setup_done) { return; }
 	predraw(camera);
-	_mesh.draw(_shader, delta_time);
+	mesh.draw(_shader, delta_time);
 }
 
 void PlanetTile::draw_wireframe(const Camera & camera, double delta_time) {
 	if (!_setup_done) { return; }
 	predraw(camera);
-	_mesh.draw_wireframe(_shader, delta_time);
+	mesh.draw_wireframe(_shader, delta_time);
 }

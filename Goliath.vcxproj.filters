@@ -45,9 +45,6 @@
     <ClCompile Include="Source\Drawable\Plane.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Drawable\Sphere.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Model\Mesh.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
@@ -75,9 +72,6 @@
     <ClCompile Include="Source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Terrain\Tile.cpp">
-      <Filter>Source Files\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Terrain\QuadTree.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
@@ -93,15 +87,15 @@
     <ClCompile Include="Source\Terrain\Noise3D.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Terrain\Water.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Drawable\Plane.h">
       <Filter>Source Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="Source\Drawable\Primitive.h">
-      <Filter>Source Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Drawable\Sphere.h">
       <Filter>Source Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="Source\Model\Mesh.h">
@@ -140,12 +134,6 @@
     <ClInclude Include="Source\Application.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Terrain\Tile.h">
-      <Filter>Source Files\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Model\Material.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Terrain\Skybox.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
@@ -155,17 +143,11 @@
     <ClInclude Include="Source\Drawable\Cube.h">
       <Filter>Source Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Model\Lighting.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Terrain\QuadTree.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Source\View\ShaderStore.h">
       <Filter>Source Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\View\AtmosphereNode.h">
-      <Filter>Source Files\View\Post Processing</Filter>
     </ClInclude>
     <ClInclude Include="Source\View\PostProcessingNode.h">
       <Filter>Source Files\View\Post Processing</Filter>
@@ -197,11 +179,14 @@
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h">
       <Filter>Source Files\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="Semaphore.h">
-      <Filter>Source Files\Thread</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Terrain\Noise3D.h">
       <Filter>Source Files\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Thread\Semaphore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\Water.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -259,5 +244,10 @@
     <None Include="Shaders\groundshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
+    <None Include="Shaders\water.frag" />
+    <None Include="Shaders\water.geom" />
+    <None Include="Shaders\water.tesc.glsl" />
+    <None Include="Shaders\water.tese.glsl" />
+    <None Include="Shaders\water.vert" />
   </ItemGroup>
 </Project>

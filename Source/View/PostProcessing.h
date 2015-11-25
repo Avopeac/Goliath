@@ -12,9 +12,7 @@ public:
 		_temp_render_texture2.release();
 	}
 
-	void add_node(std::shared_ptr<PostProcessingNode> node) {
-		_nodes.push_back(node);
-	}
+	void add_node(std::shared_ptr<PostProcessingNode> node) { _nodes.push_back(node); }
 
 	void capture() {
 		RenderTexture::use(&_temp_render_texture1, nullptr, nullptr);

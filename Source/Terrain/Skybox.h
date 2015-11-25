@@ -20,13 +20,13 @@ public:
 
 	void draw(const Camera & camera, double delta_time) override {
 		begin_draw_skybox(camera);
-		_mesh.draw(_shader, delta_time);
+		mesh.draw(_shader, delta_time);
 		end_draw_skybox();
 	};
 
 	void draw_wireframe(const Camera & camera, double delta_time) override {
 		begin_draw_skybox(camera);
-		_mesh.draw_wireframe(_shader, delta_time);
+		mesh.draw_wireframe(_shader, delta_time);
 		end_draw_skybox();
 	};
 
@@ -41,12 +41,12 @@ private:
 		glCullFace(GL_FRONT);
 		glDisable(GL_DEPTH_TEST);
 		//Zero out translation
-		glm::mat4 skybox_view = camera.get_view();
+		glm::mat4 skybox_view(camera.get_dview());
 		skybox_view[3] = { 0, 0, 0, 1 };
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(skybox_view));
 		if (_first_draw) {
 			_first_draw = false;
-			glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
+			glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
 		}
 		glUniform1i(glGetUniformLocation(_shader->program, "skybox"), 0);
 	}

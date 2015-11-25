@@ -1,45 +1,44 @@
 #include "Camera.h"
 #include <iostream>
-#include <AntTweakBar\AntTweakBar.h>
+#include <AntTweakBar/AntTweakBar.h>
 #include "Input/Input.h"
 
-Camera::Camera(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far)
+Camera::Camera(const glm::dvec3 &eye, const glm::dvec3 &center, const glm::dvec3 &world_up, double vertical_fov, double aspect_ratio, double near, double far)
 	: InputEnabled(), _vertical_fov(vertical_fov), _aspect_ratio(aspect_ratio), _near(near), _far(far), _eye(eye) {
-	_perspective = glm::perspective(_vertical_fov, _aspect_ratio, _near, _far);
+	_projection = glm::perspective(_vertical_fov, _aspect_ratio, _near, _far);
 	_horizontal_fov = glm::degrees(glm::atan(glm::tan(glm::radians(_vertical_fov) * 0.5) * _aspect_ratio) * 2.0);
+
 	//Camera origin
 	_base_forward = glm::normalize(center - eye);
 	_base_right = glm::cross(_base_forward, glm::normalize(world_up));
 	_base_up = glm::cross(_base_right, _base_forward);
 
-	TwAddVarRW(Input::_tw_bar, "speed", TW_TYPE_DOUBLE, &_movement_speed, " min=0.00 max=20.0 step=0.0001 ");
+	TwAddVarRW(Input::_tw_bar, "speed", TW_TYPE_DOUBLE, &_movement_speed, " min=0.00 max=20.0 step=0.01 ");
 }
 
 void Camera::update(double delta_time) {
 	//Apply the individual axis rotations
 	//_next_rotation_quat = glm::angleAxis((float)_yaw, _base_up);
 	//_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_pitch, _base_right);
-	_next_rotation_quat = glm::angleAxis((float)_roll, _base_forward);
-	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_yaw, _base_up);
-	_next_rotation_quat = glm::rotate(_next_rotation_quat, (float)_pitch, _base_right);
+	_next_rotation_quat = glm::angleAxis(_roll, _base_forward);
+	_next_rotation_quat = glm::rotate(_next_rotation_quat, _yaw, _base_up);
+	_next_rotation_quat = glm::rotate(_next_rotation_quat, _pitch, _base_right);
 
 	//TODO: Apply roll somewhere
 	//The scale on third parameter to SLERP determines speed of interpolation
-	_rotation_quat = glm::slerp(_rotation_quat, _next_rotation_quat, (float)delta_time * 5.0f);
+	_rotation_quat = glm::slerp(_rotation_quat, _next_rotation_quat, delta_time * 5.0);
 	_next_forward = glm::rotate(_rotation_quat, _base_forward);
 	_next_right = glm::rotate(_rotation_quat, _base_right);
 	_next_up = glm::rotate(_rotation_quat, _base_up);
 	//Multiply rotation and translation matrices to get view matrix, keeping to quaternions to avoid Gimbal locking
 	_view = glm::lookAt(_eye, _eye + _next_forward, _next_up);
 
-	if (_update_frustum) {
-		build_frustum();
-	}
+	if (_update_frustum) { build_frustum(); }
 
 	_time += delta_time;
 }
 
-bool Camera::intersects_point(const glm::vec3 &point) const {
+bool Camera::intersects_point(const glm::dvec3 &point) const {
 	for (unsigned short i = 0; i < 6; ++i) {
 		if (_frustum[i].distance(point) < 0) {
 			return false;
@@ -48,7 +47,7 @@ bool Camera::intersects_point(const glm::vec3 &point) const {
 	return true;
 }
 
-bool Camera::intersects_sphere(const glm::vec3 &center, double radius) const {
+bool Camera::intersects_sphere(const glm::dvec3 &center, double radius) const {
 	for (unsigned short i = 0; i < 6; ++i) {
 		if (_frustum[i].distance(center) < -radius) {
 			return false;
@@ -57,17 +56,17 @@ bool Camera::intersects_sphere(const glm::vec3 &center, double radius) const {
 	return true;
 }
 
-bool Camera::intersects_box(const glm::vec3 &center, const glm::vec3 &extents) const {
+bool Camera::intersects_box(const glm::dvec3 &center, const glm::dvec3 &extents) const {
 	for (unsigned short i = 0; i < 6; ++i) {
 		unsigned short outside = 0;
-		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y + extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
-		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y + extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
-		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y - extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
-		outside += _frustum[i].distance(glm::vec3(center.x + extents.x, center.y - extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
-		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y + extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
-		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y + extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
-		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y - extents.y, center.z + extents.z)) < 0.0f ? 1 : 0;
-		outside += _frustum[i].distance(glm::vec3(center.x - extents.x, center.y - extents.y, center.z - extents.z)) < 0.0f ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y + extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y + extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y - extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y - extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y + extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y + extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y - extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
+		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y - extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
 		if (outside == 8) return false;
 	}
 	return true;
@@ -82,47 +81,30 @@ void Camera::handle_mouse_movement(double x, double y, double delta_x, double de
 
 void Camera::handle_multiple_keystrokes(GLFWwindow *window, double delta_time) {
 	//Create a translation in the original orthonormal basis
-	if (glfwGetKey(window, GLFW_KEY_W)) {
-		_eye += glm::rotate(_rotation_quat, _base_forward) * (float)delta_time * (float)_movement_speed;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S)) {
-		_eye -= glm::rotate(_rotation_quat, _base_forward) * (float)delta_time * (float)_movement_speed;
-	}
-	if (glfwGetKey(window, GLFW_KEY_A)) {
-		_eye -= glm::rotate(_rotation_quat, _base_right) * (float)delta_time * (float)_movement_speed;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D)) {
-		_eye += glm::rotate(_rotation_quat, _base_right) * (float)delta_time * (float)_movement_speed;
-	}
+	if (glfwGetKey(window, GLFW_KEY_W)) { _eye += glm::rotate(_rotation_quat, _base_forward) * delta_time * _movement_speed; }
+	if (glfwGetKey(window, GLFW_KEY_S)) { _eye -= glm::rotate(_rotation_quat, _base_forward) * delta_time * _movement_speed; }
+	if (glfwGetKey(window, GLFW_KEY_A)) { _eye -= glm::rotate(_rotation_quat, _base_right) * delta_time * _movement_speed; }
+	if (glfwGetKey(window, GLFW_KEY_D)) { _eye += glm::rotate(_rotation_quat, _base_right) * delta_time * _movement_speed; }
 
 	//For rolling
-	if (glfwGetKey(window, GLFW_KEY_Q)) {
-		_roll += delta_time;
-	}
-	if (glfwGetKey(window, GLFW_KEY_E)) {
-		_roll -= delta_time;
-	}
+	if (glfwGetKey(window, GLFW_KEY_Q)) { _roll += delta_time; }
+	if (glfwGetKey(window, GLFW_KEY_E)) { _roll -= delta_time; }
 }
 
 void Camera::handle_key_inputs(int key, int scan_code, int action, int mods, double delta_time) {
-	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-		_update_frustum = false;
-	}
-
-	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-		_update_frustum = true;
-	}
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) { _update_frustum = false; }
+	if (key == GLFW_KEY_G && action == GLFW_PRESS) { _update_frustum = true; }
 }
 
 void Camera::build_frustum() {
+	//Find frustum dimensions
+	double near_height = 2.0 * glm::tan(glm::radians(_vertical_fov) * 0.5) * _near;
+	double near_width = near_height * _aspect_ratio;
+	double far_height = 2.0 * glm::tan(glm::radians(_vertical_fov) * 0.5) * _far;
+	double far_width = far_height * _aspect_ratio;
 
-	float near_height = 2.0f * glm::tan(glm::radians((float)_vertical_fov) * 0.5f) * (float)_near;
-	float near_width = near_height * (float)_aspect_ratio;
-	float far_height = 2.0f * glm::tan(glm::radians((float)_vertical_fov) * 0.5f) * (float)_far;
-	float far_width = far_height * (float)_aspect_ratio;
-
-	glm::vec3 near_center = _eye + _next_forward * (float)_near;
-	glm::vec3 far_center = _eye + _next_forward * (float)_far;
+	glm::dvec3 near_center = _eye + _next_forward * _near;
+	glm::dvec3 far_center = _eye + _next_forward * _far;
 
 	_points[0] = near_center - _next_up * near_height - _next_right * near_width; //nbl
 	_points[1] = near_center + _next_up * near_height - _next_right * near_width; //ntl

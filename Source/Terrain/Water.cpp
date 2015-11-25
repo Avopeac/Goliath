@@ -14,8 +14,8 @@ private:
 	Water *_ref;
 };
 
-Water::Water(const glm::mat4& translation, const glm::mat4& scale, const glm::mat4& rotation)
-	: _translation(translation), _scale(scale), _rotation(rotation) {
+Water::Water(float radius, const glm::mat4& translation, const glm::mat4& scale, const glm::mat4& rotation)
+	: _water_level(radius), _translation(translation), _scale(scale), _rotation(rotation) {
 	_init();
 }
 
@@ -131,7 +131,9 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
 	// Tell OpenGL that every patch has 3 vertices
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 	glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);

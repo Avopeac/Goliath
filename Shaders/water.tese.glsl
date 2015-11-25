@@ -138,11 +138,14 @@ float pnoise(vec2 P, vec2 rep)
 }
 
 float height(vec2 pos) {
+	const vec2 anim_vec = vec2(0.05);
 	float sum = 0;
+
 	for (int oct = 1; oct <= 4; ++oct) {
 		pos.x += M_PI / 2.0;
-		sum += pow(0.3, oct) * pnoise(pow(2, oct) * (pos + 0.05 * time * vec2(1.0)), vec2(M_PI));
+		sum += pow(0.3, oct) * pnoise(pow(2, oct) * (pos + time * anim_vec), pow(0.5, oct) * vec2(M_PI));
 	}
+
 	return sum;
 }
 

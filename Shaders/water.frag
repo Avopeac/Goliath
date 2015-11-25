@@ -36,9 +36,9 @@ void main()
     //color = amplify(d1, 40, -0.5) * amplify(d2, 60, -0.5) * color;
 
 	vec3 lightDir = normalize(vec3(1.0));
-	vec3 wNormal = normalize(vec3(vec4(gNormal, 1.0) * model));
+	vec3 wNormal = normalize(vec3(vec4(gFacetNormal, 1.0) * model));
 
-	float light = 0.3 + max(0.0, dot(lightDir, wNormal));
+	float light = max(0.0, dot(lightDir, wNormal));
 
-    FragColor = vec4(light, light, light, 1.0);
+    FragColor = vec4(0, light, 1.0, 1.0);
 }

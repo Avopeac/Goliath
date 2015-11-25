@@ -66,19 +66,19 @@ void main()
 	vec3 lightDir = normalize(vec3(0,1,0));
 	vec3 normalDir = normalize(ourNormal);
 	//Perturbing normal with noise
-	const float epsilon = 0.05 * -ourPosition.z; //Do some distance function here
-	const float oneOverEpsilon = 1.0 / epsilon;
-	const float scaleFactor = 0.25;
-	const float lacunarity = 2.0;
-	const float dimensionality = 0.9;
-	const float octaves = 24;
-	const float offset = 0.0;
-	float h0 = heightFunction(ourWorldPosition, lacunarity, dimensionality, octaves, offset);
-	float hx = heightFunction(ourWorldPosition + vec3(epsilon,0,0), lacunarity, dimensionality, octaves, offset);
-    float hy = heightFunction(ourWorldPosition + vec3(0,epsilon,0), lacunarity, dimensionality, octaves, offset);
-    float hz = heightFunction(ourWorldPosition + vec3(0,0,epsilon), lacunarity, dimensionality, octaves, offset);
-    vec3 df = vec3(hx - h0, hy - h0, hz - h0) / epsilon;
-	normalDir = normalize(normalDir - df * scaleFactor);
+	//const float epsilon = 0.05 * -ourPosition.z; //Do some distance function here
+	//const float oneOverEpsilon = 1.0 / epsilon;
+	//const float scaleFactor = 0.25;
+	//const float lacunarity = 2.0;
+	//const float dimensionality = 0.9;
+	//const float octaves = 24;
+	//const float offset = 0.0;
+	//float h0 = heightFunction(ourWorldPosition, lacunarity, dimensionality, octaves, offset);
+	//float hx = heightFunction(ourWorldPosition + vec3(epsilon,0,0), lacunarity, dimensionality, octaves, offset);
+	//float hy = heightFunction(ourWorldPosition + vec3(0,epsilon,0), lacunarity, dimensionality, octaves, offset);
+    //float hz = heightFunction(ourWorldPosition + vec3(0,0,epsilon), lacunarity, dimensionality, octaves, offset);
+    //vec3 df = vec3(hx - h0, hy - h0, hz - h0) / epsilon;
+	//normalDir = normalize(normalDir - df * scaleFactor);
 
 	//Coloring things
 	float height = ourColor.r;

@@ -125,7 +125,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 	_shader->use();
 	auto time_now = std::chrono::steady_clock::now();
 	std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
-	glUniform1f(glGetUniformLocation(_shader->program, "time"), time_now_float.count());
+	glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
 	glUniform3fv(glGetUniformLocation(_shader->program, "wCameraPos"), 1, glm::value_ptr(camera.get_eye()));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));

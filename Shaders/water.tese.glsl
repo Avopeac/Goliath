@@ -5,6 +5,7 @@ layout(triangles, equal_spacing, ccw) in;
 in vec3 tcPosition[];
 in vec3 tcNormal[];
 out vec3 tePosition;
+out float teDisplacement;
 out vec3 teNormal;
 out vec3 tePatchDistance;
 
@@ -12,16 +13,9 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
 
-uniform float time;
+uniform float globTime;
 
 #define M_PI 3.1415926535897932384626433832795
-
-const int N = 512; // FFT dimension (spectral components)
-const float V = 600.0; // Wave speed
-const float A = 0.0000001; // Wave amplitude
-const float L = 36660;
-
-const vec2 wind = vec2(1.0, 1.0);
 
 //
 // GLSL textureless classic 2D noise "cnoise",
@@ -137,13 +131,14 @@ float pnoise(vec2 P, vec2 rep)
   return 2.3 * n_xy;
 }
 
-float height(vec2 pos) {
-	const vec2 anim_vec = vec2(0.05);
+float height(vec2 pos, float time) {
+	const vec2 anim_vec = vec2(0.03);
+	const float alpha = 0.25;
 	float sum = 0;
 
 	for (int oct = 1; oct <= 4; ++oct) {
 		pos.x += M_PI / 2.0;
-		sum += pow(0.3, oct) * pnoise(pow(2, oct) * (pos + time * anim_vec), pow(0.5, oct) * vec2(M_PI));
+		sum += pow(alpha, oct) * pnoise(pow(2, oct) * (pos + time * anim_vec), pow(0.5, oct) * vec2(M_PI));
 	}
 
 	return sum;
@@ -165,13 +160,16 @@ void main()
 	vec3 sphere_coord;
 	sphere_coord.x = length(tePosition);
 	sphere_coord.y = acos(tePosition.z / sphere_coord.x);
+
 	if (tePosition.x == 0.0) {
 		sphere_coord.z = sign(tePosition.y) * M_PI / 2.0;
 	}
 	else {
 		sphere_coord.z = atan(tePosition.y / tePosition.x);
 	}
-    tePosition += height(sphere_coord.yz) * teNormal;
+
+	teDisplacement = height(sphere_coord.yz, globTime);
+	tePosition += teDisplacement * teNormal;
 
     gl_Position = proj * view * model * vec4(tePosition, 1.0);
 }

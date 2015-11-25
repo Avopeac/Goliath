@@ -36,9 +36,9 @@ private:
 	//The current recursion level
 	unsigned int _level = 0;
 	// The deepest level we're allowed to go in the quadtree
-	const unsigned int _deepest_level = 20;
-	// Threshold for LOD error metric
-	const double _tau = 0.0;
+	const unsigned int _deepest_level = 100;
+	// The higher _lod_factor the higher resolution / more lod
+	const double _lod_factor = 16.0;
 
 	//The parent quad tree
 	QuadTree *_parent = nullptr;

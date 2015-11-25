@@ -30,7 +30,7 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	if (!camera.intersects_box(mid_point, scale)) { return; }
 	// Get LOD metric to see if we should draw child quads or just draw this one
 	double rho = compute_level_metric(camera, distance_to_patch(camera, mid_point));
-	if (rho >= _tau || _level > _deepest_level) {
+	if (rho >= 0.0 || _level > _deepest_level) {
 		// Morph vertices
 		/*if (!dont_morph) {
 				_morph_value += delta_time / 0.5f;
@@ -83,8 +83,7 @@ void QuadTree::create_patch() {
 }
 
 double QuadTree::compute_level_metric(const Camera &camera, double distance) {
-	double K = 4.0; // Increase this for higher detail
-	return distance - K*_extents;
+	return distance - _lod_factor*_extents;
 }
 
 void QuadTree::subdivide() {

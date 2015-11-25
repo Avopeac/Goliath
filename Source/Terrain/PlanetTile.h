@@ -28,13 +28,14 @@ private:
 	bool _setup_done = false;
 	int _message_ref = -1;
 
+	glm::vec3 _center;
 	glm::mat4 _translation;
 	glm::mat4 _scale;
 	glm::mat4 _rotation;
 	
-	void predraw();
+	void predraw(const Camera &camera);
 
 	bool is_edge(int x, int z);
 	static SimplePlanetHeightSampler sampler;
-	void PlanetTile::set_parent_position(int x, int z, glm::mat4 transform);
+	void PlanetTile::set_parent_position(int x, int z, const glm::mat4 &transform);
 };

@@ -3,24 +3,16 @@
 #include "View/ShaderStore.h"
 #include "Model/CubeMap.h"
 #include "Terrain/QuadTree.h"
-#include <GLM\gtc\random.hpp>
-#include <GLM\gtx\transform.hpp>
+#include "Terrain/Noise3D.h"
+#include <GLM/gtx/transform.hpp>
 #include <SOIL/SOIL.h>
-#include <iterator>
-#include <algorithm>
-#include <set>
-#include "Noise3D.h"
 
 Planet::Planet(double radius) : Drawable(), _radius(radius) {
 	setup_cube();
 	setup_skybox();
 	create_color_ramp_texture();
-	noise_maker.initialize(std::time(NULL));
-	noise_maker.generate_gradient_texture();
-	noise_maker.generate_permutation_texture();
-	noise_maker.save_textures_to_disk("Images/permutations", "Images/gradients");
+	noise_maker.initialize();
 }
-
 
 void Planet::setup_cube() {
 	float scale = (float)_radius;
@@ -62,24 +54,21 @@ void Planet::setup_skybox() {
 	_skybox->set_shader(ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH));
 }
 
-void Planet::draw(const Camera & camera, double delta_time)
-{
+void Planet::draw(const Camera & camera, double delta_time) {
 	_ground_shader->use();
-
-	//Upload textures
+	//Color ramp texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "colorRampTex"), 0);
-
-	//Noise helper
+	//Permutation texture for noise
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_1D, noise_maker.get_permutation_texture_id());
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "permutationTex"), 1);
-
+	//Gradient texture for noise
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_1D, noise_maker.get_gradient_texture_id());
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "gradientTex"), 2);
-
+	//Upload uniforms
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(camera.get_view()));
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective()));
 	_skybox->draw(camera, delta_time);

@@ -2,7 +2,7 @@
 #include <map>
 #include <memory>
 #include <string>
-#include "..\Model\Shader.h"
+#include "Model/Shader.h"
 #include "ShaderStore.h"
 
 #ifndef SKYBOX_SHADER_PATH
@@ -45,6 +45,26 @@
 #define WATER_SHADER_PATH "Shaders/water"
 #endif WATER_SHADER_PATH 
 
+#ifndef VERTEX_FILE_TYPE 
+#define VERTEX_FILE_TYPE ".vert"
+#endif
+
+#ifndef FRAGMENT_FILE_TYPE
+#define FRAGMENT_FILE_TYPE ".frag"
+#endif
+
+#ifndef TESSELATION_EVALUATION_FILE_TYPE
+#define TESSELATION_EVALUATION_FILE_TYPE ".tese.glsl"
+#endif
+
+#ifndef TESSELATION_CONTROL_FILE_TYPE
+#define TESSELATION_CONTROL_FILE_TYPE ".tesc.glsl"
+#endif
+
+#ifndef GEOMETRY_FILE_TYPE 
+#define GEOMETRY_FILE_TYPE ".geom"
+#endif
+
 class ShaderStore {
 public:
 	static ShaderStore &instance() {
@@ -67,9 +87,9 @@ public:
 
 	void add_shader_to_store(const std::string &item) {
 		std::string vert_name = item;
-		vert_name.append(".vert");
+		vert_name.append(VERTEX_FILE_TYPE);
 		std::string frag_name = item;
-		frag_name.append(".frag");
+		frag_name.append(FRAGMENT_FILE_TYPE);
 		std::pair<std::string, std::shared_ptr<Shader>> pair;
 		pair = std::make_pair(item, std::make_shared<Shader>(vert_name.c_str(), frag_name.c_str()));
 		_store.insert(pair);
@@ -77,15 +97,15 @@ public:
 
 	void add_shader_to_store_full(const std::string &item) {
 		std::string vert_name = item;
-		vert_name.append(".vert");
+		vert_name.append(VERTEX_FILE_TYPE);
 		std::string frag_name = item;
-		frag_name.append(".frag");
+		frag_name.append(FRAGMENT_FILE_TYPE);
 		std::string tess_ctrl_name = item;
-		tess_ctrl_name.append(".tesc.glsl");
+		tess_ctrl_name.append(TESSELATION_CONTROL_FILE_TYPE);
 		std::string tess_eval_name = item;
-		tess_eval_name.append(".tese.glsl");
+		tess_eval_name.append(TESSELATION_EVALUATION_FILE_TYPE);
 		std::string geom_name = item;
-		geom_name.append(".geom");
+		geom_name.append(GEOMETRY_FILE_TYPE);
 		std::pair<std::string, std::shared_ptr<Shader>> pair;
 		pair = std::make_pair(item, std::make_shared<Shader>(vert_name.c_str(), frag_name.c_str(), geom_name.c_str(), tess_ctrl_name.c_str(), tess_eval_name.c_str()));
 		_store.insert(pair);

@@ -1,25 +1,21 @@
 #include "PlanetTile.h"
 #include <iostream>
-#include "GLM/gtc/type_ptr.hpp"
+#include <GLM/gtc/type_ptr.hpp>
+#include <GLM/gtx/transform.hpp>
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
 
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0f, 20.0f, 0.7f, 0.0f);
-
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0f, 24.0f, 0.9f, 0.0f);
 
 class PlanetTile::PlanetTileMessage : public Message {
 public:
-	explicit PlanetTileMessage(PlanetTile *tile) : _tile(tile) { }
-
-	virtual void process() override { 
-		_tile->generate();
-	}
+	explicit PlanetTileMessage(PlanetTile *tile) : _tile(tile) {}
+	virtual void process() override { _tile->generate(); }
 private:
 	PlanetTile *_tile;
 };
 
-class PlanetTile::VertexData
-{
+class PlanetTile::VertexData {
 public:
 	VertexData() {}
 	~VertexData() {}
@@ -33,6 +29,7 @@ public:
 PlanetTile::PlanetTile(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation)
 	: Drawable(), _translation(translation), _scale(scale), _rotation(rotation) {
 	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
+	_center = glm::vec3(_translation * _rotation * _scale * glm::vec4(0.5, 0, 0.5, 1));
 }
 
 PlanetTile::PlanetTile(const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation, std::shared_ptr<Shader> shader)
@@ -58,10 +55,9 @@ void PlanetTile::generate()
 			current.vertex.position = glm::vec3(trans *  glm::vec4(cx, 0, cz, 1.0));
 			current.vertex.position = glm::normalize(current.vertex.position);
 			float height = sampler.sample(current.vertex.position);
-			current.vertex.position = (4.0f + height * 0.1f) * current.vertex.position; //Pow 4 gives us more exaggerations
+			current.vertex.position = (2500.0f + height * 0.1f) * current.vertex.position; //Pow 4 gives us more exaggerations
 			current.vertex.texcoord = { cx + offset, cz + offset };
 			current.vertex.color.r = height;
-			current.vertex.color.b = current.edge ? 1.0 : 0.0;
 			current.own_position = current.vertex.position;
 			vertex_data.push_back(current);
 		}
@@ -117,7 +113,7 @@ void PlanetTile::generate()
 
 void PlanetTile::morph_vertices(float alpha) {
 	for (int i = 0; i < vertex_data.size(); i++) {
-		if (!vertex_data[i].edge){
+		if (!vertex_data[i].edge) {
 			_mesh.vertices[i].position = vertex_data[i].parent_position *(1.0f - alpha) + vertex_data[i].own_position*alpha; // glm::vec3(0,0,0)
 		}
 		/*if (i == 11) {
@@ -127,7 +123,7 @@ void PlanetTile::morph_vertices(float alpha) {
 	_mesh.update_vertices();
 }
 
-void PlanetTile::set_parent_position(int x, int z, glm::mat4 transform) {
+void PlanetTile::set_parent_position(int x, int z, const glm::mat4 &transform) {
 	float step = 1.0f / _resolution;
 	float offset = 0.5f;
 	glm::vec3 parent_position = glm::vec3(0, 0, 0);
@@ -155,19 +151,19 @@ void PlanetTile::set_parent_position(int x, int z, glm::mat4 transform) {
 			for (int z_idx = start_z; z_idx <= end_z; z_idx++) {
 				if (z_idx == z) { continue; }
 
-					counter++;
-					cx = x_idx * step - offset;
-					cz = z_idx * step - offset;
+				counter++;
+				cx = x_idx * step - offset;
+				cz = z_idx * step - offset;
 
-					glm::vec3 tmp_pos;
-					tmp_pos = glm::vec3(transform *  glm::vec4(cx, 0, cz, 1.0));
-					tmp_pos = glm::normalize(tmp_pos);
-					float height = sampler.sample(tmp_pos);
-					parent_position += (4.0f + height * 0.1f) * tmp_pos;
+				glm::vec3 tmp_pos;
+				tmp_pos = glm::vec3(transform *  glm::vec4(cx, 0, cz, 1.0));
+				tmp_pos = glm::normalize(tmp_pos);
+				float height = sampler.sample(tmp_pos);
+				parent_position += (2500.0f + height * 0.1f) * tmp_pos;
 			}
 		}
 	}
-	
+
 	vertex_data[current_idx].parent_position = parent_position / (float)counter;
 
 	//std::cout << "parent: " << vertex_data[current_idx].parent_position.x << "  " << vertex_data[current_idx].parent_position.y << "  " << vertex_data[current_idx].parent_position.z << "  " << std::endl;
@@ -181,7 +177,7 @@ bool PlanetTile::is_edge(int x, int z) {
 	return (x == -1) || (z == -1) || (x == _resolution + 1) || (z == _resolution + 1);
 }
 
-void PlanetTile::predraw() {
+void PlanetTile::predraw(const Camera &camera) {
 	if (_message_ref != -1) {
 		auto message = MessageSystem::instance().get(_message_ref);
 		if (message) {
@@ -200,26 +196,24 @@ void PlanetTile::predraw() {
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	_shader->use();
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+	glm::mat4 model(1);
+	//TODO: Evaluate if this works, could be used to simulate large distances?
+	float distance = glm::distance(camera.get_eye(), glm::vec3(0, 0, 0));
+	float fpc = 0.5 * camera.get_far();
+	//model = glm::scale(glm::vec3(glm::exp(-distance / fpc)));
+	//model = glm::translate(model, glm::vec3(glm::exp(-distance / fpc)));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(camera.get_perspective() * camera.get_view() * model));
 }
 
-void PlanetTile::draw(const Camera & camera, double delta_time)
-{
-	if (!_setup_done) {
-		return;
-	}
-
-	predraw();
-
+void PlanetTile::draw(const Camera & camera, double delta_time) {
+	if (!_setup_done) { return; }
+	predraw(camera);
 	_mesh.draw(_shader, delta_time);
 }
 
-void PlanetTile::draw_wireframe(const Camera & camera, double delta_time)
-{
-	if (!_setup_done) {
-		return;
-	}
-
-	predraw();
+void PlanetTile::draw_wireframe(const Camera & camera, double delta_time) {
+	if (!_setup_done) { return; }
+	predraw(camera);
 	_mesh.draw_wireframe(_shader, delta_time);
 }

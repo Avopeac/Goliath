@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
-#include <GLFW\glfw3.h>
-#include <GLM\glm.hpp>
-#include <GLM\gtc\quaternion.hpp>
-#include <GLM\gtx\quaternion.hpp>
-#include <GLM\gtc\matrix_transform.hpp>
-#include "..\Drawable\Plane.h"
-#include "..\Model\Vertex.h"
-#include "..\Input\InputEnabled.h"
+#include <GLFW/glfw3.h>
+#include <GLM/glm.hpp>
+#include <GLM/gtc/quaternion.hpp>
+#include <GLM/gtx/quaternion.hpp>
+#include <GLM/gtc/matrix_transform.hpp>
+#include "Drawable/Plane.h"
+#include "Model/Vertex.h"
+#include "Input/InputEnabled.h"
 
 class Camera : public InputEnabled {
 public:
@@ -33,7 +33,7 @@ private:
 	double _near, _far;
 	double _time;
 	double _yaw, _pitch, _roll;
-	double _movement_speed = 1.0;
+	double _movement_speed = 25.0;
 	glm::mat4 _view, _perspective;
 	glm::quat _rotation_quat, _next_rotation_quat;
 	glm::vec3 _eye, _base_forward, _base_right, _base_up;

@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
-#include <GL\glew.h>
-#include <GL\GL.h>
-#include <GLFW\glfw3.h>
-#include "..\Application.h"
+#include <GL/glew.h>
+#include <GL/GL.h>
+#include <GLFW/glfw3.h>
+#include "Application.h"
 struct RenderTexture {
 	RenderTexture(unsigned int width = Application::width, unsigned int height = Application::height) : width(width), height(height) {
 		initialize();
@@ -55,7 +55,6 @@ struct RenderTexture {
 	}
 
 	static void use(RenderTexture *out, RenderTexture *in1, RenderTexture *in2) {
-
 		GLint current;
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &current);
 		if (current == 0) {
@@ -64,14 +63,14 @@ struct RenderTexture {
 			glGetIntegerv(GL_VIEWPORT, viewport);
 			w = viewport[2] - viewport[0];
 			h = viewport[3] - viewport[1];
-			if ((w > 0) && (h > 0) && (w < 65536) && (h < 65536)) // I don't believe in 64k pixel wide frame buffers for quite some time
+			if ((w > 0) && (h > 0) && (w < 65536) && (h < 65536))
 			{
-				last_width = viewport[2] - viewport[0];
-				last_height = viewport[3] - viewport[1];
+				_last_width = viewport[2] - viewport[0];
+				_last_height = viewport[3] - viewport[1];
 			}
 		}
 
-		out != nullptr ? glViewport(0, 0, out->width, out->height) : glViewport(0, 0, last_width, last_height);
+		out != nullptr ? glViewport(0, 0, out->width, out->height) : glViewport(0, 0, _last_width, _last_height);
 
 		if (out != nullptr) {
 			glBindFramebuffer(GL_FRAMEBUFFER, out->framebuffer);
@@ -101,5 +100,5 @@ struct RenderTexture {
 	unsigned int width, height;
 
 private:
-	static GLint last_width, last_height;
+	static GLint _last_width, _last_height;
 };

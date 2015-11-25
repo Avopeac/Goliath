@@ -7,21 +7,18 @@
 QuadTree::QuadTree(): Drawable() {
 	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
 	create_patch();
-	//_has_patch = true; // TODO: Remove ?
 }
 
 QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents)
 	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents) {
 	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
 	create_patch();
-	//_has_patch = true;
 }
 
 QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, std::shared_ptr<Shader> shader)
 	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents) {
 	set_shader(shader);
 	create_patch();
-	//_has_patch = true;
 }
 
 void QuadTree::draw(const Camera &camera, double delta_time) {

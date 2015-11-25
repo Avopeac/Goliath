@@ -56,7 +56,7 @@ void PlanetTile::generate()
 			current.position = glm::dvec3(trans *  glm::dvec4(cx, 0, cz, 1.0));
 			current.position = glm::normalize(current.position);
 			double height = sampler.sample(current.position);
-			current.position = (2500.0 + height * 0.1) * current.position; //Pow 4 gives us more exaggerations
+			current.position = (2500.0 + 20.0 * height) * current.position; //Pow 4 gives us more exaggerations
 			current.uv = { cx + offset, cz + offset };
 			current.color.r = static_cast<float>(height);
 			vertex_data.push_back(current);
@@ -106,11 +106,11 @@ void PlanetTile::generate()
 	}
 
 	// Set up parent positions
-	for (x = -1; x <= _resolution + 1; ++x) {
+	/*for (x = -1; x <= _resolution + 1; ++x) {
 		for (z = -1; z <= _resolution + 1; ++z) {
 			set_parent_position(x, z, trans);
 		}
-	}
+	}*/
 
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
@@ -162,7 +162,7 @@ void PlanetTile::set_parent_position(int x, int z, const glm::dmat4 &transform) 
 				tmp_pos = glm::vec3(transform *  glm::dvec4(cx, 0, cz, 1.0));
 				tmp_pos = glm::normalize(tmp_pos);
 				double height = sampler.sample(tmp_pos);
-				parent_position += (2500.0 + height * 0.1) * tmp_pos;
+				parent_position += (2500.0 + height * 2.0) * tmp_pos;
 			}
 		}
 	}

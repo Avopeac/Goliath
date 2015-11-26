@@ -22,7 +22,7 @@ private:
 	class VertexData;
 
 	std::vector<VertexData> vertex_data;
-	const int _resolution = 64;
+	const int _resolution = 16;
 	bool _setup_done = false;
 	int _message_ref = -1;
 

@@ -26,6 +26,7 @@ void main()
 	
 	float far =	10000.0;
 	float c = 1.01 - clamp(length(-ourPosition.z), 0, 1);
+	//float c = 1.0;
     gl_Position = mvp * vec4(position, 1);
 	gl_Position.z = (2.0 * log(c * gl_Position.w + 1.0) / log(c * far +  1) - 1) * gl_Position.w;
 }

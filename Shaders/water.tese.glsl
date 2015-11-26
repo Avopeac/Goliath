@@ -157,7 +157,7 @@ void main()
     tePatchDistance = gl_TessCoord;
 
 	// Displacement should be [0,1], applied to normalized position
-	teDisplacement = 0.001 * height(tePosition, globTime);
+	teDisplacement = 0.00011 * height(tePosition, globTime);
 	tePosition += teDisplacement * teNormal;
 	// Set proper height
 	tePosition *= length(tcPosition[0]);

@@ -5,7 +5,7 @@
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
 
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 24.0, 0.9, 0.0);
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 14.0, 0.05, 0.7);
 
 class PlanetTile::PlanetTileMessage : public Message {
 public:

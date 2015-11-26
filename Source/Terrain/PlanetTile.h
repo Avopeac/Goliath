@@ -41,5 +41,8 @@ private:
 	static SimplePlanetHeightSampler sampler;
 	
 	void set_parent_position(int x, int z, const glm::dmat4 &transform);
-	inline double height_scaler(const glm::dvec3 &pos) { return _radii + sampler.sample(pos) * 20.0; }
+	inline double height_scaler(const glm::dvec3 &pos) { 
+		float h = sampler.sample(pos) - 1.8;
+		return _radii + h * _radii * 0.01;
+	}
 };

@@ -5,9 +5,6 @@ in vec3 vPosition[];
 in vec3 vNormal[];
 out vec3 tcNormal[];
 out vec3 tcPosition[];
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
 uniform vec3 wCameraPos;
 
 #define ID gl_InvocationID

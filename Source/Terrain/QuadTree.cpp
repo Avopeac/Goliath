@@ -28,7 +28,11 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	//glm::dvec3 mid_point = _patch->mesh.vertices[_patch->mesh.vertices.size() / 2].position;
 
 	glm::dvec3 scale = glm::vec3(_extents, _extents, _extents);
-	if (!camera.intersects_box(_patch->get_center(), scale)) { return; }
+	if (!camera.intersects_box(_patch->get_center(), _patch->get_extents())) {
+		remove_children();
+		return; 
+	}
+
 	// Get LOD metric to see if we should draw child quads or just draw this one
 	double rho = compute_level_metric(camera, distance_to_patch(camera, _patch->get_center()));
 	if (rho >= 0.0 || _level > _deepest_level) {
@@ -42,6 +46,7 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 			dont_morph = true;
 		}*/
 		_patch->draw(camera, delta_time);
+		remove_children();
 	}
 	else {
 		//dont_morph = false;
@@ -53,6 +58,7 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 				_northeast->draw(camera, delta_time);
 				_southwest->draw(camera, delta_time);
 				_southeast->draw(camera, delta_time);
+
 			}
 			else {
 				// Draw this tile until all children is setup
@@ -102,4 +108,33 @@ void QuadTree::subdivide() {
 	_southeast = std::make_shared<QuadTree>(_rotation, glm::translate(origin + se_rotated_offset), scale, _radii, _shader); _southeast->_level = _level + 1; _southeast->_parent = this;
 	//This quadtree now has children
 	_has_children = true;
+}
+
+// Recursively removes all children if no children is currently being created
+bool QuadTree::remove_children() {
+	if (_has_children && _northwest->setup_done() && _northeast->setup_done() && _southwest->setup_done() && _southeast->setup_done()) {
+
+		if (_northwest->remove_children() && _northeast->remove_children() &&
+				_southwest->remove_children() && _southeast->remove_children()) {
+			
+			_northwest->_patch.reset();
+			_northwest.reset();
+
+			_northeast->_patch.reset();
+			_northeast.reset();
+
+			_southwest->_patch.reset();
+			_southwest.reset();
+
+			_southeast->_patch.reset();
+			_southeast.reset();
+
+			_has_children = false;
+			return true;
+		}
+	}
+	else if (!_has_children) {
+		return true;
+	}
+	return false;
 }

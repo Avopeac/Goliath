@@ -16,14 +16,16 @@ public:
 	virtual void draw_wireframe(const Camera &camera, double delta_time) override;
 
 	bool setup_done() const { return _patch->setup_done(); }
-	
+	bool remove_children();
+
 private:
 	void subdivide();
 	void create_patch();
 	double compute_level_metric(const Camera & camera, double distance);
 	double distance_nearest_corner(const Camera & camera);
 	double distance_to_patch(const Camera &camera, glm::dvec3 mid_point);
-	
+
+
 	//The axis aligned bounding box
 	glm::dmat4 _translation;
 	glm::dmat4 _rotation;

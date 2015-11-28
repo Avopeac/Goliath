@@ -84,7 +84,10 @@
     <ClCompile Include="Source\Terrain\Noise3D.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Terrain\Water.cpp">
+    <ClCompile Include="Source\Terrain\WaterQuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Terrain\WaterTile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -179,7 +182,10 @@
     <ClInclude Include="Source\Thread\Semaphore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Terrain\Water.h">
+    <ClInclude Include="Source\Terrain\WaterQuadTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\WaterTile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -238,10 +244,7 @@
     <None Include="Shaders\groundshader.vert">
       <Filter>Resource Files\Shader Files</Filter>
     </None>
-    <None Include="Shaders\water.frag" />
-    <None Include="Shaders\water.geom" />
-    <None Include="Shaders\water.tesc.glsl" />
-    <None Include="Shaders\water.tese.glsl" />
-    <None Include="Shaders\water.vert" />
+    <None Include="Shaders\watershader.frag" />
+    <None Include="Shaders\watershader.vert" />
   </ItemGroup>
 </Project>

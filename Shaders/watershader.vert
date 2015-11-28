@@ -7,13 +7,12 @@ out vec3 ourPosition;
 out vec3 ourNormal;
 out vec2 ourUv;
 out vec3 ourColor;
-uniform mat4 mv;
+uniform mat4 model;
+uniform mat4 view;
 uniform mat4 mvp;
-uniform sampler1D permutationTex;
-uniform sampler1D gradientTex;
 void main()
 {
-	vec4 viewPos = mv * vec4(position, 1);
+    vec4 viewPos = view * model * vec4(position, 1);
 	ourPosition = viewPos.xyz;
 	ourNormal = normalize(normal);
     ourUv = uv;

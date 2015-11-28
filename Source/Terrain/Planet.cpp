@@ -3,9 +3,9 @@
 #include "View/ShaderStore.h"
 #include "Model/CubeMap.h"
 #include "Terrain/QuadTree.h"
+#include "Terrain/WaterQuadTree.h"
 #include "Terrain/Noise3D.h"
 #include <GLM/gtx/transform.hpp>
-#include "Terrain/Water.h"
 #include <SOIL/SOIL.h>
 
 Planet::Planet(double radius) : Drawable(), _radius(radius) {
@@ -36,9 +36,7 @@ void Planet::setup_cube() {
 	//Yon transforms
 	glm::dmat4 yon_rot(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(1, 0, 0)));
 	glm::dmat4 yon_trans(glm::translate(glm::dvec3(0, 0, -trans)));
-
-
-
+	//Set up ground terrain quad cube
 	_ground_shader = ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH);
 	_north = std::make_shared<QuadTree>(north_rot, north_trans, _radius, _radius, _ground_shader);
 	_south = std::make_shared<QuadTree>(south_rot, south_trans, _radius, _radius, _ground_shader);
@@ -46,13 +44,14 @@ void Planet::setup_cube() {
 	_east = std::make_shared<QuadTree>(east_rot, east_trans, _radius, _radius, _ground_shader);
 	_hither = std::make_shared<QuadTree>(hither_rot, hither_trans, _radius, _radius, _ground_shader);
 	_yon = std::make_shared<QuadTree>(yon_rot, yon_trans, _radius, _radius, _ground_shader);
-
-	_north_water = std::make_shared<Water>(_radius, glm::translate(glm::dvec3(0, trans, 0)), glm::scale(glm::dvec3(_radius)), glm::dmat4(1));
-	_south_water = std::make_shared<Water>(_radius, glm::translate(glm::dvec3(0, -trans, 0)), glm::scale(glm::dvec3(_radius)), glm::rotate(glm::pi<double>(), glm::dvec3(0, 0, 1)));
-	_west_water = std::make_shared<Water>(_radius, glm::translate(glm::dvec3(-trans, 0, 0)), glm::scale(glm::dvec3(_radius)), glm::rotate(glm::half_pi<double>(), glm::dvec3(0, 0, 1)));
-	_east_water = std::make_shared<Water>(_radius, glm::translate(glm::dvec3(trans, 0, 0)), glm::scale(glm::dvec3(_radius)), glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(0, 0, 1)));
-	_hither_water = std::make_shared<Water>(_radius, glm::translate(glm::dvec3(0, 0, trans)), glm::scale(glm::dvec3(_radius)), glm::rotate(glm::half_pi<double>(), glm::dvec3(1, 0, 0)));
-	_yon_water = std::make_shared<Water>(_radius, glm::translate(glm::dvec3(0, 0, -trans)), glm::scale(glm::dvec3(_radius)), glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(1, 0, 0)));
+	//Set up sea quad cube
+	_water_shader = ShaderStore::instance().get_shader_from_store(WATER_SHADER_PATH);
+	_north_water = std::make_shared<WaterQuadTree>(north_rot, north_trans, _radius, _radius, _water_shader);
+	_south_water = std::make_shared<WaterQuadTree>(south_rot, south_trans, _radius, _radius, _water_shader);
+	_west_water = std::make_shared<WaterQuadTree>(west_rot, west_trans, _radius, _radius, _water_shader);
+	_east_water = std::make_shared<WaterQuadTree>(east_rot, east_trans, _radius, _radius, _water_shader);
+	_hither_water = std::make_shared<WaterQuadTree>(hither_rot, hither_trans, _radius, _radius, _water_shader);
+	_yon_water = std::make_shared<WaterQuadTree>(yon_rot, yon_trans, _radius, _radius, _water_shader);
 }
 
 void Planet::create_color_ramp_texture() {
@@ -84,6 +83,9 @@ void Planet::setup_skybox() {
 }
 
 void Planet::draw(const Camera & camera, double delta_time) {
+	//Draw skybox
+	_skybox->draw(camera, delta_time);
+	//Draw terrain
 	_ground_shader->use();
 	//Color ramp texture
 	glActiveTexture(GL_TEXTURE0);
@@ -98,19 +100,13 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	glBindTexture(GL_TEXTURE_1D, noise_maker.get_gradient_texture_id());
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "gradientTex"), 2);
 	//Upload uniforms
-	
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
-
-	//_skybox->draw(camera, delta_time);
-
 	_north->draw(camera, delta_time);
 	_south->draw(camera, delta_time);
 	_west->draw(camera, delta_time);
 	_east->draw(camera, delta_time);
 	_hither->draw(camera, delta_time);
 	_yon->draw(camera, delta_time);
-
+	//Draw sea
 	_north_water->draw(camera, delta_time);
 	_south_water->draw(camera, delta_time);
 	_west_water->draw(camera, delta_time);
@@ -119,26 +115,6 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	_yon_water->draw(camera, delta_time);
 }
 
-void Planet::draw_wireframe(const Camera & camera, double delta_time)
-{
-	_ground_shader->use();
-
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
-	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
-
-	_skybox->draw(camera, delta_time);
-
-	_north->draw(camera, delta_time);
-	_south->draw(camera, delta_time);
-	_west->draw(camera, delta_time);
-	_east->draw(camera, delta_time);
-	_hither->draw(camera, delta_time);
-	_yon->draw(camera, delta_time);
-
-	_north_water->draw(camera, delta_time);
-	_south_water->draw(camera, delta_time);
-	_west_water->draw(camera, delta_time);
-	_east_water->draw(camera, delta_time);
-	_hither_water->draw(camera, delta_time);
-	_yon_water->draw(camera, delta_time);
+void Planet::draw_wireframe(const Camera & camera, double delta_time) {
+	draw(camera, delta_time);
 }

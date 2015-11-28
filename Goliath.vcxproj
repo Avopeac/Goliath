@@ -170,13 +170,16 @@
     <ClCompile Include="Source\Terrain\Planet.cpp" />
     <ClCompile Include="Source\Terrain\PlanetTile.cpp" />
     <ClCompile Include="Source\Terrain\QuadTree.cpp" />
-    <ClCompile Include="Source\Terrain\Water.cpp" />
+    <ClCompile Include="Source\Terrain\WaterQuadTree.cpp" />
+    <ClCompile Include="Source\Terrain\WaterTile.cpp" />
     <ClCompile Include="Source\Thread\MessageSystem.cpp" />
     <ClCompile Include="Source\View\Camera.cpp" />
     <ClCompile Include="Source\View\Renderer.cpp" />
     <ClCompile Include="Source\View\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Terrain\WaterQuadTree.h" />
+    <ClInclude Include="Source\Terrain\WaterTile.h" />
     <ClInclude Include="Source\Thread\Semaphore.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Drawable\Cube.h" />
@@ -195,7 +198,6 @@
     <ClInclude Include="Source\Terrain\QuadTree.h" />
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h" />
     <ClInclude Include="Source\Terrain\Skybox.h" />
-    <ClInclude Include="Source\Terrain\Water.h" />
     <ClInclude Include="Source\Thread\Message.h" />
     <ClInclude Include="Source\Thread\MessageSystem.h" />
     <ClInclude Include="Source\View\BloomNode.h" />
@@ -228,11 +230,8 @@
     <None Include="Shaders\thresholdshader.vert" />
     <None Include="Shaders\gammatonemapshader.frag" />
     <None Include="Shaders\gammatonemapshader.vert" />
-    <None Include="Shaders\water.frag" />
-    <None Include="Shaders\water.geom" />
-    <None Include="Shaders\water.tesc.glsl" />
-    <None Include="Shaders\water.tese.glsl" />
-    <None Include="Shaders\water.vert" />
+    <None Include="Shaders\watershader.frag" />
+    <None Include="Shaders\watershader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

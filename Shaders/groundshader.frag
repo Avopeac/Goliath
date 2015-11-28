@@ -1,9 +1,8 @@
-#version 420
+#version 330
 out vec4 color;
 in vec2 ourUv;
 in vec3 ourNormal;
 in vec3 ourPosition;
-in vec3 ourWorldPosition;
 in vec3 ourColor;
 uniform sampler2D colorRampTex;
 uniform sampler1D permutationTex;

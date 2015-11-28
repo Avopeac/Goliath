@@ -42,7 +42,7 @@
 #endif GROUND_SHADER_PATH
 
 #ifndef WATER_SHADER_PATH 
-#define WATER_SHADER_PATH "Shaders/water"
+#define WATER_SHADER_PATH "Shaders/watershader"
 #endif WATER_SHADER_PATH 
 
 #ifndef VERTEX_FILE_TYPE 
@@ -82,7 +82,7 @@ public:
 		add_shader_to_store(PLAIN_TEXTURE_SHADER_PATH);
 		add_shader_to_store(GROUND_SHADER_PATH);
 		add_shader_to_store(STANDARD_SHADER_PATH);
-		add_shader_to_store_full(WATER_SHADER_PATH);
+		add_shader_to_store(WATER_SHADER_PATH);
 	}
 
 	void add_shader_to_store(const std::string &item) {

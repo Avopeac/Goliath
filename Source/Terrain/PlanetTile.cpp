@@ -184,8 +184,9 @@ void PlanetTile::predraw(const Camera &camera) {
 	glm::dmat4 relative_to_center(camera.get_dview());
 	glm::dvec4 center_eye(relative_to_center * glm::dvec4(_center, 1));
 	relative_to_center[3] = center_eye;
-	relative_to_center = camera.get_dprojection() * relative_to_center;
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(glm::mat4(relative_to_center)));
+	glm::mat4 downcast_rtc(relative_to_center);
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mv"), 1, GL_FALSE, glm::value_ptr(downcast_rtc));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(camera.get_fprojection() * downcast_rtc));
 }
 
 void PlanetTile::draw(const Camera & camera, double delta_time) {

@@ -25,11 +25,12 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	if (!setup_done()) { return; }
 	// Check if we have to draw this patch
 	// TODO Calculate this without generated mesh if possible ?
-	glm::dvec3 mid_point = _patch->mesh.vertices[_patch->mesh.vertices.size() / 2].position;
+	//glm::dvec3 mid_point = _patch->mesh.vertices[_patch->mesh.vertices.size() / 2].position;
+
 	glm::dvec3 scale = glm::vec3(_extents, _extents, _extents);
-	if (!camera.intersects_box(mid_point, scale)) { return; }
+	if (!camera.intersects_box(_patch->get_center(), scale)) { return; }
 	// Get LOD metric to see if we should draw child quads or just draw this one
-	double rho = compute_level_metric(camera, distance_to_patch(camera, mid_point));
+	double rho = compute_level_metric(camera, distance_to_patch(camera, _patch->get_center()));
 	if (rho >= 0.0 || _level > _deepest_level) {
 		// Morph vertices
 		/*if (!dont_morph) {

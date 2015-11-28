@@ -5,7 +5,7 @@
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
 
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 14.0, 0.05, 0.7);
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 30.0, 0.05, 0.7);
 
 class PlanetTile::PlanetTileMessage : public Message {
 public:
@@ -58,7 +58,7 @@ void PlanetTile::generate()
 			double height = height_scaler(current.position);
 			current.position = height * current.position; //Pow 4 gives us more exaggerations
 			current.uv = { cx + offset, cz + offset };
-			current.color.r = (height - _radii) * 0.05;
+			current.color.r = (height - _radii) / 8000.0;
 			vertex_data.push_back(current);
 
 			//Find max points
@@ -115,7 +115,7 @@ void PlanetTile::generate()
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
 		if (it->edge) { it->position *= 0.95f; }
-		mesh.vertices.push_back(Vertex(it->position, it->normal, it->uv, it->color));
+		mesh.vertices.push_back(Vertex(it->position - _center, it->normal, it->uv, it->color));
 	}
 
 	_setup_done = true;
@@ -159,7 +159,7 @@ void PlanetTile::set_parent_position(int x, int z, const glm::dmat4 &transform) 
 				cx = x_idx * step - offset;
 				cz = z_idx * step - offset;
 				glm::dvec3 tmp_pos;
-				tmp_pos = glm::vec3(transform *  glm::dvec4(cx, 0, cz, 1.0));
+				tmp_pos = glm::dvec3(transform *  glm::dvec4(cx, 0, cz, 1.0));
 				tmp_pos = glm::normalize(tmp_pos);
 				parent_position += height_scaler(tmp_pos) * tmp_pos;
 			}
@@ -196,9 +196,15 @@ void PlanetTile::predraw(const Camera &camera) {
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	_shader->use();
-	glm::mat4 model(1);
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(camera.get_fview_proj() * model));
+	glm::dmat4 model(1);
+	glm::dmat4 mv_cpu(camera.get_dview() * model);
+	glm::dvec4 center_eye = mv_cpu * glm::dvec4(_center, 1);
+	glm::dmat4 mv_gpu(mv_cpu);
+	mv_gpu[3] = center_eye;
+	mv_gpu = camera.get_dprojection() * mv_gpu;
+
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(model)));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(glm::mat4(mv_gpu)));
 }
 
 void PlanetTile::draw(const Camera & camera, double delta_time) {

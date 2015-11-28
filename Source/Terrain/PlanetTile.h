@@ -15,6 +15,8 @@ public:
 	void PlanetTile::morph_vertices(double delta_time);
 	const glm::dvec3 &get_maximum() const { return _max; }
 	const glm::dvec3 &get_minimum() const { return _min; }
+	const glm::dvec3 &get_center() const { return _center; }
+	const glm::dvec3 &get_extents() const { return _extents; }
 	bool setup_done() const { return _setup_done; }
 
 private:
@@ -42,7 +44,7 @@ private:
 	
 	void set_parent_position(int x, int z, const glm::dmat4 &transform);
 	inline double height_scaler(const glm::dvec3 &pos) { 
-		float h = sampler.sample(pos) - 1.8;
-		return _radii + h * _radii * 0.01;
+		double h = sampler.sample(pos) - 1.8;
+		return _radii + h * 8000.0; //Max is approx 8000 units
 	}
 };

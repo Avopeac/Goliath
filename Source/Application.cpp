@@ -82,10 +82,10 @@ void Application::run() {
 	Renderer::instance().initialize();
 	
 	//Create planet
-	std::shared_ptr<Planet> planet = std::make_shared<Planet>(4000);
+	std::shared_ptr<Planet> planet = std::make_shared<Planet>(6000000);
 	
 	//Create camera
-	Camera camera(glm::vec3(0, 0, 4050), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.0001, 10000.0);
+	Camera camera(glm::vec3(0, 0, 6060000), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 100000000.0);
 	
 	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);

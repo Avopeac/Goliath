@@ -82,8 +82,7 @@ void main()
 
 	//Coloring things
 	float height = ourColor.r;
-	float slope = dot(normalize(ourWorldPosition), normalDir);
-	vec3 texColor = texture(colorRampTex, vec2(height * slope, 0)).rgb;
+	vec3 texColor = texture(colorRampTex, vec2(height, 0)).rgb;
 
 	//Lighting
     float ndotl = clamp(dot(normalDir, lightDir), 0.0, 1.0);

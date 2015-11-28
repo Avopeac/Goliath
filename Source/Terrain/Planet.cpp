@@ -82,7 +82,7 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
 	glUniformMatrix4fv(glGetUniformLocation(_ground_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
 
-	_skybox->draw(camera, delta_time);
+	//_skybox->draw(camera, delta_time);
 
 	_north->draw(camera, delta_time);
 	_south->draw(camera, delta_time);

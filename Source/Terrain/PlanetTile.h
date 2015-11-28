@@ -1,50 +1,63 @@
 #pragma once
-#include "..\View\Drawable.h"
-#include "..\Model\Vertex.h"
-#include "..\View\ShaderStore.h"
-#include "..\Terrain\SimplePlanetHeightSampler.h"
+#include "View/Drawable.h"
+#include "Model/Vertex.h"
+#include "View/ShaderStore.h"
+#include "Terrain/SimplePlanetHeightSampler.h"
+
+/// This may not be very pretty but keeps memory footprint down for instances of this class
+#ifndef PLANET_TILE_MAX_MOUNTAIN_HEIGHT 
+#define PLANET_TILE_MAX_MOUNTAIN_HEIGHT 8192
+#endif
+#ifndef PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT 
+#define PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT 0.00012207031
+#endif
+#ifndef PLANET_TILE_RESOLUTION
+#define PLANET_TILE_RESOLUTION 16
+#endif
+#ifndef PLANET_TILE_INV_RESOLUTION
+#define PLANET_TILE_INV_RESOLUTION 0.0625
+#endif
+#ifndef PLANET_TILE_OFFSET 
+#define PLANET_TILE_OFFSET 0.5
+#endif
+
+//There are many tiles created at runtime, this class should be kept as small as possible
 class PlanetTile : public Drawable {
 public:
-	PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii);
 	PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii, std::shared_ptr<Shader> shader);
 	PlanetTile(const PlanetTile&) = delete;
-
 	void generate();
 	virtual void draw(const Camera & camera, double delta_time) override;
 	virtual void draw_wireframe(const Camera & camera, double delta_time) override;
-	void PlanetTile::morph_vertices(double delta_time);
-	const glm::dvec3 &get_maximum() const { return _max; }
-	const glm::dvec3 &get_minimum() const { return _min; }
 	const glm::dvec3 &get_center() const { return _center; }
 	const glm::dvec3 &get_extents() const { return _extents; }
 	bool setup_done() const { return _setup_done; }
+	//void PlanetTile::morph_vertices(double delta_time);
 
 private:
 	class PlanetTileMessage;
 	class VertexData;
+	static SimplePlanetHeightSampler sampler;
 
-	std::vector<VertexData> vertex_data;
-	const int _resolution = 16;
+	//Tile setup data
 	bool _setup_done = false;
 	int _message_ref = -1;
 
-	glm::dvec3 _center;
-	glm::dvec3 _extents;
-	glm::dvec3 _min;
-	glm::dvec3 _max;
-	glm::dmat4 _translation;
-	glm::dmat4 _scale;
-	glm::dmat4 _rotation;
-	double _radii;
-	
-	void predraw(const Camera &camera);
-	bool is_edge(int x, int z);
+	//Tile transformation data
+	glm::dvec3 _center, _extents;
+	glm::dmat4 _transform;
+	const double _radii;
 
-	static SimplePlanetHeightSampler sampler;
-	
-	void set_parent_position(int x, int z, const glm::dmat4 &transform);
+	///Gets a noise value by giving position, scales this according to max mountain height
 	inline double height_scaler(const glm::dvec3 &pos) { 
-		double h = sampler.sample(pos) - 1.8;
-		return _radii + h * 8000.0; //Max is approx 8000 units
+		return _radii + (sampler.sample(pos) - 1.8) * PLANET_TILE_MAX_MOUNTAIN_HEIGHT;
 	}
+
+	///Is the given tile index on the edge?
+	inline bool is_edge(int x, int z) {
+		return (x == -1) || (z == -1) || (x == PLANET_TILE_RESOLUTION + 1) || (z == PLANET_TILE_RESOLUTION + 1);
+	}
+
+	//void set_parent_position(int x, int z, const glm::dmat4 &transform);
+	void predraw(const Camera &camera);
 };

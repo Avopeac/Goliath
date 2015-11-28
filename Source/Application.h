@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
-#include <GLM\glm.hpp>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <GLM/glm.hpp>
 //The default argument window width
 #ifndef WINDOW_WIDTH
 #define WINDOW_WIDTH 1024

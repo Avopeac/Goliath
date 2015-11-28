@@ -1,10 +1,8 @@
 #include "PlanetTile.h"
 #include <iostream>
 #include <GLM/gtc/type_ptr.hpp>
-#include <GLM/gtx/transform.hpp>
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
-
 SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 30.0, 0.05, 0.7);
 
 class PlanetTile::PlanetTileMessage : public Message {
@@ -21,66 +19,60 @@ public:
 	~VertexData() {}
 	glm::dvec3 parent_position;
 	glm::dvec3 position;
-	glm::dvec3 normal;
+	glm::vec3 normal;
 	glm::vec3 color;
 	glm::vec2 uv;
 	bool edge = false;
 };
 
-PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii)
-	: Drawable(), _translation(translation), _scale(scale), _rotation(rotation), _radii(radii) {
-	set_shader(ShaderStore::instance().get_shader_from_store(GROUND_SHADER_PATH));
-}
-
 PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii, std::shared_ptr<Shader> shader)
-	: PlanetTile(translation, scale, rotation, radii) {
+	: Drawable(), _radii(radii), _transform(translation * rotation * scale)  {
 	set_shader(shader);
 	_message_ref = MessageSystem::instance().post(std::make_shared<PlanetTileMessage>(this));
 }
 
-void PlanetTile::generate()
-{
+void PlanetTile::generate() {
 	int x, z;
-	double step = 1.0 / _resolution;
-	double offset = 0.5;
-	glm::dmat4 trans = _translation * _rotation * _scale;
-	_max = glm::dvec3(std::numeric_limits<double>().min());
-	_min = glm::dvec3(std::numeric_limits<double>().max());
-	//Set up vertices with the edge case
-	for (x = -1; x <= _resolution + 1; ++x) {
-		for (z = -1; z <= _resolution + 1; ++z) {
+	glm::dvec3 max(glm::dvec3(std::numeric_limits<double>().min()));
+	glm::dvec3 min(glm::dvec3(std::numeric_limits<double>().max()));
+	//Reserve vertex data
+	std::vector<VertexData> vertex_data;
+	vertex_data.reserve((2 + PLANET_TILE_RESOLUTION) * (2 + PLANET_TILE_RESOLUTION));
+	for (x = -1; x <= PLANET_TILE_RESOLUTION + 1; ++x) {
+		for (z = -1; z <= PLANET_TILE_RESOLUTION + 1; ++z) {
+			//Cx, cz are normalized coordinates with 0.5, 0.5 in the center
+			double cx(x * PLANET_TILE_INV_RESOLUTION - PLANET_TILE_OFFSET);
+			double cz(z * PLANET_TILE_INV_RESOLUTION - PLANET_TILE_OFFSET);
+			double height(1);
 			VertexData current;
-			double cx = x * step - offset;
-			double cz = z * step - offset;
 			current.edge = is_edge(x, z);
-			current.position = glm::dvec3(trans *  glm::dvec4(cx, 0, cz, 1.0));
-			current.position = glm::normalize(current.position);
-			double height = height_scaler(current.position);
-			current.position = height * current.position; //Pow 4 gives us more exaggerations
-			current.uv = { cx + offset, cz + offset };
-			current.color.r = (height - _radii) / 8000.0;
+			//Transform point to unit sphere and scale
+			current.position = glm::normalize(glm::dvec3(_transform *  glm::dvec4(cx, 0, cz, 1.0)));
+			height = height_scaler(current.position);
+			current.position = height * current.position;
+			current.uv = { cx + PLANET_TILE_OFFSET, cz + PLANET_TILE_OFFSET };
+			//Some height-based color fraction
+			current.color.r = (height - _radii) * PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT;
 			vertex_data.push_back(current);
-
 			//Find max points
-			if (_max.x < current.position.x) { _max.x = current.position.x; }
-			if (_max.y < current.position.y) { _max.y = current.position.y; }
-			if (_max.z < current.position.z) { _max.z = current.position.z; }
-
+			if (max.x < current.position.x) { max.x = current.position.x; }
+			if (max.y < current.position.y) { max.y = current.position.y; }
+			if (max.z < current.position.z) { max.z = current.position.z; }
 			//Find min points
-			if (_min.x > current.position.x) { _min.x = current.position.x; }
-			if (_min.y > current.position.y) { _min.y = current.position.y; }
-			if (_min.z > current.position.z) { _min.z = current.position.z; }
+			if (min.x > current.position.x) { min.x = current.position.x; }
+			if (min.y > current.position.y) { min.y = current.position.y; }
+			if (min.z > current.position.z) { min.z = current.position.z; }
 		}
 	}
 
 	//Set up true aabb
-	_center = (_max + _min) * 0.5;
-	_extents = (_max - _min) * 0.5;
+	_center = (max + min) * 0.5;
+	_extents = (max - min) * 0.5;
 
 	//Set up indices with the edge case
-	int stride = _resolution + 2 + 1;
-	for (x = 0; x < _resolution + 2; ++x) {
-		for (z = 0; z < _resolution + 2; ++z) {
+	int stride = PLANET_TILE_RESOLUTION + 2 + 1;
+	for (x = 0; x < PLANET_TILE_RESOLUTION + 2; ++x) {
+		for (z = 0; z < PLANET_TILE_RESOLUTION + 2; ++z) {
 			mesh.indices.push_back(x + 1 + z * stride);
 			mesh.indices.push_back(x + (z + 1) * stride);
 			mesh.indices.push_back(x + z * stride);
@@ -96,10 +88,8 @@ void PlanetTile::generate()
 		int i1(mesh.indices[x + 0]);
 		int i2(mesh.indices[x + 1]);
 		int i3(mesh.indices[x + 2]);
-		glm::dvec3 p1(vertex_data[i1].position);
-		glm::dvec3 p2(vertex_data[i2].position);
-		glm::dvec3 p3(vertex_data[i3].position);
-		glm::dvec3 normal(glm::cross(p2 - p1, p3 - p1));
+		glm::dvec3 normal(glm::cross(vertex_data[i2].position - vertex_data[i1].position,
+			vertex_data[i3].position - vertex_data[i1].position));
 		vertex_data[i1].normal += normal;
 		vertex_data[i2].normal += normal;
 		vertex_data[i3].normal += normal;
@@ -122,17 +112,17 @@ void PlanetTile::generate()
 }
 
 
-void PlanetTile::morph_vertices(double alpha) {
+/*void PlanetTile::morph_vertices(double alpha) {
 	for (int i = 0; i < vertex_data.size(); i++) {
 		if (!vertex_data[i].edge) {
 			mesh.vertices[i].position = vertex_data[i].parent_position * (1.0 - alpha) + vertex_data[i].position * alpha; // glm::vec3(0,0,0)
 		}
-		/*if (i == 11) { std::cout << "vertex_data[i].vertex.position " << vertex_data[i].vertex.position.x << "  " << vertex_data[i].vertex.position.y << "  " << vertex_data[i].vertex.position.z << std::endl; }*/
+		//if (i == 11) { std::cout << "vertex_data[i].vertex.position " << vertex_data[i].vertex.position.x << "  " << vertex_data[i].vertex.position.y << "  " << vertex_data[i].vertex.position.z << std::endl; }
 	}
 	mesh.update_vertices();
-}
+}*/
 
-void PlanetTile::set_parent_position(int x, int z, const glm::dmat4 &transform) {
+/*void PlanetTile::set_parent_position(int x, int z, const glm::dmat4 &transform) {
 	double step = 1.0 / _resolution;
 	double offset = 0.5;
 	glm::dvec3 parent_position(0);
@@ -170,18 +160,13 @@ void PlanetTile::set_parent_position(int x, int z, const glm::dmat4 &transform) 
 	//std::cout << "parent: " << vertex_data[current_idx].parent_position.x << "  " << vertex_data[current_idx].parent_position.y << "  " << vertex_data[current_idx].parent_position.z << "  " << std::endl;
 	//std::cout << "real: " << vertex_data[current_idx].own_position.x << "  " << vertex_data[current_idx].own_position.y << "  " << vertex_data[current_idx].own_position.z << "  " << std::endl;
 	//Calculate vertex normals, simple version, only averages over one triangle
-}
-
-
-bool PlanetTile::is_edge(int x, int z) {
-	return (x == -1) || (z == -1) || (x == _resolution + 1) || (z == _resolution + 1);
-}
+}*/
 
 void PlanetTile::predraw(const Camera &camera) {
 	if (_message_ref != -1) {
-		auto message = MessageSystem::instance().get(_message_ref);
+		auto message(MessageSystem::instance().get(_message_ref));
+		// Setup mesh once
 		if (message) {
-			// Setup mesh once
 			mesh.setup_mesh();
 			_message_ref = -1;
 			_setup_done = true;
@@ -196,15 +181,11 @@ void PlanetTile::predraw(const Camera &camera) {
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	_shader->use();
-	glm::dmat4 model(1);
-	glm::dmat4 mv_cpu(camera.get_dview() * model);
-	glm::dvec4 center_eye = mv_cpu * glm::dvec4(_center, 1);
-	glm::dmat4 mv_gpu(mv_cpu);
-	mv_gpu[3] = center_eye;
-	mv_gpu = camera.get_dprojection() * mv_gpu;
-
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(model)));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(glm::mat4(mv_gpu)));
+	glm::dmat4 relative_to_center(camera.get_dview());
+	glm::dvec4 center_eye(relative_to_center * glm::dvec4(_center, 1));
+	relative_to_center[3] = center_eye;
+	relative_to_center = camera.get_dprojection() * relative_to_center;
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(glm::mat4(relative_to_center)));
 }
 
 void PlanetTile::draw(const Camera & camera, double delta_time) {

@@ -1,13 +1,12 @@
 #pragma once
 #include <iostream>
 #include "Application.h"
-#include "View\Renderer.h"
-#include "View\Camera.h"
-#include "View\ShaderStore.h"
-#include "Terrain\Planet.h"
-#include "Thread\MessageSystem.h"
-#include "Input\Input.h"
-#include "AntTweakBar\AntTweakBar.h"
+#include "View/Renderer.h"
+#include "View/ShaderStore.h"
+#include "Terrain/Planet.h"
+#include "Thread/MessageSystem.h"
+#include "Input/Input.h"
+#include "AntTweakBar/AntTweakBar.h"
 
 unsigned int Application::width = WINDOW_WIDTH;
 unsigned int Application::height = WINDOW_HEIGHT;

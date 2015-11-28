@@ -25,11 +25,8 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	if (!setup_done()) { return; }
 	// Check if we have to draw this patch
 	// TODO Calculate this without generated mesh if possible ?
-	//glm::dvec3 mid_point = _patch->mesh.vertices[_patch->mesh.vertices.size() / 2].position;
-
-	glm::dvec3 scale = glm::vec3(_extents, _extents, _extents);
 	if (!camera.intersects_box(_patch->get_center(), _patch->get_extents())) {
-		remove_children();
+		//remove_children();
 		return; 
 	}
 
@@ -46,7 +43,7 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 			dont_morph = true;
 		}*/
 		_patch->draw(camera, delta_time);
-		remove_children();
+		//remove_children();
 	}
 	else {
 		//dont_morph = false;

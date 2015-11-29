@@ -178,6 +178,7 @@
     <ClCompile Include="Source\View\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Model\Texture2DLoader.h" />
     <ClInclude Include="Source\Terrain\WaterQuadTree.h" />
     <ClInclude Include="Source\Terrain\WaterTile.h" />
     <ClInclude Include="Source\Thread\Semaphore.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Source\View\BloomNode.h" />
     <ClInclude Include="Source\View\Camera.h" />
     <ClInclude Include="Source\View\Drawable.h" />
+    <ClInclude Include="Source\View\FxaaNode.h" />
     <ClInclude Include="Source\View\PostProcessing.h" />
     <ClInclude Include="Source\View\PostProcessingNode.h" />
     <ClInclude Include="Source\View\RenderTexture.h" />
@@ -218,6 +220,8 @@
     <None Include="Shaders\atmosphereshader.vert" />
     <None Include="Shaders\blurfiltershader.frag" />
     <None Include="Shaders\blurfiltershader.vert" />
+    <None Include="Shaders\fxaashader.frag" />
+    <None Include="Shaders\fxaashader.vert" />
     <None Include="Shaders\groundshader.frag" />
     <None Include="Shaders\groundshader.vert" />
     <None Include="Shaders\plaintextureshader.frag" />

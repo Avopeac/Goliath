@@ -33,6 +33,10 @@
 #define PLAIN_TEXTURE_SHADER_PATH "Shaders/plaintextureshader"
 #endif PLAIN_TEXTURE_SHADER_PATH
 
+#ifndef FXAA_SHADER_PATH
+#define FXAA_SHADER_PATH "Shaders/fxaashader"
+#endif
+
 #ifndef STANDARD_SHADER_PATH
 #define STANDARD_SHADER_PATH "Shaders/standard"
 #endif STANDARD_SHADER_PATH
@@ -83,6 +87,7 @@ public:
 		add_shader_to_store(GROUND_SHADER_PATH);
 		add_shader_to_store(STANDARD_SHADER_PATH);
 		add_shader_to_store(WATER_SHADER_PATH);
+		add_shader_to_store(FXAA_SHADER_PATH);
 	}
 
 	void add_shader_to_store(const std::string &item) {
@@ -113,10 +118,7 @@ public:
 
 	std::shared_ptr<Shader> get_shader_from_store(const std::string &item) {
 		auto it = _store.find(item);
-		if (it != _store.end()) {
-			return it->second;
-		}
-		return nullptr;
+		return it != _store.end() ? it->second : nullptr;
 	}
 
 private:

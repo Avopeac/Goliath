@@ -1,12 +1,13 @@
 #include "Planet.h"
+#include <GLM/gtx/transform.hpp>
+#include <SOIL/SOIL.h>
 #include "View/Renderer.h"
 #include "View/ShaderStore.h"
 #include "Model/CubeMap.h"
+#include "Model/Texture2DLoader.h"
 #include "Terrain/QuadTree.h"
 #include "Terrain/WaterQuadTree.h"
 #include "Terrain/Noise3D.h"
-#include <GLM/gtx/transform.hpp>
-#include <SOIL/SOIL.h>
 
 Planet::Planet(double radius) : Drawable(), _radius(radius) {
 	setup_cube();
@@ -55,29 +56,14 @@ void Planet::setup_cube() {
 }
 
 void Planet::create_color_ramp_texture() {
-	glGenTextures(1, &_color_ramp_id);
-	glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	int w, h, c;
-	unsigned char *data = SOIL_load_image("Images/color_ramp_terrain.png", &w, &h, &c, SOIL_LOAD_RGB);
-	if (data != 0) {
-		std::cout << "Loaded color ramp texture. " << std::endl;
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		SOIL_free_image_data(data);
-	}
-	else {
-		std::cout << "Failed to load color ramp texture. " << std::endl;
-	}
+	_color_ramp_id = Texture2DLoader::load("Images/color_ramp_terrain.png");
 }
 
 void Planet::setup_skybox() {
 	//Set up skybox shader
-	_skybox = std::make_shared<Skybox>("Images/skybox_space_right1.png", 
-		"Images/skybox_space_left2.png", "Images/skybox_space_top3.png", 
-		"Images/skybox_space_bottom4.png", "Images/skybox_space_front5.png", 
+	_skybox = std::make_shared<Skybox>("Images/skybox_space_right1.png",
+		"Images/skybox_space_left2.png", "Images/skybox_space_top3.png",
+		"Images/skybox_space_bottom4.png", "Images/skybox_space_front5.png",
 		"Images/skybox_space_back6.png");
 	_skybox->set_shader(ShaderStore::instance().get_shader_from_store(SKYBOX_SHADER_PATH));
 }
@@ -107,6 +93,8 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	_hither->draw(camera, delta_time);
 	_yon->draw(camera, delta_time);
 	//Draw sea
+	_water_shader->use();
+	glUniform1f(glGetUniformLocation(_water_shader->program, "time"), Application::elapsed_time);
 	_north_water->draw(camera, delta_time);
 	_south_water->draw(camera, delta_time);
 	_west_water->draw(camera, delta_time);

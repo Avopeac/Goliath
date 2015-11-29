@@ -16,11 +16,11 @@ class WaterTile::VertexData {
 public:
 	VertexData() {}
 	~VertexData() {}
-	glm::dvec3 parent_position;
 	glm::dvec3 position;
-	glm::vec3 normal;
+	glm::vec3 normal; 
 	glm::vec3 color;
 	glm::vec2 uv;
+	glm::vec3 bitangent;
 	bool edge = false;
 };
 
@@ -46,6 +46,12 @@ void WaterTile::generate() {
 			current.edge = is_edge(x, z);
 			//Transform point to unit sphere and scale
 			current.position = glm::normalize(glm::dvec3(_transform *  glm::dvec4(cx, 0, cz, 1.0)));
+			current.normal = current.position;
+			//Find bitangent
+			double bcx((x + 1) * WATER_TILE_INV_RESOLUTION - WATER_TILE_OFFSET);
+			double bcz(z * WATER_TILE_INV_RESOLUTION - WATER_TILE_OFFSET);
+			glm::vec3 bitangent = glm::normalize(glm::dvec3(_transform * glm::dvec4(bcx, 0, bcz, 1.0)));
+			current.bitangent = normalize(bitangent - current.normal);
 			current.position = _radii * current.position;
 			current.uv = { cx + WATER_TILE_OFFSET, cz + WATER_TILE_OFFSET };
 			//Some height-based color fraction
@@ -79,7 +85,7 @@ void WaterTile::generate() {
 	}
 
 	//Calculate vertex normals, simple version, only averages over one triangle
-	z = (int)mesh.indices.size();
+	/*z = (int)mesh.indices.size();
 	for (x = 0; x < z; x += 3) {
 		int i1(mesh.indices[x + 0]);
 		int i2(mesh.indices[x + 1]);
@@ -89,12 +95,13 @@ void WaterTile::generate() {
 		vertex_data[i1].normal += normal;
 		vertex_data[i2].normal += normal;
 		vertex_data[i3].normal += normal;
-	}
+	}*/
 
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
-		if (it->edge) { it->position *= 0.95f; }
-		mesh.vertices.push_back(Vertex(it->position - _center, it->normal, it->uv, it->color));
+		//Keep skirts as small as possible to reduce fragment computations
+		if (it->edge) { it->position *= 0.9999f; } 
+		mesh.vertices.push_back(Vertex(it->position - _center, it->normal, it->uv, it->color, it->bitangent));
 	}
 
 	_setup_done = true;
@@ -122,8 +129,9 @@ void WaterTile::predraw(const Camera &camera) {
 	glm::dmat4 relative_to_center(camera.get_dview());
 	glm::dvec4 center_eye(relative_to_center * glm::dvec4(_center, 1));
 	relative_to_center[3] = center_eye;
-	relative_to_center = camera.get_dprojection() * relative_to_center;
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(glm::mat4(relative_to_center)));
+	glm::mat4 downcast_rtc = relative_to_center;
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mv"), 1, GL_FALSE, glm::value_ptr(downcast_rtc));
+	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(camera.get_fprojection() * downcast_rtc));
 }
 
 void WaterTile::draw(const Camera & camera, double delta_time) {

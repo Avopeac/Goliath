@@ -2,11 +2,19 @@
 out vec4 color;
 in vec2 ourUv;
 in vec3 ourNormal;
+in vec3 ourSphereNormal;
 in vec3 ourPosition;
 in vec3 ourColor;
 uniform sampler2D colorRampTex;
 uniform sampler1D permutationTex;
 uniform sampler1D gradientTex;
+uniform samplerCube grassTex;
+uniform sampler2D grass2Tex;
+uniform sampler2D dirtTex;
+uniform sampler2D rockTex;
+uniform sampler2D forestTex;
+uniform sampler2D snowTex;
+uniform sampler2D sandTex;
 uniform mat4 view;
 
 //Noise helper functions
@@ -48,40 +56,14 @@ float noise(vec3 p){
 	return mix(nxy0, nxy1, f.z);
 }
 
-
-float heightFunction(vec3 p, float l, float d, float o, float x) {
-    float i, v = 1.0;
-	v += (noise(p) + x);
-	p *= l;
-    for (i = 1; i <= o; ++i) {
-        v += (abs(noise(p)) + x) * pow(l, -d * i);
-        p *= l;
-    }
-	return 4.0 + (pow(v, 3) - 1.5) * 0.1;
-}
-
 void main()
 {
 	vec3 lightDir = normalize(vec3(0,1,0));
 	vec3 normalDir = normalize(ourNormal);
-	//Perturbing normal with noise
-	//const float epsilon = 0.05 * -ourPosition.z; //Do some distance function here
-	//const float oneOverEpsilon = 1.0 / epsilon;
-	//const float scaleFactor = 0.25;
-	//const float lacunarity = 2.0;
-	//const float dimensionality = 0.9;
-	//const float octaves = 24;
-	//const float offset = 0.0;
-	//float h0 = heightFunction(ourWorldPosition, lacunarity, dimensionality, octaves, offset);
-	//float hx = heightFunction(ourWorldPosition + vec3(epsilon,0,0), lacunarity, dimensionality, octaves, offset);
-	//float hy = heightFunction(ourWorldPosition + vec3(0,epsilon,0), lacunarity, dimensionality, octaves, offset);
-    //float hz = heightFunction(ourWorldPosition + vec3(0,0,epsilon), lacunarity, dimensionality, octaves, offset);
-    //vec3 df = vec3(hx - h0, hy - h0, hz - h0) / epsilon;
-	//normalDir = normalize(normalDir - df * scaleFactor);
+	vec3 sphereNormalDir = normalize(ourSphereNormal);
 
 	//Coloring things
-	float height = ourColor.r;
-	vec3 texColor = texture(colorRampTex, vec2(height, 0)).rgb;
+	vec3 texColor = texture(colorRampTex, vec2(ourColor.r, 0)).rgb;
 
 	//Lighting
     float ndotl = clamp(dot(normalDir, lightDir), 0.0, 1.0);

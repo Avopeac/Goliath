@@ -3,21 +3,24 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 color;
+layout(location = 4) in vec3 bitangent;
 out vec3 ourPosition;
 out vec3 ourNormal;
+out vec3 ourBitangent;
+out vec3 ourTangent;
 out vec2 ourUv;
 out vec3 ourColor;
-uniform mat4 model;
-uniform mat4 view;
+uniform mat4 mv;
 uniform mat4 mvp;
+uniform float time;
+
 void main()
 {
-    vec4 viewPos = view * model * vec4(position, 1);
-	ourPosition = viewPos.xyz;
 	ourNormal = normalize(normal);
+    vec4 viewPos = mv * vec4(position, 1);
+	ourPosition = position.xyz;
     ourUv = uv;
 	ourColor = color;
-	
 	float far =	100000000.0;
 	float c = 0.01;
     gl_Position = mvp * vec4(position, 1);

@@ -3,7 +3,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 30.0, 0.05, 0.7);
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 25.0, 0.035, 0.7);
 
 class PlanetTile::PlanetTileMessage : public Message {
 public:
@@ -17,9 +17,10 @@ class PlanetTile::VertexData {
 public:
 	VertexData() {}
 	~VertexData() {}
-	glm::dvec3 parent_position;
+	//glm::dvec3 parent_position;
 	glm::dvec3 position;
-	glm::vec3 normal;
+	glm::vec3 normal; 
+	glm::vec3 sphere_normal;
 	glm::vec3 color;
 	glm::vec2 uv;
 	bool edge = false;
@@ -48,11 +49,12 @@ void PlanetTile::generate() {
 			current.edge = is_edge(x, z);
 			//Transform point to unit sphere and scale
 			current.position = glm::normalize(glm::dvec3(_transform *  glm::dvec4(cx, 0, cz, 1.0)));
+			current.sphere_normal = current.position;
 			height = height_scaler(current.position);
 			current.position = height * current.position;
 			current.uv = { cx + PLANET_TILE_OFFSET, cz + PLANET_TILE_OFFSET };
 			//Some height-based color fraction
-			current.color.r = (height - _radii) * PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT;
+			current.color.r = static_cast<float>((height - _radii) * PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT);
 			vertex_data.push_back(current);
 			//Find max points
 			if (max.x < current.position.x) { max.x = current.position.x; }
@@ -104,8 +106,8 @@ void PlanetTile::generate() {
 
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
-		if (it->edge) { it->position *= 0.95f; }
-		mesh.vertices.push_back(Vertex(it->position - _center, it->normal, it->uv, it->color));
+		if (it->edge) { it->position *= 0.9999f; } //Keep as small as possible to reduce fragment computations
+		mesh.vertices.push_back(Vertex(it->position - _center, it->normal, it->uv, it->color, it->sphere_normal));
 	}
 
 	_setup_done = true;

@@ -3,8 +3,10 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 color;
+layout(location = 4) in vec3 sphereNormal;
 out vec3 ourPosition;
 out vec3 ourNormal;
+out vec3 ourSphereNormal;
 out vec2 ourUv;
 out vec3 ourColor;
 uniform mat4 mv;
@@ -18,6 +20,8 @@ void main()
 	ourNormal = normalize(normal);
     ourUv = uv;
 	ourColor = color;
+	ourSphereNormal = normalize(sphereNormal);
+
 	
 	float far =	100000000.0;
 	float c = 0.01;

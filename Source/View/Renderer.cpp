@@ -2,6 +2,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include <AntTweakBar/AntTweakBar.h>
+#include "FxaaNode.h"
 #include "BloomNode.h"
 #include "GammaToneMapNode.h"
 
@@ -13,9 +14,9 @@ void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
 
 void Renderer::initialize() {
 	//Set up post processing
-	//_post_processing.add_node(std::make_shared<AtmosphereNode>());
 	_post_processing.add_node(std::make_shared<BloomNode>(2, 0.42f, 1.0f, 1.0f));
 	_post_processing.add_node(std::make_shared<GammaToneMapNode>(2.3f, 2.2f));
+	_post_processing.add_node(std::make_shared<FxaaNode>());
 }
 
 void Renderer::render(const Camera &camera, double delta_time) {

@@ -188,6 +188,12 @@
     <ClInclude Include="Source\Terrain\WaterTile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\View\FxaaNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Texture2DLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\standard.frag">
@@ -246,5 +252,7 @@
     </None>
     <None Include="Shaders\watershader.frag" />
     <None Include="Shaders\watershader.vert" />
+    <None Include="Shaders\fxaashader.frag" />
+    <None Include="Shaders\fxaashader.vert" />
   </ItemGroup>
 </Project>

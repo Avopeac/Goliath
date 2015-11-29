@@ -10,6 +10,7 @@
 
 unsigned int Application::width = WINDOW_WIDTH;
 unsigned int Application::height = WINDOW_HEIGHT;
+double Application::elapsed_time = 0.0f;
 
 Application::Application(unsigned int width, unsigned int height, const std::string &title) : _title(title) {
 	this->width = width;
@@ -96,9 +97,9 @@ void Application::run() {
 	double old_time = 0.0;
 	while (!glfwWindowShouldClose(_window_ptr)) {
 		//Timings
-		_elapsed_time = glfwGetTime();
-		_delta_time = _elapsed_time - old_time;
-		old_time = _elapsed_time;
+		elapsed_time = glfwGetTime();
+		_delta_time = elapsed_time - old_time;
+		old_time = elapsed_time;
 		_frames_per_second = 1.0 / _delta_time;
 		input.update(_delta_time);
 		camera.update(_delta_time);

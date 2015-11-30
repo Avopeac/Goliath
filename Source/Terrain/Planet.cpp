@@ -56,7 +56,7 @@ void Planet::setup_cube() {
 }
 
 void Planet::create_color_ramp_texture() {
-	_color_ramp_id = Texture2DLoader::load("Images/color_ramp_terrain.png");
+	_color_ramp_id = Texture2DLoader::load("Images/color_ramp_terrain.png", false, GL_CLAMP_TO_EDGE, GL_REPEAT, GL_LINEAR, GL_LINEAR);
 }
 
 void Planet::setup_skybox() {

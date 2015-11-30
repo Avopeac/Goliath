@@ -84,20 +84,6 @@ void WaterTile::generate() {
 		}
 	}
 
-	//Calculate vertex normals, simple version, only averages over one triangle
-	/*z = (int)mesh.indices.size();
-	for (x = 0; x < z; x += 3) {
-		int i1(mesh.indices[x + 0]);
-		int i2(mesh.indices[x + 1]);
-		int i3(mesh.indices[x + 2]);
-		glm::dvec3 normal(glm::cross(vertex_data[i2].position - vertex_data[i1].position,
-			vertex_data[i3].position - vertex_data[i1].position));
-		vertex_data[i1].normal += normal;
-		vertex_data[i2].normal += normal;
-		vertex_data[i3].normal += normal;
-	}*/
-
-	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
 		//Keep skirts as small as possible to reduce fragment computations
 		if (it->edge) { it->position *= 0.9999f; } 

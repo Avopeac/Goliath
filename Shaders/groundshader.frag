@@ -8,13 +8,8 @@ in vec3 ourColor;
 uniform sampler2D colorRampTex;
 uniform sampler1D permutationTex;
 uniform sampler1D gradientTex;
-uniform samplerCube grassTex;
-uniform sampler2D grass2Tex;
-uniform sampler2D dirtTex;
-uniform sampler2D rockTex;
-uniform sampler2D forestTex;
-uniform sampler2D snowTex;
-uniform sampler2D sandTex;
+uniform sampler2D groundTex;
+uniform sampler2D grassTex;
 uniform mat4 view;
 
 //Noise helper functions
@@ -60,11 +55,15 @@ void main()
 {
 	vec3 lightDir = normalize(vec3(0,1,0));
 	vec3 normalDir = normalize(ourNormal);
+	float offset = 0.5 * noise(normalDir) + 0.25 * noise(normalDir * 2.0) + 0.1 * noise(normalDir * 4.0);
+	offset *= 0.333;
+
+	normalDir = normalize(normalDir + 0.5 * offset);
 	vec3 sphereNormalDir = normalize(ourSphereNormal);
-
 	//Coloring things
-	vec3 texColor = texture(colorRampTex, vec2(ourColor.r, 0)).rgb;
 
+
+	vec3 texColor = texture(colorRampTex, ourColor.rg + offset).rgb;
 	//Lighting
     float ndotl = clamp(dot(normalDir, lightDir), 0.0, 1.0);
     float ndots = clamp(0.5 + 0.5 * ndotl, 0.0, 1.0);

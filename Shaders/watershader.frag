@@ -20,7 +20,7 @@ void main()
 		vec3 reflDir = normalize(reflect(-lightDir, normalDir));
 		vec3 halfDir = normalize(normalDir + reflDir);
 		specular = clamp(dot(halfDir, viewDir), 0.0, 1.0);
-		specular = pow(specular, 90);
+		specular = pow(specular, 25);
 	}
 
 	//Light colors	
@@ -32,7 +32,7 @@ void main()
     lighting += reflSunColor * ndoti;
 	
 	vec3 oceanColor = vec3(0.1, 0.6, 0.97);
-    vec3 final = oceanColor * lighting + sunColor * specular;
+    vec3 final = oceanColor * lighting + vec3(1.0) * specular * 1.5;
     color = vec4(final, 1.0);
 }
 

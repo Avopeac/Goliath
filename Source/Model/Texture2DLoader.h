@@ -9,14 +9,14 @@ public:
 	Texture2DLoader() {}
 	~Texture2DLoader() {}
 
-	static GLuint load(const std::string &path) {
+	static GLuint load(const std::string &path, bool generate_mips, GLint wrap_s, GLint wrap_t, GLfloat min_filter, GLfloat max_filter) {
 		GLuint loaded_id;
 		glGenTextures(1, &loaded_id);
 		glBindTexture(GL_TEXTURE_2D, loaded_id);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, max_filter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_s);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_t);
 		int w, h, c;
 		unsigned char *data = SOIL_load_image(path.c_str(), &w, &h, &c, SOIL_LOAD_RGB);
 		if (data != 0) {
@@ -27,6 +27,11 @@ public:
 		else {
 			std::cerr << "Failed to load texture at path " << path << "." << std::endl;
 		}
+		
+		if (generate_mips) {
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return loaded_id;

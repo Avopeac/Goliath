@@ -5,11 +5,11 @@
 #include <GLM/glm.hpp>
 //The default argument window width
 #ifndef WINDOW_WIDTH
-#define WINDOW_WIDTH 1024
+#define WINDOW_WIDTH 1920
 #endif
 //The default argument window height
 #ifndef WINDOW_HEIGHT
-#define WINDOW_HEIGHT 768
+#define WINDOW_HEIGHT 1080
 #endif
 //The default argument window name
 #ifndef WINDOW_NAME

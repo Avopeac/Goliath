@@ -20,8 +20,8 @@ private:
 	double _extents; //The axis aligned bounding box
 	double _radii;
 	unsigned short _level = 0; //The current recursion level
-	const unsigned short _deepest_level = 100; // The deepest level we're allowed to go in the WaterQuadTree
-	const double _lod_factor = 16.0; // The higher _lod_factor the higher resolution / more lod
+	const unsigned short _deepest_level = 40; // The deepest level we're allowed to go in the WaterQuadTree
+	const double _lod_factor = 4.0; // The higher _lod_factor the higher resolution / more lod
 	WaterQuadTree *_parent = nullptr; //The parent quad tree
 	std::shared_ptr<WaterTile> _patch = nullptr; //The object contained in a leaf of the quad tree
 	bool _has_children = false; //The child quad trees

@@ -78,9 +78,9 @@ void MessageSystem::initialize() {
 	_id = 0;
 	//Use almost all of the hardware threads, using all causes some lag to occur
 	_hardware_concurrency = std::thread::hardware_concurrency();
-	if (_hardware_concurrency >= 2) {
-		--_hardware_concurrency;
-	}
+	//if (_hardware_concurrency >= 2) {
+	//	--_hardware_concurrency;
+	//}
 	//Start thread functions
 	for (int i = 0; i < _hardware_concurrency; ++i) {
 		_threads.push_back(std::thread(&MessageSystem::thread_func, this, i));

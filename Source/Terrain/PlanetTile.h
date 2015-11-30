@@ -50,7 +50,7 @@ private:
 
 	///Gets a noise value by giving position, scales this according to max mountain height
 	inline double height_scaler(const glm::dvec3 &pos) { 
-		return _radii + (sampler.sample(pos) - 1.8) * PLANET_TILE_MAX_MOUNTAIN_HEIGHT;
+		return sampler.sample(pos);
 	}
 
 	///Is the given tile index on the edge?

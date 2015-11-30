@@ -3,7 +3,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 25.0, 0.035, 0.7);
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 22.0, 0.15, 0.7);
 
 class PlanetTile::PlanetTileMessage : public Message {
 public:
@@ -51,10 +51,10 @@ void PlanetTile::generate() {
 			current.position = glm::normalize(glm::dvec3(_transform *  glm::dvec4(cx, 0, cz, 1.0)));
 			current.sphere_normal = current.position;
 			height = height_scaler(current.position);
-			current.position = height * current.position;
+			current.position = (_radii + PLANET_TILE_MAX_MOUNTAIN_HEIGHT * height) * current.position;
 			current.uv = { cx + PLANET_TILE_OFFSET, cz + PLANET_TILE_OFFSET };
 			//Some height-based color fraction
-			current.color.r = static_cast<float>((height - _radii) * PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT);
+			current.color.r = static_cast<float>(height);
 			vertex_data.push_back(current);
 			//Find max points
 			if (max.x < current.position.x) { max.x = current.position.x; }

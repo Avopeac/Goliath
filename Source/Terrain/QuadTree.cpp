@@ -1,8 +1,9 @@
 #include "QuadTree.h"
-#include "Thread/MessageSystem.h"
 #include <iostream>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtx/transform.hpp>
+#include "Thread/MessageSystem.h"
+#include "Terrain/Planet.h"
 
 QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, double extents, double radii, std::shared_ptr<Shader> shader)
 	: Drawable(), _translation(translation), _rotation(rotation), _extents(extents), _radii(radii) {
@@ -11,10 +12,17 @@ QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, do
 }
 
 
+static int counter = 0;
 void QuadTree::draw(const Camera &camera, double delta_time) {
+
+	if (_level == 0) { counter = 0; }
 	if (!setup_done()) { return; }
-	// Check if we have to draw this patch
-	// TODO Calculate this without generated mesh if possible ?
+
+	if (Planet::horizon_culling(camera.get_deye(), glm::dvec3(0, 0, 0), _radii, _patch->get_center(), _extents)) {
+		remove_children();
+		return;
+	}
+
 	if (!camera.intersects_box(_patch->get_center(), _patch->get_extents())) {
 		remove_children();
 		return;
@@ -53,7 +61,11 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 			}
 		}
 		else { // Else create children and draw this tile
-			subdivide();
+			if (counter < 25) {
+				counter++;
+				subdivide();
+			}
+
 			_patch->draw(camera, delta_time);
 		}
 	}

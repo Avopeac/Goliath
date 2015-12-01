@@ -57,6 +57,10 @@ void Planet::setup_cube() {
 
 void Planet::create_color_ramp_texture() {
 	_color_ramp_id = Texture2DLoader::load("Images/color_ramp_terrain.png", false, GL_CLAMP_TO_EDGE, GL_REPEAT, GL_LINEAR, GL_LINEAR);
+	_grass_id = Texture2DLoader::load("Images/grass_06/diffuse.tga", true, GL_REPEAT, GL_MIRRORED_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+	_ground_id = Texture2DLoader::load("Images/ground_03/diffuse.tga", true, GL_REPEAT, GL_MIRRORED_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+	_rock_id = Texture2DLoader::load("Images/stone_00/diffuse.tga", true, GL_REPEAT, GL_MIRRORED_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
+	_forest_id = Texture2DLoader::load("Images/grass_rocks_01/diffuse.tga", true, GL_REPEAT, GL_MIRRORED_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
 }
 
 void Planet::setup_skybox() {
@@ -85,6 +89,19 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_1D, noise_maker.get_gradient_texture_id());
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "gradientTex"), 2);
+	//Terrain texturing
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, _grass_id);
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "grassTex"), 3);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, _ground_id);
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "groundTex"), 4);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, _rock_id);
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "rockTex"), 5);
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, _forest_id);
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "forestTex"), 6);
 	//Upload uniforms
 	_north->draw(camera, delta_time);
 	_south->draw(camera, delta_time);

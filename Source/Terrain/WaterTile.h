@@ -5,10 +5,10 @@
 
 /// This may not be very pretty but keeps memory footprint down for instances of this class
 #ifndef WATER_TILE_RESOLUTION
-#define WATER_TILE_RESOLUTION 4
+#define WATER_TILE_RESOLUTION 16
 #endif
 #ifndef WATER_TILE_INV_RESOLUTION
-#define WATER_TILE_INV_RESOLUTION 0.25
+#define WATER_TILE_INV_RESOLUTION 0.0625
 #endif
 #ifndef WATER_TILE_OFFSET 
 #define WATER_TILE_OFFSET 0.5

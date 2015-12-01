@@ -22,7 +22,7 @@ public:
 	glm::vec3 normal; 
 	glm::vec3 sphere_normal;
 	glm::vec3 color;
-	glm::vec2 uv;
+	glm::dvec2 uv;
 	bool edge = false;
 };
 
@@ -49,10 +49,26 @@ void PlanetTile::generate() {
 			current.edge = is_edge(x, z);
 			//Transform point to unit sphere and scale
 			current.position = glm::normalize(glm::dvec3(_transform *  glm::dvec4(cx, 0, cz, 1.0)));
+
+
+		//	glm::dvec3 vn(0.0, 1.0, 0.0);
+		//	glm::dvec3 ve(-1.0, 0.0, 0.0);
+
+		//	double phi(glm::acos(-1.0 * glm::dot(vn, current.position)));
+		//	double theta = (glm::acos(glm::dot(current.position, ve) / glm::sin(phi)));
+		//	if (glm::dot(glm::cross(vn, ve), current.position) <= 0) {
+		//		theta = 1.0 - theta;
+		//	}
+			
+			//double v = phi * glm::one_over_pi<double>();
+			//double u = theta * glm::one_over_two_pi<double>();
+
+			current.uv = { cx + PLANET_TILE_OFFSET, cz + PLANET_TILE_OFFSET };
+			//current.uv = glm::dvec2(u, v);
 			current.sphere_normal = current.position;
 			height = height_scaler(current.position);
 			current.position = (_radii + PLANET_TILE_MAX_MOUNTAIN_HEIGHT * height) * current.position;
-			current.uv = { cx + PLANET_TILE_OFFSET, cz + PLANET_TILE_OFFSET };
+
 			//Some height-based color fraction
 			current.color.r = static_cast<float>(height);
 			vertex_data.push_back(current);

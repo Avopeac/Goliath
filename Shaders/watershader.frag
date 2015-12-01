@@ -20,7 +20,7 @@ void main()
 		vec3 reflDir = normalize(reflect(-lightDir, normalDir));
 		vec3 halfDir = normalize(normalDir + reflDir);
 		specular = clamp(dot(halfDir, viewDir), 0.0, 1.0);
-		specular = pow(specular, 25);
+		specular = pow(specular, 200);
 	}
 
 	//Light colors	

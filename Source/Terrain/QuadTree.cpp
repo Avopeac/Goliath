@@ -18,7 +18,10 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	if (_level == 0) { counter = 0; }
 	if (!setup_done()) { return; }
 
-	if (Planet::horizon_culling(camera.get_deye(), glm::dvec3(0, 0, 0), _radii, _patch->get_center(), _extents)) {
+	Vertex v = _patch->mesh.vertices[_patch->mesh.vertices.size() / 2];
+	glm::vec3 cen = _patch->get_center();
+
+	if (Planet::horizon_culling(camera.get_deye(), glm::dvec3(0, 0, 0), _radii, v.position + cen, _extents)) {
 		remove_children();
 		return;
 	}
@@ -29,7 +32,9 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	}
 
 	// Get LOD metric to see if we should draw child quads or just draw this one
-	double rho = compute_level_metric(camera, distance_to_patch(camera, _patch->get_center()));
+
+
+	double rho = compute_level_metric(camera, distance_to_patch(camera, v.position + cen));//_patch->get_center()
 	if (rho >= 0.0 || _level > _deepest_level) {
 		// Morph vertices
 		/*if (!dont_morph) {

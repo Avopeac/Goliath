@@ -39,7 +39,7 @@ private:
 	};
 
 	inline double distance_to_patch(const Camera &camera, const glm::dvec3 &mid_point) {
-		return glm::max(0.0, glm::distance(mid_point, camera.get_deye()));
+		return glm::distance(mid_point, camera.get_deye());
 	};
 
 	//Morphing

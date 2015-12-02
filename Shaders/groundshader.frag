@@ -8,9 +8,12 @@ uniform sampler2D colorRampTex;
 uniform sampler1D permutationTex;
 uniform sampler1D gradientTex;
 uniform sampler2D groundTex;
+uniform sampler2D groundNormalTex;
 uniform sampler2D grassTex;
+uniform sampler2D grassNormalTex;
 uniform sampler2D forestTex;
 uniform sampler2D rockTex;
+uniform sampler2D rockNormalTex;
 uniform mat4 view;
 
 //Noise helper functions
@@ -56,33 +59,29 @@ void main()
 {
 	vec3 lightDir = normalize(vec3(0,1,0));
 	vec3 normalDir = normalize(ourNormal);
-	float e = 0.00001;
-	float h0 = noise(normalDir);
-	float h1 = noise(normalDir + vec3(1,0,0) * e);
-	float h2 = noise(normalDir + vec3(0,1,0) * e);
-	float h3 = noise(normalDir + vec3(0,0,1) * e);
-	vec3 noff = normalize(vec3(h1 - h0, h2 - h0, h3 - h0) / e);
-	normalDir = normalize(normalDir - 0.5 * noff);
 
 	//Coloring things
-	float w1 = clamp(1.0 - abs(ourColor.r - 0.0) / 0.45, 0, 1);
-	float w2 = clamp(1.0 - abs(ourColor.r - 0.4) / 0.25, 0, 1);
-	float w3 = clamp(1.0 - abs(ourColor.r - 0.6) / 0.55, 0, 1);
-	float w4 = clamp(1.0 - abs(ourColor.r - 1.0) / 1.0, 0, 1);
-	float tot = (w1 + w2 + w3 + w4) / 4.0;
+	float w1 = clamp(1.0 - abs(ourColor.r - 0.0), 0, 1);
+	float w2 = clamp(1.0 - abs(ourColor.r - 0.6) / 0.25, 0, 1);
+	float w3 = clamp(1.0 - abs(ourColor.r - 1.0) / 0.75, 0, 1);
+	float tot = (w1 + w2 + w3) / 3.0;
 	w1 /= tot;
 	w2 /= tot;
 	w3 /= tot;
-	w4 /= tot;
 
 	vec2 uv = ourUv;
-	vec3 grass = texture(grassTex, uv).rgb;
-	vec3 ground = texture(groundTex, uv).rgb;
-	vec3 forest = texture(forestTex, uv).rgb;
-	vec3 rock = texture(rockTex, uv).rgb;
+	vec3 grass = 0.33 * (texture(grassTex, uv).rgb + texture(grassTex, uv * 3.0).rgb + vec3(0.0, 0.4, 0.1));
+	vec3 ground = 0.33 * (texture(groundTex, uv).rgb + texture(groundTex, uv * 3.0).rgb + vec3(0.1, 0.4, 0.4));
+	vec3 rock = 0.33 * (texture(rockTex, uv).rgb + texture(rockTex, uv * 3.0).rgb + vec3(0.2, 0.2, 0.2));
+	vec3 ramp = texture(colorRampTex, ourColor.rg).rgb;
+	vec3 groundN = 2.0 * texture(grassNormalTex, uv).rgb - 1.0;
+	vec3 grassN = 2.0 * texture(grassNormalTex, uv).rgb - 1.0;
+	vec3 rockN = 2.0 * texture(rockNormalTex, uv).rgb - 1.0;
 
-	vec3 texColor = w1 * ground + w2 * grass + w3 * forest + w4 * rock;
+	vec3 dn = normalize(w1 * groundN + w2 * grassN + w3 * rockN);
+	vec3 texColor = (w1 * ground + w2 * grass + w3 * rock) + 2.0 * ramp;
 
+	normalDir = normalize(normalDir + 0.25 * dn);
 
 	//Lighting
     float ndotl = clamp(dot(normalDir, lightDir), 0.0, 1.0);
@@ -104,7 +103,7 @@ void main()
     vec3 lighting =  sunColor * ndotl;
 	lighting += skyColor * ndots;
     lighting += reflSunColor * ndoti;
-    vec3 final = sunColor * texColor * 0.3 * (lighting + sunColor * 0.2 * specular);
+    vec3 final = sunColor * texColor * 0.3 * (lighting + sunColor * 5.0 * specular);
     color = vec4(final, 1.0);
 }
 

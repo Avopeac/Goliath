@@ -39,21 +39,25 @@ private:
 	std::shared_ptr<QuadTree> _hither;
 	std::shared_ptr<QuadTree> _yon;
 
-	std::shared_ptr<Shader> _water_shader;
-	std::shared_ptr<WaterQuadTree> _north_water;
-	std::shared_ptr<WaterQuadTree> _south_water;
-	std::shared_ptr<WaterQuadTree> _west_water;
-	std::shared_ptr<WaterQuadTree> _east_water;
-	std::shared_ptr<WaterQuadTree> _hither_water;
-	std::shared_ptr<WaterQuadTree> _yon_water;
+	//std::shared_ptr<Shader> _water_shader;
+	//std::shared_ptr<WaterQuadTree> _north_water;
+	//std::shared_ptr<WaterQuadTree> _south_water;
+	//std::shared_ptr<WaterQuadTree> _west_water;
+	//std::shared_ptr<WaterQuadTree> _east_water;
+	//std::shared_ptr<WaterQuadTree> _hither_water;
+	//std::shared_ptr<WaterQuadTree> _yon_water;
 	
 	void setup_cube();
 	void setup_skybox();
 	void create_color_ramp_texture();
 	GLuint _color_ramp_id;
 	GLuint _ground_id;
+	GLuint _ground_n_id;
 	GLuint _grass_id;
+	GLuint _grass_n_id;
 	GLuint _rock_id;
+	GLuint _rock_n_id;
 	GLuint _forest_id;
+	//GLuint _water_n_id;
 	double _radius;
 };

@@ -11,11 +11,8 @@ QuadTree::QuadTree(const glm::dmat4& rotation, const glm::dmat4& translation, do
 	create_patch();
 }
 
-
-static int counter = 0;
 void QuadTree::draw(const Camera &camera, double delta_time) {
 
-	if (_level == 0) { counter = 0; }
 	if (!setup_done()) { return; }
 
 	Vertex v = _patch->mesh.vertices[_patch->mesh.vertices.size() / 2];
@@ -66,10 +63,10 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 			}
 		}
 		else { // Else create children and draw this tile
-			if (counter < 25) {
-				counter++;
+			//if (counter < 25) {
+			//	counter++;
 				subdivide();
-			}
+			//}
 
 			_patch->draw(camera, delta_time);
 		}
@@ -111,6 +108,10 @@ bool QuadTree::remove_children() {
 			_northeast->_patch.reset(); _northeast.reset();
 			_southwest->_patch.reset(); _southwest.reset();
 			_southeast->_patch.reset(); _southeast.reset();
+			_northwest = nullptr;
+			_northeast = nullptr;
+			_southwest = nullptr;
+			_southeast = nullptr;
 			_has_children = false;
 			removal = true;
 		}

@@ -20,7 +20,7 @@ private:
 	double _radii;
 	unsigned int _level = 0; //The current recursion level
 	const unsigned int _deepest_level = 32; // The deepest level we're allowed to go in the quadtree
-	const double _lod_factor = 16.0; // The higher _lod_factor the higher resolution / more lod
+	const double _lod_factor = 8.0; // The higher _lod_factor the higher resolution / more lod
 	QuadTree *_parent = nullptr; //The parent quad tree
 	std::shared_ptr<PlanetTile> _patch = nullptr; //The object contained in a leaf of the quad tree
 	bool _has_children = false; //The child quad trees
@@ -31,7 +31,7 @@ private:
 	
 	//#### Inline functions for speed ####
 	inline double compute_level_metric(const Camera & camera, double distance) {
-		return glm::log2(distance - _lod_factor * _extents);
+		return distance - _lod_factor * glm::pow(_extents, 0.98);
 	};
 
 	inline double distance_nearest_corner(const Camera & camera) {

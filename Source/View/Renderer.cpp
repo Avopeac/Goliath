@@ -7,9 +7,7 @@
 #include "GammaToneMapNode.h"
 
 void Renderer::add_drawable(const std::shared_ptr<Drawable> &drawable) {
-	_render_queue_mutex.lock();
 	_render_queue.push(drawable);
-	_render_queue_mutex.unlock();
 }
 
 void Renderer::initialize() {
@@ -28,14 +26,8 @@ void Renderer::render(const Camera &camera, double delta_time) {
 }
 
 void Renderer::draw_queue(const Camera &camera, double delta_time) {
-	_render_queue_mutex.lock();
-	std::shared_ptr<Drawable> drawable;
 	while (!_render_queue.empty()) {
-		drawable = _render_queue.front();
+		_render_queue.front()->draw(camera,delta_time);
 		_render_queue.pop();
-		if (drawable != nullptr) {
-			drawable->draw(camera, delta_time);
-		}
 	}
-	_render_queue_mutex.unlock();
 }

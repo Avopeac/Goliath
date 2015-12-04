@@ -51,6 +51,7 @@ void PlanetTile::generate() {
 			current.position = glm::normalize(glm::dvec3(_transform *  glm::dvec4(cx, 0, cz, 1.0)));
 			current.uv = glm::vec2(cx + PLANET_TILE_OFFSET, cz + PLANET_TILE_OFFSET);
 			current.sphere_normal = current.position;
+			current.normal = { 0, 0, 0 };
 			height = height_scaler(current.position);
 			current.position = (_radii + PLANET_TILE_MAX_MOUNTAIN_HEIGHT * height) * current.position;
 
@@ -91,8 +92,8 @@ void PlanetTile::generate() {
 		int i1(mesh.indices[x + 0]);
 		int i2(mesh.indices[x + 1]);
 		int i3(mesh.indices[x + 2]);
-		glm::dvec3 normal(glm::cross(vertex_data[i2].position - vertex_data[i1].position,
-			vertex_data[i3].position - vertex_data[i1].position));
+		glm::dvec3 normal(glm::cross(vertex_data[i1].position - vertex_data[i2].position,
+			vertex_data[i3].position - vertex_data[i2].position));
 		vertex_data[i1].normal += normal;
 		vertex_data[i2].normal += normal;
 		vertex_data[i3].normal += normal;

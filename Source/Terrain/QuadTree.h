@@ -20,7 +20,7 @@ private:
 	double _radii;
 	unsigned int _level = 0; //The current recursion level
 	const unsigned int _deepest_level = 32; // The deepest level we're allowed to go in the quadtree
-	const double _lod_factor = 8.0; // The higher _lod_factor the higher resolution / more lod
+	const double _lod_factor = 16.0; // The higher _lod_factor the higher resolution / more lod
 	QuadTree *_parent = nullptr; //The parent quad tree
 	std::shared_ptr<PlanetTile> _patch = nullptr; //The object contained in a leaf of the quad tree
 	bool _has_children = false; //The child quad trees
@@ -41,8 +41,4 @@ private:
 	inline double distance_to_patch(const Camera &camera, const glm::dvec3 &mid_point) {
 		return glm::distance(mid_point, camera.get_deye());
 	};
-
-	//Morphing
-	//double _morph_value = 0;
-	//bool dont_morph = false;
 };

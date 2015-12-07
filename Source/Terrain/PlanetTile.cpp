@@ -3,6 +3,8 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
+#include "View/ShaderStore.h"
+
 SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 22.0, 0.15, 0.7);
 
 class PlanetTile::PlanetTileMessage : public Message {
@@ -17,17 +19,16 @@ class PlanetTile::VertexData {
 public:
 	VertexData() {}
 	~VertexData() {}
-	//glm::dvec3 parent_position;
 	glm::dvec3 position;
 	glm::vec3 normal; 
-	glm::vec3 sphere_normal;
+	glm::vec3 extra;
 	glm::vec3 color;
 	glm::dvec2 uv;
 	bool edge = false;
 };
 
 PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii, std::shared_ptr<Shader> shader)
-	: Drawable(), _radii(radii), _transform(translation * rotation * scale)  {
+	: Drawable(), _radii(radii), _transform(translation * rotation * scale), _inv_outer_radii(1.0 / (1.025 * _radii)) {
 	set_shader(shader);
 	_message_ref = MessageSystem::instance().post(std::make_shared<PlanetTileMessage>(this));
 }
@@ -50,10 +51,10 @@ void PlanetTile::generate() {
 			//Transform point to unit sphere and scale
 			current.position = glm::normalize(glm::dvec3(_transform *  glm::dvec4(cx, 0, cz, 1.0)));
 			current.uv = glm::vec2(cx + PLANET_TILE_OFFSET, cz + PLANET_TILE_OFFSET);
-			current.sphere_normal = current.position;
 			current.normal = { 0, 0, 0 };
 			height = height_scaler(current.position);
 			current.position = (_radii + PLANET_TILE_MAX_MOUNTAIN_HEIGHT * height) * current.position;
+			current.extra = current.position * _inv_outer_radii;
 
 			//Some height-based color fraction
 			current.color.r = static_cast<float>(height);
@@ -94,77 +95,20 @@ void PlanetTile::generate() {
 		int i3(mesh.indices[x + 2]);
 		glm::dvec3 normal(glm::cross(vertex_data[i1].position - vertex_data[i2].position,
 			vertex_data[i3].position - vertex_data[i2].position));
+		normal.y = -normal.y;
 		vertex_data[i1].normal += normal;
 		vertex_data[i2].normal += normal;
 		vertex_data[i3].normal += normal;
 	}
 
-	// Set up parent positions
-	/*for (x = -1; x <= _resolution + 1; ++x) {
-		for (z = -1; z <= _resolution + 1; ++z) {
-			set_parent_position(x, z, trans);
-		}
-	}*/
-
 	// "Bend down" skirts
 	for (auto it = vertex_data.begin(); it != vertex_data.end(); ++it) {
-		if (it->edge) { it->position *= 0.9999f; } //Keep as small as possible to reduce fragment computations
-		mesh.vertices.push_back(Vertex(it->position - _center, it->normal, it->uv, it->color, it->sphere_normal));
+		if (it->edge) { it->position *= 0.99f; } //Keep as small as possible to reduce fragment computations
+		mesh.vertices.push_back(Vertex(it->position - _center, it->normal, it->uv, it->color, it->extra));
 	}
 
 	_setup_done = true;
 }
-
-
-/*void PlanetTile::morph_vertices(double alpha) {
-	for (int i = 0; i < vertex_data.size(); i++) {
-		if (!vertex_data[i].edge) {
-			mesh.vertices[i].position = vertex_data[i].parent_position * (1.0 - alpha) + vertex_data[i].position * alpha; // glm::vec3(0,0,0)
-		}
-		//if (i == 11) { std::cout << "vertex_data[i].vertex.position " << vertex_data[i].vertex.position.x << "  " << vertex_data[i].vertex.position.y << "  " << vertex_data[i].vertex.position.z << std::endl; }
-	}
-	mesh.update_vertices();
-}*/
-
-/*void PlanetTile::set_parent_position(int x, int z, const glm::dmat4 &transform) {
-	double step = 1.0 / _resolution;
-	double offset = 0.5;
-	glm::dvec3 parent_position(0);
-	double cx = x * step - offset;
-	double cz = z * step - offset;
-	int counter = 0;
-	int current_idx = (z + 1) + (x + 1) * (_resolution + 3);
-	// If it's an even vertex then parent pos is same as the vertex pos
-	if (!((x + 1 + z + 1) % 2)) {
-		parent_position = vertex_data[current_idx].position;
-		counter++;
-	}
-	// Else get the average of the near vertices
-	else {
-		int start_z = glm::max(-1, z - 1);
-		int end_z = glm::min(z + 1, (_resolution + 3)); // + 2 cause actual amount of vertices are _res + 1 and then + 1 for left / upper skirt
-		int start_x = glm::max(-1, x - 1);
-		int end_x = glm::min(x + 1, (_resolution + 3));
-		for (int x_idx = start_x; x_idx <= end_x; x_idx++) {
-			if (x_idx == x) { continue; }
-			for (int z_idx = start_z; z_idx <= end_z; z_idx++) {
-				if (z_idx == z) { continue; }
-				counter++;
-				cx = x_idx * step - offset;
-				cz = z_idx * step - offset;
-				glm::dvec3 tmp_pos;
-				tmp_pos = glm::dvec3(transform *  glm::dvec4(cx, 0, cz, 1.0));
-				tmp_pos = glm::normalize(tmp_pos);
-				parent_position += height_scaler(tmp_pos) * tmp_pos;
-			}
-		}
-	}
-
-	vertex_data[current_idx].parent_position = parent_position / (double)counter;
-	//std::cout << "parent: " << vertex_data[current_idx].parent_position.x << "  " << vertex_data[current_idx].parent_position.y << "  " << vertex_data[current_idx].parent_position.z << "  " << std::endl;
-	//std::cout << "real: " << vertex_data[current_idx].own_position.x << "  " << vertex_data[current_idx].own_position.y << "  " << vertex_data[current_idx].own_position.z << "  " << std::endl;
-	//Calculate vertex normals, simple version, only averages over one triangle
-}*/
 
 void PlanetTile::predraw(const Camera &camera) {
 	if (_message_ref != -1) {

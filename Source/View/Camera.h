@@ -89,7 +89,7 @@ private:
 	double _yaw = 0.0;
 	double _pitch = 0.0;
 	double _roll = 0.0;
-	double _movement_speed = 1000.0;
+	double _movement_speed = 500000.0;
 
 	//View data
 	glm::dmat4 _view_proj;

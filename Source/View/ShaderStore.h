@@ -7,31 +7,35 @@
 
 #ifndef SKYBOX_SHADER_PATH
 #define SKYBOX_SHADER_PATH "Shaders/skyboxshader"
-#endif SKYBOX_SHADER_PATH
+#endif 
 
 #ifndef ADDITIVE_SHADER_PATH
 #define ADDITIVE_SHADER_PATH "Shaders/additiveshader"
-#endif ADDITIVE_SHADER_PATH
+#endif 
 
-#ifndef ATMOSPHERE_SHADER_PATH
-#define ATMOSPHERE_SHADER_PATH "Shaders/atmosphereshader"
-#endif ATMOSPHERE_SHADER_PATH
+#ifndef SKY_FROM_SPACE_SHADER_PATH
+#define SKY_FROM_SPACE_SHADER_PATH "Shaders/skyfromspaceshader"
+#endif 
+
+#ifndef SKY_FROM_ATMOSPHERE_SHADER_PATH
+#define SKY_FROM_ATMOSPHERE_SHADER_PATH "Shaders/skyfromatmosphereshader"
+#endif 
 
 #ifndef BLUR_SHADER_PATH
 #define BLUR_SHADER_PATH "Shaders/blurfiltershader"
-#endif BLUR_SHADER_PATH
+#endif 
 
 #ifndef GAMMA_TONEMAP_SHADER_PATH
 #define GAMMA_TONEMAP_SHADER_PATH "Shaders/gammatonemapshader"
-#endif GAMMA_TONEMAP_SHADER_PATH
+#endif 
 
 #ifndef THRESHOLD_SHADER_PATH
 #define THRESHOLD_SHADER_PATH "Shaders/thresholdshader"
-#endif THRESHOLD_SHADER_PATH
+#endif 
 
 #ifndef PLAIN_TEXTURE_SHADER_PATH
 #define PLAIN_TEXTURE_SHADER_PATH "Shaders/plaintextureshader"
-#endif PLAIN_TEXTURE_SHADER_PATH
+#endif 
 
 #ifndef FXAA_SHADER_PATH
 #define FXAA_SHADER_PATH "Shaders/fxaashader"
@@ -39,15 +43,15 @@
 
 #ifndef STANDARD_SHADER_PATH
 #define STANDARD_SHADER_PATH "Shaders/standard"
-#endif STANDARD_SHADER_PATH
+#endif 
 
 #ifndef GROUND_SHADER_PATH
 #define GROUND_SHADER_PATH "Shaders/groundshader"
-#endif GROUND_SHADER_PATH
+#endif 
 
 #ifndef WATER_SHADER_PATH 
 #define WATER_SHADER_PATH "Shaders/watershader"
-#endif WATER_SHADER_PATH 
+#endif 
 
 #ifndef VERTEX_FILE_TYPE 
 #define VERTEX_FILE_TYPE ".vert"
@@ -79,7 +83,8 @@ public:
 	void stock_inventory() {
 		add_shader_to_store(SKYBOX_SHADER_PATH);
 		add_shader_to_store(ADDITIVE_SHADER_PATH);
-		add_shader_to_store(ATMOSPHERE_SHADER_PATH);
+		add_shader_to_store(SKY_FROM_ATMOSPHERE_SHADER_PATH);
+		add_shader_to_store(SKY_FROM_SPACE_SHADER_PATH);
 		add_shader_to_store(BLUR_SHADER_PATH);
 		add_shader_to_store(GAMMA_TONEMAP_SHADER_PATH);
 		add_shader_to_store(THRESHOLD_SHADER_PATH);

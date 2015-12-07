@@ -90,6 +90,9 @@
     <ClCompile Include="Source\Terrain\WaterTile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Terrain\AtmosphereObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Drawable\Plane.h">
@@ -194,6 +197,9 @@
     <ClInclude Include="Source\Model\Texture2DLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Terrain\AtmosphereObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\standard.frag">
@@ -212,12 +218,6 @@
       <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
     <None Include="Shaders\additiveshader.vert">
-      <Filter>Resource Files\Shader Files\Post Processing</Filter>
-    </None>
-    <None Include="Shaders\atmosphereshader.frag">
-      <Filter>Resource Files\Shader Files\Post Processing</Filter>
-    </None>
-    <None Include="Shaders\atmosphereshader.vert">
       <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
     <None Include="Shaders\blurfiltershader.frag">
@@ -244,15 +244,15 @@
     <None Include="Shaders\thresholdshader.vert">
       <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
-    <None Include="Shaders\groundshader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\groundshader.vert">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
     <None Include="Shaders\watershader.frag" />
     <None Include="Shaders\watershader.vert" />
     <None Include="Shaders\fxaashader.frag" />
     <None Include="Shaders\fxaashader.vert" />
+    <None Include="Shaders\skyfromspaceshader.frag" />
+    <None Include="Shaders\skyfromspaceshader.vert" />
+    <None Include="Shaders\skyfromatmosphereshader.frag" />
+    <None Include="Shaders\skyfromatmosphereshader.vert" />
+    <None Include="Shaders\groundshader.frag" />
+    <None Include="Shaders\groundshader.vert" />
   </ItemGroup>
 </Project>

@@ -6,10 +6,10 @@
 
 /// This may not be very pretty but keeps memory footprint down for instances of this class
 #ifndef PLANET_TILE_MAX_MOUNTAIN_HEIGHT 
-#define PLANET_TILE_MAX_MOUNTAIN_HEIGHT 8192
+#define PLANET_TILE_MAX_MOUNTAIN_HEIGHT 81920
 #endif
 #ifndef PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT 
-#define PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT 0.00012207031
+#define PLANET_TILE_MAX_MOUNTAIN_INV_HEIGHT 0.00136533333
 #endif
 #ifndef PLANET_TILE_RESOLUTION
 #define PLANET_TILE_RESOLUTION 16
@@ -32,7 +32,6 @@ public:
 	const glm::dvec3 &get_center() const { return _center; }
 	const glm::dvec3 &get_extents() const { return _extents; }
 	bool setup_done() const { return _setup_done; }
-	//void PlanetTile::morph_vertices(double delta_time);
 
 private:
 	class PlanetTileMessage;
@@ -47,6 +46,7 @@ private:
 	glm::dvec3 _center, _extents;
 	glm::dmat4 _transform;
 	const double _radii;
+	const double _inv_outer_radii;
 
 	///Gets a noise value by giving position, scales this according to max mountain height
 	inline double height_scaler(const glm::dvec3 &pos) { 
@@ -58,6 +58,5 @@ private:
 		return (x == -1) || (z == -1) || (x == PLANET_TILE_RESOLUTION + 1) || (z == PLANET_TILE_RESOLUTION + 1);
 	}
 
-	//void set_parent_position(int x, int z, const glm::dmat4 &transform);
 	void predraw(const Camera &camera);
 };

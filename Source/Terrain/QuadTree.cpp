@@ -29,24 +29,12 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 	}
 
 	// Get LOD metric to see if we should draw child quads or just draw this one
-
-
 	double rho = compute_level_metric(camera, distance_to_patch(camera, v.position + cen));//_patch->get_center()
 	if (rho >= 0.0 || _level > _deepest_level) {
-		// Morph vertices
-		/*if (!dont_morph) {
-				_morph_value += delta_time / 0.5f;
-			_morph_value = glm::min(1.0f, _morph_value);
-			_patch->morph_vertices(_morph_value);
-		}
-		if (_morph_value == 1.0f) {
-			dont_morph = true;
-		}*/
 		_patch->draw(camera, delta_time);
 		remove_children();
 	}
 	else {
-		//dont_morph = false;
 		// If we already have created the children then just draw them
 		if (_has_children) {
 			if (_northwest->setup_done() && _northeast->setup_done() &&
@@ -63,11 +51,7 @@ void QuadTree::draw(const Camera &camera, double delta_time) {
 			}
 		}
 		else { // Else create children and draw this tile
-			//if (counter < 25) {
-			//	counter++;
-				subdivide();
-			//}
-
+			subdivide();
 			_patch->draw(camera, delta_time);
 		}
 	}

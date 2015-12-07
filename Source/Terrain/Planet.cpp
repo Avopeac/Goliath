@@ -9,7 +9,7 @@
 #include "Terrain/WaterQuadTree.h"
 #include "Terrain/Noise3D.h"
 
-Planet::Planet(double radius) : Drawable(), _radius(radius) {
+Planet::Planet(double radius) : Drawable(), _radius(radius), _factor(1.0 / (1.025 * _radius)) {
 	setup_cube();
 	setup_skybox();
 	create_color_ramp_texture();
@@ -45,26 +45,15 @@ void Planet::setup_cube() {
 	_east = std::make_shared<QuadTree>(east_rot, east_trans, _radius, _radius, _ground_shader);
 	_hither = std::make_shared<QuadTree>(hither_rot, hither_trans, _radius, _radius, _ground_shader);
 	_yon = std::make_shared<QuadTree>(yon_rot, yon_trans, _radius, _radius, _ground_shader);
-	//Set up sea quad cube
-	/*_water_shader = ShaderStore::instance().get_shader_from_store(WATER_SHADER_PATH);
-	_north_water = std::make_shared<WaterQuadTree>(north_rot, north_trans, _radius, _radius, _water_shader);
-	_south_water = std::make_shared<WaterQuadTree>(south_rot, south_trans, _radius, _radius, _water_shader);
-	_west_water = std::make_shared<WaterQuadTree>(west_rot, west_trans, _radius, _radius, _water_shader);
-	_east_water = std::make_shared<WaterQuadTree>(east_rot, east_trans, _radius, _radius, _water_shader);
-	_hither_water = std::make_shared<WaterQuadTree>(hither_rot, hither_trans, _radius, _radius, _water_shader);
-	_yon_water = std::make_shared<WaterQuadTree>(yon_rot, yon_trans, _radius, _radius, _water_shader);*/
+
+	_atmosphere = std::make_shared<AtmosphereObject>(_radius);
 }
 
 void Planet::create_color_ramp_texture() {
 	_color_ramp_id = Texture2DLoader::load("Images/color_ramp_terrain.png", false, GL_CLAMP_TO_EDGE, GL_REPEAT, GL_LINEAR, GL_LINEAR);
-	_grass_id = Texture2DLoader::load("Images/grass_01/diffuse.tga", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
 	_grass_n_id = Texture2DLoader::load("Images/grass_01/normal.tga", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-	_ground_id = Texture2DLoader::load("Images/ground_03/diffuse.tga", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
 	_ground_n_id = Texture2DLoader::load("Images/ground_03/normal.tga", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-	_rock_id = Texture2DLoader::load("Images/stone_00/diffuse.tga", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
 	_rock_n_id = Texture2DLoader::load("Images/stone_00/normal.tga", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-	//_water_n_id = Texture2DLoader::load("Images/water.jpg", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
-	_forest_id = Texture2DLoader::load("Images/grass_rocks_01/diffuse.tga", true, GL_REPEAT, GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR);
 }
 
 void Planet::setup_skybox() {
@@ -79,8 +68,24 @@ void Planet::setup_skybox() {
 void Planet::draw(const Camera & camera, double delta_time) {
 	//Draw skybox
 	_skybox->draw(camera, delta_time);
+
 	//Draw terrain
 	_ground_shader->use();
+	setup_terrain_textures();
+	setup_atmosphere(camera);
+
+	//Upload uniforms
+	_north->draw(camera, delta_time);
+	_south->draw(camera, delta_time);
+	_west->draw(camera, delta_time);
+	_east->draw(camera, delta_time);
+	_hither->draw(camera, delta_time);
+	_yon->draw(camera, delta_time);
+	
+	_atmosphere->draw(camera, delta_time);
+}
+
+void Planet::setup_terrain_textures() {
 	//Color ramp texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _color_ramp_id);
@@ -95,48 +100,55 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "gradientTex"), 2);
 	//Terrain texturing
 	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, _grass_id);
-	glUniform1i(glGetUniformLocation(_ground_shader->program, "grassTex"), 3);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, _ground_id);
-	glUniform1i(glGetUniformLocation(_ground_shader->program, "groundTex"), 4);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, _rock_id);
-	glUniform1i(glGetUniformLocation(_ground_shader->program, "rockTex"), 5);
-	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, _forest_id);
-	glUniform1i(glGetUniformLocation(_ground_shader->program, "forestTex"), 6);
-	glActiveTexture(GL_TEXTURE7);
 	glBindTexture(GL_TEXTURE_2D, _grass_n_id);
-	glUniform1i(glGetUniformLocation(_ground_shader->program, "grassNormalTex"), 7);
-	glActiveTexture(GL_TEXTURE8);
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "grassNormalTex"), 3);
+	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, _ground_n_id);
-	glUniform1i(glGetUniformLocation(_ground_shader->program, "groundNormalTex"), 8);
-	glActiveTexture(GL_TEXTURE9);
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "groundNormalTex"), 4);
+	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, _rock_n_id);
-	glUniform1i(glGetUniformLocation(_ground_shader->program, "rockNormalTex"), 9);
-	//Upload uniforms
-	_north->draw(camera, delta_time);
-	_south->draw(camera, delta_time);
-	_west->draw(camera, delta_time);
-	_east->draw(camera, delta_time);
-	_hither->draw(camera, delta_time);
-	_yon->draw(camera, delta_time);
-	//Draw sea
-	/*_water_shader->use();
-	glUniform1f(glGetUniformLocation(_water_shader->program, "time"), Application::elapsed_time);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _water_n_id);
-	glUniform1i(glGetUniformLocation(_water_shader->program, "waterNormalTex"), 0);
-	_north_water->draw(camera, delta_time);
-	_south_water->draw(camera, delta_time);
-	_west_water->draw(camera, delta_time);
-	_east_water->draw(camera, delta_time);
-	_hither_water->draw(camera, delta_time);
-	_yon_water->draw(camera, delta_time);
-	glDisable(GL_BLEND);*/
+	glUniform1i(glGetUniformLocation(_ground_shader->program, "rockNormalTex"), 5);
+}
+
+void Planet::setup_atmosphere(const Camera &camera) {
+
+	glm::dvec3 cam_pos = camera.get_deye() * _factor;
+	double h = length(cam_pos);
+	double h2 = h * h;
+
+	glUniform3fv(glGetUniformLocation(_ground_shader->program, "cameraPos"), 1, glm::value_ptr(glm::vec3(cam_pos)));
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "cameraHeight"), h);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "cameraHeight2"), h2);
+
+	double ir_scaled = _radius * _factor;
+	double or_scaled = 1.0;
+	double or_scaled2 = 1.0;
+
+	double scale = 1.0 / (or_scaled - ir_scaled);
+	double scale_depth = 0.25;
+	double scale_over_depth = scale / scale_depth;
+
+	const double kr = 0.0025;
+	const double km = 0.001;
+	const double e_sun = 20.0;
+	const double f_pi = 4.0 * glm::pi<double>();
+	const double g = -0.99;
+
+	glm::vec3 inv_wave_length = glm::vec3(0.65, 0.57, 0.475);
+	inv_wave_length = 1.0f / glm::pow(inv_wave_length, glm::vec3(4.0f));
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "innerRadius"), ir_scaled);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "outerRadius"), or_scaled);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "outerRadius2"), or_scaled2);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "scale"), scale);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "scaleDepth"), scale_depth);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "scaleOverDepth"), scale_over_depth);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "Kr4Pi"), kr * f_pi);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "Km4Pi"), km * f_pi);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "KmEsun"), km * e_sun);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "KrEsun"), kr * e_sun);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "g"), g);
+	glUniform1f(glGetUniformLocation(_ground_shader->program, "g2"), g * g);
+	glUniform3fv(glGetUniformLocation(_ground_shader->program, "invWaveLength"), 1, glm::value_ptr(inv_wave_length));
 }
 
 void Planet::draw_wireframe(const Camera & camera, double delta_time) {

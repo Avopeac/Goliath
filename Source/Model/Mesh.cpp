@@ -42,7 +42,7 @@ void Mesh::update_vertices() {
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::color));
 	//Bitangent
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::bitangent));
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::extra));
 
 }
 

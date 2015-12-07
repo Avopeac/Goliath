@@ -166,6 +166,7 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
+    <ClCompile Include="Source\Terrain\AtmosphereObject.cpp" />
     <ClCompile Include="Source\Terrain\Noise3D.cpp" />
     <ClCompile Include="Source\Terrain\Planet.cpp" />
     <ClCompile Include="Source\Terrain\PlanetTile.cpp" />
@@ -179,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Model\Texture2DLoader.h" />
+    <ClInclude Include="Source\Terrain\AtmosphereObject.h" />
     <ClInclude Include="Source\Terrain\WaterQuadTree.h" />
     <ClInclude Include="Source\Terrain\WaterTile.h" />
     <ClInclude Include="Source\Thread\Semaphore.h" />
@@ -216,8 +218,6 @@
   <ItemGroup>
     <None Include="Shaders\additiveshader.frag" />
     <None Include="Shaders\additiveshader.vert" />
-    <None Include="Shaders\atmosphereshader.frag" />
-    <None Include="Shaders\atmosphereshader.vert" />
     <None Include="Shaders\blurfiltershader.frag" />
     <None Include="Shaders\blurfiltershader.vert" />
     <None Include="Shaders\fxaashader.frag" />
@@ -228,6 +228,10 @@
     <None Include="Shaders\plaintextureshader.vert" />
     <None Include="Shaders\skyboxshader.frag" />
     <None Include="Shaders\skyboxshader.vert" />
+    <None Include="Shaders\skyfromatmosphereshader.frag" />
+    <None Include="Shaders\skyfromatmosphereshader.vert" />
+    <None Include="Shaders\skyfromspaceshader.frag" />
+    <None Include="Shaders\skyfromspaceshader.vert" />
     <None Include="Shaders\standard.frag" />
     <None Include="Shaders\standard.vert" />
     <None Include="Shaders\thresholdshader.frag" />

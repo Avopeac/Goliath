@@ -39,7 +39,7 @@ void Water::_init() {
 	glGenBuffers(1, &_VBO);
 	glGenBuffers(1, &_EBO);
 
-	set_shader(ShaderStore::instance().get_shader_from_store(WATER_SHADER_PATH));
+	set_shader(ShaderStore::instance().get_shader_from_store(A_LITTLE_COOLER_WATER_SHADER_PATH));
 
 	MessageSystem::instance().post_noreturn(std::make_shared<WaterMessage>(this));
 }

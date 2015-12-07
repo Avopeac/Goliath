@@ -77,18 +77,25 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	//Draw skybox
 	_skybox->draw(camera, delta_time);
 
-	//Draw terrain
+	//Some predraw stuff
 	_ground_shader->use();
 	setup_terrain_textures();
 	setup_atmosphere(camera);
 
-	//Upload uniforms
+	//Draw stuff
 	_north->draw(camera, delta_time);
 	_south->draw(camera, delta_time);
 	_west->draw(camera, delta_time);
 	_east->draw(camera, delta_time);
 	_hither->draw(camera, delta_time);
 	_yon->draw(camera, delta_time);
+
+	//_north_water->draw(camera, delta_time);
+	//_south_water->draw(camera, delta_time);
+	//_west_water->draw(camera, delta_time);
+	//_east_water->draw(camera, delta_time);
+	//_hither_water->draw(camera, delta_time);
+	//_yon_water->draw(camera, delta_time);
 	
 	_atmosphere->draw(camera, delta_time);
 }

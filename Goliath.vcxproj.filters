@@ -260,5 +260,10 @@
     <None Include="Shaders\skyfromatmosphereshader.vert" />
     <None Include="Shaders\groundshader.frag" />
     <None Include="Shaders\groundshader.vert" />
+    <None Include="Shaders\water.vert" />
+    <None Include="Shaders\water.frag" />
+    <None Include="Shaders\water.geom" />
+    <None Include="Shaders\water.tesc.glsl" />
+    <None Include="Shaders\water.tese.glsl" />
   </ItemGroup>
 </Project>

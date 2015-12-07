@@ -53,6 +53,10 @@
 #define WATER_SHADER_PATH "Shaders/watershader"
 #endif 
 
+#ifndef A_LITTLE_COOOLER_WATER_SHADER_PATH 
+#define A_LITTLE_COOLER_WATER_SHADER_PATH "Shaders/water"
+#endif 
+
 #ifndef VERTEX_FILE_TYPE 
 #define VERTEX_FILE_TYPE ".vert"
 #endif
@@ -93,6 +97,7 @@ public:
 		add_shader_to_store(STANDARD_SHADER_PATH);
 		add_shader_to_store(WATER_SHADER_PATH);
 		add_shader_to_store(FXAA_SHADER_PATH);
+		add_shader_to_store_full(A_LITTLE_COOLER_WATER_SHADER_PATH);
 	}
 
 	void add_shader_to_store(const std::string &item) {

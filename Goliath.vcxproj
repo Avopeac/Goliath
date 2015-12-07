@@ -240,6 +240,11 @@
     <None Include="Shaders\thresholdshader.vert" />
     <None Include="Shaders\gammatonemapshader.frag" />
     <None Include="Shaders\gammatonemapshader.vert" />
+    <None Include="Shaders\water.frag" />
+    <None Include="Shaders\water.geom" />
+    <None Include="Shaders\water.tesc.glsl" />
+    <None Include="Shaders\water.tese.glsl" />
+    <None Include="Shaders\water.vert" />
     <None Include="Shaders\watershader.frag" />
     <None Include="Shaders\watershader.vert" />
   </ItemGroup>

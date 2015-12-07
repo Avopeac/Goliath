@@ -31,6 +31,9 @@ void MessageSystem::thread_func(int id) {
 		}
 
 		push_done(mp);
+
+		// Notify waiting threads that something is done
+		_done_semaphore.notify();
 	}
 }
 
@@ -97,4 +100,14 @@ void MessageSystem::post_noreturn(std::shared_ptr<Message> message) {
  */
 std::shared_ptr<Message> MessageSystem::get(int id) {
 	return pop_done(id);
+}
+
+std::shared_ptr<Message> MessageSystem::wait_for(int id) {
+	auto message = get(id);
+	while (message == nullptr) {
+		_done_semaphore.wait();
+		message = get(id);
+	}
+
+	return message;
 }

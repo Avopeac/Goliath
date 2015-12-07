@@ -33,6 +33,7 @@ public:
 	void post_noreturn(std::shared_ptr<Message> message);
 	//Get a message from the done collection, null if no such message exists
 	std::shared_ptr<Message> get(int id);
+	std::shared_ptr<Message> wait_for(int id);
 	//Shut down the threads
 	void clean_up();
 
@@ -62,6 +63,7 @@ private:
 	std::map<int, MessagePair> _done_collection;
 
 	Semaphore _work_semaphore;
+	Semaphore _done_semaphore;
 	//Locks for shared data-structures
 	std::mutex _request_mutex;
 	std::mutex _done_mutex;

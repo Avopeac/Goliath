@@ -5,7 +5,7 @@
 #include <Thread/MessageSystem.h>
 #include "View/ShaderStore.h"
 
-SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 22.0, 0.15, 0.7);
+SimplePlanetHeightSampler PlanetTile::sampler = SimplePlanetHeightSampler(2.0, 24.0, 0.0999, 0.4);
 
 class PlanetTile::PlanetTileMessage : public Message {
 public:

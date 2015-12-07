@@ -1,4 +1,5 @@
 ﻿#include "Water.h"
+
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
 #include <iostream>
@@ -8,14 +9,12 @@
 class Water::WaterMessage : public Message {
 public:
 	WaterMessage(Water *ref) : _ref(ref) {}
-	void virtual process() override {
-		_ref->_setup();
-	}
+	void virtual process() override { _ref->_setup(); }
 private:
 	Water *_ref;
 };
 
-Water::Water(float radius, const glm::dmat4& translation, const glm::dmat4& rotation, const glm::dmat4& scale)
+Water::Water(double radius, const glm::dmat4& translation, const glm::dmat4& rotation, const glm::dmat4& scale)
 	: _water_level(radius), _translation(translation), _rotation(rotation), _scale(scale) {
 	_init();
 }
@@ -47,22 +46,18 @@ void Water::_init() {
 
 void Water::_setup() {
 	unsigned int resolution = _base_resolution;
-	float step = 1.0f / resolution;
-	float offset = 0.5f;
+	double step = 1.0 / resolution;
+	double offset = 0.5;
 	glm::dmat4 transform = _translation * _rotation * _scale;
-
 	for (int x = 0; x <= resolution; ++x) {
 		for (int z = 0; z <= resolution; ++z) {
-			float cx = x * step - offset;
-			float cz = z * step - offset;
-
+			double cx = x * step - offset;
+			double cz = z * step - offset;
 			// Apply transform to base position
-			glm::dvec3 vertex = glm::dvec3(transform *  glm::dvec4(cx, 0, cz, 1.0));
-			
+			glm::dvec3 vertex(transform *  glm::vec4(cx, 0, cz, 1.0));
 			// Add normal while we're at it
 			vertex = glm::normalize(vertex);
 			_normals.push_back(vertex);
-
 			// Set length to water level
 			vertex = _water_level * vertex;
 			_vertices.push_back(vertex);
@@ -180,10 +175,10 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		auto time_now = std::chrono::steady_clock::now();
 		std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
 		glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
+		glUniform3fv(glGetUniformLocation(_shader->program, "wCameraPos"), 1, glm::value_ptr(glm::vec3(camera.get_deye())));
 		glUniform1f(glGetUniformLocation(_shader->program, "tessellationFactor"), 1024.0 / static_cast<double>(_base_resolution));
-		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
-		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
-		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
+		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 
 		if (wireframe) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

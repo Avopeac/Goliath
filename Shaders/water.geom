@@ -13,10 +13,6 @@ out vec3 gFacetNormal;
 out vec3 gPatchDistance;
 out vec3 gTriDistance;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
-
 void main()
 {
     gFacetNormal = normalize(cross(tePosition[1] - tePosition[0], tePosition[2] - tePosition[0]));

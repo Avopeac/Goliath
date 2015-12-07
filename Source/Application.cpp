@@ -1,16 +1,16 @@
 #pragma once
 #include <iostream>
 #include "Application.h"
-#include "View\Renderer.h"
-#include "View\Camera.h"
-#include "View\ShaderStore.h"
-#include "Terrain\Planet.h"
-#include "Thread\MessageSystem.h"
-#include "Input\Input.h"
-#include "AntTweakBar\AntTweakBar.h"
+#include "View/Renderer.h"
+#include "View/ShaderStore.h"
+#include "Terrain/Planet.h"
+#include "Thread/MessageSystem.h"
+#include "Input/Input.h"
+#include "AntTweakBar/AntTweakBar.h"
 
 unsigned int Application::width = WINDOW_WIDTH;
 unsigned int Application::height = WINDOW_HEIGHT;
+double Application::elapsed_time = 0.0f;
 
 Application::Application(unsigned int width, unsigned int height, const std::string &title) : _title(title) {
 	this->width = width;
@@ -82,10 +82,10 @@ void Application::run() {
 	Renderer::instance().initialize();
 	
 	//Create planet
-	std::shared_ptr<Planet> planet = std::make_shared<Planet>(4000);
+	std::shared_ptr<Planet> planet = std::make_shared<Planet>(60000000);
 	
 	//Create camera
-	Camera camera(glm::vec3(0, 0, 4050), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.0001, 10000.0);
+	Camera camera(glm::vec3(0, 0, 60600000), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0), 45.0, (double)width / height, 0.1, 1000000000.0);
 	
 	//Add camera to as a input enabled object
 	input.add_input_enabled_object(&camera);
@@ -97,9 +97,9 @@ void Application::run() {
 	double old_time = 0.0;
 	while (!glfwWindowShouldClose(_window_ptr)) {
 		//Timings
-		_elapsed_time = glfwGetTime();
-		_delta_time = _elapsed_time - old_time;
-		old_time = _elapsed_time;
+		elapsed_time = glfwGetTime();
+		_delta_time = elapsed_time - old_time;
+		old_time = elapsed_time;
 		_frames_per_second = 1.0 / _delta_time;
 		input.update(_delta_time);
 		camera.update(_delta_time);

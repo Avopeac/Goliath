@@ -32,7 +32,7 @@ public:
 		int i = 0;
 		glm::dvec3 point(position);
 		/* get first octave of function */
-		result = (Noise3D::get_noise(point.x, point.y, point.z) + _offset) * _exponentials[0];
+		result = (1.0 - glm::abs(Noise3D::get_noise(point.x, point.y, point.z))) * _exponentials[0];
 		weight = result;
 		/* increase frequency */
 		point *= _lacunarity;
@@ -41,7 +41,7 @@ public:
 			/* prevent divergence */
 			if (weight > 1.0) weight = 1.0;
 			/* get next higher frequency */
-			signal = (Noise3D::get_noise(point.x, point.y, point.z) + _offset) * _exponentials[i];
+			signal = ((1.0 - glm::abs(Noise3D::get_noise(point.x, point.y, point.z))) + _offset) * _exponentials[i];
 			/* add it in, weighted by previous freq's local value */
 			result += weight * signal;
 			/* update the (monotonically decreasing) weighting value */
@@ -53,28 +53,11 @@ public:
 			/* take care of remainder in “octaves” */
 		remainder = _octaves - (int)_octaves;
 		if (remainder) {/* “i” and spatial freq. are preset in loop above */
-			result += remainder * Noise3D::get_noise(point.x, point.y, point.z) * _exponentials[i];
+			result += remainder * (1.0 - glm::abs(Noise3D::get_noise(point.x, point.y, point.z))) * _exponentials[i];
 		}
 		
-		return result;
-	} /* HybridMultifractal() */
-
-/*		double i, v = 1.0;
-		glm::dvec3 p(position);
-		v += (glm::perlin(p) + _offset);
-		p *= _lacunarity;
-		for (i = 1.0; i <= _octaves; ++i) {
-			v += (glm::abs(Noise3D::get_noise(p.x, p.y, p.z) + _offset) * glm::pow(_lacunarity, -_dimensionality * i));
-			p *= _lacunarity;
-		}
-		return sqrt(pow(v, 3.0)) - 1.5;
-	}*/
-
-
-
-
-
-
+		return result * 0.5 - 3.5;
+	}
 
 private:
 	std::vector<double> _exponentials;

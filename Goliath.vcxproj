@@ -84,7 +84,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(ProjectDir)\Source;$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(ProjectDir)\Include;$(ProjectDir)\Source;$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -166,17 +166,25 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
+    <ClCompile Include="Source\Terrain\AtmosphereObject.cpp" />
     <ClCompile Include="Source\Terrain\Noise3D.cpp" />
     <ClCompile Include="Source\Terrain\Planet.cpp" />
     <ClCompile Include="Source\Terrain\PlanetTile.cpp" />
     <ClCompile Include="Source\Terrain\QuadTree.cpp" />
     <ClCompile Include="Source\Terrain\Water.cpp" />
+    <ClCompile Include="Source\Terrain\WaterQuadTree.cpp" />
+    <ClCompile Include="Source\Terrain\WaterTile.cpp" />
     <ClCompile Include="Source\Thread\MessageSystem.cpp" />
     <ClCompile Include="Source\View\Camera.cpp" />
     <ClCompile Include="Source\View\Renderer.cpp" />
     <ClCompile Include="Source\View\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Model\Texture2DLoader.h" />
+    <ClInclude Include="Source\Terrain\AtmosphereObject.h" />
+    <ClInclude Include="Source\Terrain\Water.h" />
+    <ClInclude Include="Source\Terrain\WaterQuadTree.h" />
+    <ClInclude Include="Source\Terrain\WaterTile.h" />
     <ClInclude Include="Source\Thread\Semaphore.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Drawable\Cube.h" />
@@ -195,12 +203,12 @@
     <ClInclude Include="Source\Terrain\QuadTree.h" />
     <ClInclude Include="Source\Terrain\SimplePlanetHeightSampler.h" />
     <ClInclude Include="Source\Terrain\Skybox.h" />
-    <ClInclude Include="Source\Terrain\Water.h" />
     <ClInclude Include="Source\Thread\Message.h" />
     <ClInclude Include="Source\Thread\MessageSystem.h" />
     <ClInclude Include="Source\View\BloomNode.h" />
     <ClInclude Include="Source\View\Camera.h" />
     <ClInclude Include="Source\View\Drawable.h" />
+    <ClInclude Include="Source\View\FxaaNode.h" />
     <ClInclude Include="Source\View\PostProcessing.h" />
     <ClInclude Include="Source\View\PostProcessingNode.h" />
     <ClInclude Include="Source\View\RenderTexture.h" />
@@ -212,27 +220,28 @@
   <ItemGroup>
     <None Include="Shaders\additiveshader.frag" />
     <None Include="Shaders\additiveshader.vert" />
-    <None Include="Shaders\atmosphereshader.frag" />
-    <None Include="Shaders\atmosphereshader.vert" />
     <None Include="Shaders\blurfiltershader.frag" />
     <None Include="Shaders\blurfiltershader.vert" />
+    <None Include="Shaders\fxaashader.frag" />
+    <None Include="Shaders\fxaashader.vert" />
     <None Include="Shaders\groundshader.frag" />
     <None Include="Shaders\groundshader.vert" />
     <None Include="Shaders\plaintextureshader.frag" />
     <None Include="Shaders\plaintextureshader.vert" />
     <None Include="Shaders\skyboxshader.frag" />
     <None Include="Shaders\skyboxshader.vert" />
+    <None Include="Shaders\skyfromatmosphereshader.frag" />
+    <None Include="Shaders\skyfromatmosphereshader.vert" />
+    <None Include="Shaders\skyfromspaceshader.frag" />
+    <None Include="Shaders\skyfromspaceshader.vert" />
     <None Include="Shaders\standard.frag" />
     <None Include="Shaders\standard.vert" />
     <None Include="Shaders\thresholdshader.frag" />
     <None Include="Shaders\thresholdshader.vert" />
     <None Include="Shaders\gammatonemapshader.frag" />
     <None Include="Shaders\gammatonemapshader.vert" />
-    <None Include="Shaders\water.frag" />
-    <None Include="Shaders\water.geom" />
-    <None Include="Shaders\water.tesc.glsl" />
-    <None Include="Shaders\water.tese.glsl" />
-    <None Include="Shaders\water.vert" />
+    <None Include="Shaders\watershader.frag" />
+    <None Include="Shaders\watershader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

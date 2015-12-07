@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include <View/Drawable.h>
+#include <GLM/detail/type_mat.hpp>
 
 class Water : public Drawable {
 public:
-	Water(float radius, const glm::dmat4 &translation, const glm::dmat4 &rotation, const glm::dmat4 &scale);
+	Water(double radius, const glm::dmat4 &translation, const glm::dmat4 &rotation, const glm::dmat4 &scale);
 
 	Water() = delete;
 	Water(const Water&) = delete;
@@ -18,7 +19,7 @@ private:
 
 	std::vector<std::unique_ptr<Water>> _children;
 
-	const unsigned int _base_resolution = 128;
+	const unsigned int _base_resolution = 512;
 	double _water_level;
 	double _lod_level;
 

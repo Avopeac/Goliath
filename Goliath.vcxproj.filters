@@ -84,6 +84,15 @@
     <ClCompile Include="Source\Terrain\Noise3D.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Terrain\WaterQuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Terrain\WaterTile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Terrain\AtmosphereObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Terrain\Water.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -179,6 +188,21 @@
     <ClInclude Include="Source\Thread\Semaphore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Terrain\WaterQuadTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\WaterTile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\View\FxaaNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Texture2DLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Terrain\AtmosphereObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Terrain\Water.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -200,12 +224,6 @@
       <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
     <None Include="Shaders\additiveshader.vert">
-      <Filter>Resource Files\Shader Files\Post Processing</Filter>
-    </None>
-    <None Include="Shaders\atmosphereshader.frag">
-      <Filter>Resource Files\Shader Files\Post Processing</Filter>
-    </None>
-    <None Include="Shaders\atmosphereshader.vert">
       <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
     <None Include="Shaders\blurfiltershader.frag">
@@ -232,16 +250,15 @@
     <None Include="Shaders\thresholdshader.vert">
       <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
-    <None Include="Shaders\groundshader.frag">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\groundshader.vert">
-      <Filter>Resource Files\Shader Files</Filter>
-    </None>
-    <None Include="Shaders\water.frag" />
-    <None Include="Shaders\water.geom" />
-    <None Include="Shaders\water.tesc.glsl" />
-    <None Include="Shaders\water.tese.glsl" />
-    <None Include="Shaders\water.vert" />
+    <None Include="Shaders\watershader.frag" />
+    <None Include="Shaders\watershader.vert" />
+    <None Include="Shaders\fxaashader.frag" />
+    <None Include="Shaders\fxaashader.vert" />
+    <None Include="Shaders\skyfromspaceshader.frag" />
+    <None Include="Shaders\skyfromspaceshader.vert" />
+    <None Include="Shaders\skyfromatmosphereshader.frag" />
+    <None Include="Shaders\skyfromatmosphereshader.vert" />
+    <None Include="Shaders\groundshader.frag" />
+    <None Include="Shaders\groundshader.vert" />
   </ItemGroup>
 </Project>

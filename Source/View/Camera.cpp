@@ -13,7 +13,7 @@ Camera::Camera(const glm::dvec3 &eye, const glm::dvec3 &center, const glm::dvec3
 	_base_right = glm::cross(_base_forward, glm::normalize(world_up));
 	_base_up = glm::cross(_base_right, _base_forward);
 
-	TwAddVarRW(Input::_tw_bar, "speed", TW_TYPE_DOUBLE, &_movement_speed, " min=0.00 max=20.0 step=0.01 ");
+	TwAddVarRW(Input::_tw_bar, "Camera Speed", TW_TYPE_DOUBLE, &_movement_speed, " min=1.00 max=20000000.0 step=100.0 ");
 }
 
 void Camera::update(double delta_time) {
@@ -37,40 +37,6 @@ void Camera::update(double delta_time) {
 	if (_update_frustum) { build_frustum(); }
 
 	_time += delta_time;
-}
-
-bool Camera::intersects_point(const glm::dvec3 &point) const {
-	for (unsigned short i = 0; i < 6; ++i) {
-		if (_frustum[i].distance(point) < 0) {
-			return false;
-		}
-	}
-	return true;
-}
-
-bool Camera::intersects_sphere(const glm::dvec3 &center, double radius) const {
-	for (unsigned short i = 0; i < 6; ++i) {
-		if (_frustum[i].distance(center) < -radius) {
-			return false;
-		}
-	}
-	return true;
-}
-
-bool Camera::intersects_box(const glm::dvec3 &center, const glm::dvec3 &extents) const {
-	for (unsigned short i = 0; i < 6; ++i) {
-		unsigned short outside = 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y + extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y + extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y - extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x + extents.x, center.y - extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y + extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y + extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y - extents.y, center.z + extents.z)) < 0.0 ? 1 : 0;
-		outside += _frustum[i].distance(glm::dvec3(center.x - extents.x, center.y - extents.y, center.z - extents.z)) < 0.0 ? 1 : 0;
-		if (outside == 8) return false;
-	}
-	return true;
 }
 
 void Camera::handle_mouse_movement(double x, double y, double delta_x, double delta_y, double delta_time, bool captured) {

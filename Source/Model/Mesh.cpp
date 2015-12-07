@@ -2,19 +2,16 @@
 #include <sstream>
 #include <iostream>
 
-Mesh::Mesh() {
-	glGenVertexArrays(1, &_VAO);
-	glGenBuffers(1, &_VBO);
-	glGenBuffers(1, &_EBO);
-}
-
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) : Mesh() {
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) {
 	this->vertices = vertices;
 	this->indices = indices;
 }
 
 void Mesh::setup_mesh() {
 	//Generate buffers and bind buffer data
+	glGenVertexArrays(1, &_VAO);
+	glGenBuffers(1, &_VBO);
+	glGenBuffers(1, &_EBO);
 	update_indices();
 	update_vertices();
 }
@@ -43,6 +40,9 @@ void Mesh::update_vertices() {
 	//Colors
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::color));
+	//Bitangent
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)offsetof(Vertex, Vertex::extra));
 
 }
 

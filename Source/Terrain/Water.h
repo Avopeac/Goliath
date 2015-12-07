@@ -3,7 +3,7 @@
 
 class Water : public Drawable {
 public:
-	Water(float radius, const glm::mat4 &translation, const glm::mat4 &scale, const glm::mat4 &rotation);
+	Water(float radius, const glm::dmat4 &translation, const glm::dmat4 &rotation, const glm::dmat4 &scale);
 
 	Water() = delete;
 	Water(const Water&) = delete;
@@ -12,17 +12,22 @@ public:
 	virtual void draw_wireframe(const Camera &camera, double delta_time) override;
 	
 private:
+	Water(float radius, const glm::dmat4 &translation, const glm::dmat4 &rotation, const glm::dmat4 &scale, double lod_level);
+
 	class WaterMessage;
 
+	std::vector<std::unique_ptr<Water>> _children;
+
 	const unsigned int _base_resolution = 128;
-	float _water_level;
+	double _water_level;
+	double _lod_level;
 
-	const glm::mat4 _translation;
-	const glm::mat4 _scale;
-	const glm::mat4 _rotation;
+	const glm::dmat4 _translation;
+	const glm::dmat4 _rotation;
+	const glm::dmat4 _scale;
 
-	std::vector<glm::vec3> _vertices;
-	std::vector<glm::vec3> _normals;
+	std::vector<glm::dvec3> _vertices;
+	std::vector<glm::dvec3> _normals;
 	std::vector<GLuint> _indices;
 
 	unsigned int _VAO, _VBO, _EBO;
@@ -31,6 +36,8 @@ private:
 
 	void _init();
 	void _setup();
+	void _update_lod();
+	bool _children_setup_done();
 	void _gl_setup();
 	void _draw(const Camera &camera, double delta_time, bool wireframe);
 };

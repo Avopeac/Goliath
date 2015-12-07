@@ -27,12 +27,12 @@ void Planet::setup_cube() {
 	_yon = std::make_shared<QuadTree>(glm::rotate(glm::three_over_two_pi<double>(), glm::dvec3(1, 0, 0)), glm::translate(glm::dvec3(0, 0, -trans)), scale, _radius, _ground_shader);
 
 	double water_level = _radius;
-	_north_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, trans, 0)), glm::scale(glm::vec3(scale)), glm::mat4(1));
-	_south_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, -trans, 0)), glm::scale(glm::vec3(scale)), glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)));
-	_west_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(-trans, 0, 0)), glm::scale(glm::vec3(scale)), glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)));
-	_east_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(trans, 0, 0)), glm::scale(glm::vec3(scale)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)));
-	_hither_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, 0, trans)), glm::scale(glm::vec3(scale)), glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)));
-	_yon_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, 0, -trans)), glm::scale(glm::vec3(scale)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)));
+	_north_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, trans, 0)), glm::mat4(1), glm::scale(glm::vec3(scale)));
+	_south_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, -trans, 0)), glm::rotate(glm::pi<float>(), glm::vec3(0, 0, 1)), glm::scale(glm::vec3(scale)));
+	_west_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(-trans, 0, 0)), glm::rotate(glm::half_pi<float>(), glm::vec3(0, 0, 1)), glm::scale(glm::vec3(scale)));
+	_east_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(trans, 0, 0)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(0, 0, 1)), glm::scale(glm::vec3(scale)));
+	_hither_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, 0, trans)), glm::rotate(glm::half_pi<float>(), glm::vec3(1, 0, 0)), glm::scale(glm::vec3(scale)));
+	_yon_water = std::make_shared<Water>(water_level, glm::translate(glm::vec3(0, 0, -trans)), glm::rotate(glm::three_over_two_pi<float>(), glm::vec3(1, 0, 0)), glm::scale(glm::vec3(scale)));
 }
 
 void Planet::create_color_ramp_texture() {

@@ -3,6 +3,7 @@
 #include <Thread/MessageSystem.h>
 #include <iostream>
 #include <GLM/gtc/type_ptr.hpp>
+#include <GLM/gtx/transform.hpp>
 
 class Water::WaterMessage : public Message {
 public:
@@ -14,8 +15,8 @@ private:
 	Water *_ref;
 };
 
-Water::Water(float radius, const glm::mat4& translation, const glm::mat4& scale, const glm::mat4& rotation)
-	: _water_level(radius), _translation(translation), _scale(scale), _rotation(rotation) {
+Water::Water(float radius, const glm::dmat4& translation, const glm::dmat4& rotation, const glm::dmat4& scale)
+	: _water_level(radius), _translation(translation), _rotation(rotation), _scale(scale) {
 	_init();
 }
 
@@ -25,6 +26,11 @@ void Water::draw(const Camera& camera, double delta_time) {
 
 void Water::draw_wireframe(const Camera& camera, double delta_time) {
 	_draw(camera, delta_time, true);
+}
+
+Water::Water(float radius, const glm::dmat4& translation, const glm::dmat4& rotation, const glm::dmat4& scale, double lod_level)
+	: _water_level(radius), _lod_level(lod_level), _translation(translation), _rotation(rotation), _scale(scale) {
+	_init();
 }
 
 void Water::_init() {
@@ -43,7 +49,7 @@ void Water::_setup() {
 	unsigned int resolution = _base_resolution;
 	float step = 1.0f / resolution;
 	float offset = 0.5f;
-	glm::mat4 transform = _translation * _rotation * _scale;
+	glm::dmat4 transform = _translation * _rotation * _scale;
 
 	for (int x = 0; x <= resolution; ++x) {
 		for (int z = 0; z <= resolution; ++z) {
@@ -51,7 +57,7 @@ void Water::_setup() {
 			float cz = z * step - offset;
 
 			// Apply transform to base position
-			glm::vec3 vertex = glm::vec3(transform *  glm::vec4(cx, 0, cz, 1.0));
+			glm::dvec3 vertex = glm::dvec3(transform *  glm::dvec4(cx, 0, cz, 1.0));
 			
 			// Add normal while we're at it
 			vertex = glm::normalize(vertex);
@@ -79,10 +85,48 @@ void Water::_setup() {
 	_setup_done = true;
 }
 
+void Water::_update_lod() {
+	if (_children.empty() && false) {
+		glm::dmat4 translation, rotation, scale;
+		// XXX: Base scale seems to correspond entirely to water level as it is now
+		scale = glm::scale(glm::dvec3(_water_level * glm::pow(0.5, _lod_level)));
+		double offset = _water_level * glm::pow(0.25, _lod_level);
+		glm::dvec3 origin = glm::dvec3(_translation[3]);
+
+		glm::dvec3 nw_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(offset, 0, -offset), 1.0));
+		translation = glm::translate(origin + nw_rotated_offset);
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+
+		glm::dvec3 ne_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(-offset, 0, -offset), 1.0));
+		translation = glm::translate(origin + ne_rotated_offset);
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+
+		glm::dvec3 sw_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(offset, 0, offset), 1.0));
+		translation = glm::translate(origin + sw_rotated_offset);
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+
+		glm::dvec3 se_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(-offset, 0, offset), 1.0));
+		translation = glm::translate(origin + se_rotated_offset);
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+	}
+	else if (!_children.empty() && false) {
+		_children.clear();
+	}
+}
+
+bool Water::_children_setup_done() {
+	bool ret = !_children.empty();
+	for (auto& child : _children) {
+		ret = ret && child->_setup_done;
+	}
+	return ret;
+}
+
 void Water::_gl_setup() {
 	std::vector<GLfloat> buffer(3 * (_vertices.size() + _normals.size()));
 	buffer.resize(3 * (_vertices.size() + _normals.size()));
 
+	// XXX: Probably unnecessary copying of mesh but I don't like OpenGL
 	for (int i = 0; i < _vertices.size(); ++i) {
 		buffer[i * 6] = _vertices[i].x;
 		buffer[i * 6 + 1] = _vertices[i].y;
@@ -111,33 +155,44 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		return;
 	}
 
-	glBindVertexArray(_VAO);
+	_update_lod();
 
-	if (!_gl_setup_done) {
-		_gl_setup();
-		_gl_setup_done = true;
+	if (_children_setup_done()) {
+		// Draw children
+		for (auto& child : _children) {
+			child->_draw(camera, delta_time, wireframe);
+		}
 	}
+	else {
+		// Draw ourselves
+		glBindVertexArray(_VAO);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glEnable(GL_DEPTH_TEST);
+		if (!_gl_setup_done) {
+			_gl_setup();
+			_gl_setup_done = true;
+		}
 
-	_shader->use();
-	auto time_now = std::chrono::steady_clock::now();
-	std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
-	glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
-	glUniform1f(glGetUniformLocation(_shader->program, "tessellationFactor"), 1024.0 / static_cast<double>(_base_resolution));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
-	glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glEnable(GL_DEPTH_TEST);
 
-	if (wireframe) {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		_shader->use();
+		auto time_now = std::chrono::steady_clock::now();
+		std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
+		glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
+		glUniform1f(glGetUniformLocation(_shader->program, "tessellationFactor"), 1024.0 / static_cast<double>(_base_resolution));
+		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "view"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dview())));
+		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "proj"), 1, GL_FALSE, glm::value_ptr(glm::mat4(camera.get_dprojection())));
+		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+
+		if (wireframe) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		// Tell OpenGL that every patch has 3 vertices
+		glPatchParameteri(GL_PATCH_VERTICES, 3);
+		glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glBindVertexArray(0);
 	}
-	// Tell OpenGL that every patch has 3 vertices
-	glPatchParameteri(GL_PATCH_VERTICES, 3);
-	glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glBindVertexArray(0);
 }

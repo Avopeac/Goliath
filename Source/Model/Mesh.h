@@ -8,7 +8,8 @@
 ///A mesh is the most basic thing that's uploaded to the GPU, it contains vertices, normals, texture coordinates and textures
 class Mesh {
 public:
-	Mesh() {}
+	Mesh();
+	~Mesh();
 	Mesh(std::vector<Vertex>, std::vector<GLuint>);
 	Mesh(const Mesh&) = delete;
 	//Mesh data

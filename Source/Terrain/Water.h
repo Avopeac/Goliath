@@ -17,15 +17,19 @@ private:
 
 	class WaterMessage;
 
-	std::vector<std::unique_ptr<Water>> _children;
+	const double WATER_MAX_LOD_LEVEL = 16;
+	const unsigned int BASE_RESOLUTION = 64;
 
-	const unsigned int _base_resolution = 512;
 	double _water_level;
 	double _lod_level;
+
+	std::vector<std::unique_ptr<Water>> _children;
 
 	const glm::dmat4 _translation;
 	const glm::dmat4 _rotation;
 	const glm::dmat4 _scale;
+
+	glm::dvec3 _center, _extents;
 
 	std::vector<glm::dvec3> _vertices;
 	std::vector<glm::dvec3> _normals;
@@ -37,7 +41,7 @@ private:
 
 	void _init();
 	void _setup();
-	void _update_lod();
+	void _update_lod(double rho);
 	bool _children_setup_done();
 	void _gl_setup();
 	void _draw(const Camera &camera, double delta_time, bool wireframe);

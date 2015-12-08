@@ -14,22 +14,31 @@ private:
 	Water *_ref;
 };
 
+static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
+	const double lod_factor = 4.0;
+	return distance - lod_factor * glm::pow(extents, 0.98);
+};
+
+static inline double distance_to_patch(const Camera &camera, const glm::dvec3 &mid_point) {
+	return glm::distance(mid_point, camera.get_deye());
+};
+
 Water::Water(double radius, const glm::dmat4& translation, const glm::dmat4& rotation, const glm::dmat4& scale)
-	: _water_level(radius), _translation(translation), _rotation(rotation), _scale(scale) {
+	: _water_level(radius), _lod_level(0), _translation(translation), _rotation(rotation), _scale(scale) {
 	_init();
-}
-
-void Water::draw(const Camera& camera, double delta_time) {
-	_draw(camera, delta_time, false);
-}
-
-void Water::draw_wireframe(const Camera& camera, double delta_time) {
-	_draw(camera, delta_time, true);
 }
 
 Water::Water(float radius, const glm::dmat4& translation, const glm::dmat4& rotation, const glm::dmat4& scale, double lod_level)
 	: _water_level(radius), _lod_level(lod_level), _translation(translation), _rotation(rotation), _scale(scale) {
 	_init();
+}
+
+void Water::draw(const Camera& camera, double delta_time) {
+	_draw(camera, delta_time, true);
+}
+
+void Water::draw_wireframe(const Camera& camera, double delta_time) {
+	_draw(camera, delta_time, true);
 }
 
 void Water::_init() {
@@ -40,15 +49,17 @@ void Water::_init() {
 	glGenBuffers(1, &_EBO);
 
 	set_shader(ShaderStore::instance().get_shader_from_store(A_LITTLE_COOLER_WATER_SHADER_PATH));
+	glm::dvec3 vec = _vertices[_vertices.size() / 2];
 
 	MessageSystem::instance().post_noreturn(std::make_shared<WaterMessage>(this));
 }
 
 void Water::_setup() {
-	unsigned int resolution = _base_resolution;
+	unsigned int resolution = BASE_RESOLUTION;
 	double step = 1.0 / resolution;
 	double offset = 0.5;
 	glm::dmat4 transform = _translation * _rotation * _scale;
+	glm::dvec3 max, min;
 	for (int x = 0; x <= resolution; ++x) {
 		for (int z = 0; z <= resolution; ++z) {
 			double cx = x * step - offset;
@@ -61,8 +72,20 @@ void Water::_setup() {
 			// Set length to water level
 			vertex = _water_level * vertex;
 			_vertices.push_back(vertex);
+
+			//Find max points
+			if (max.x < vertex.x) { max.x = vertex.x; }
+			if (max.y < vertex.y) { max.y = vertex.y; }
+			if (max.z < vertex.z) { max.z = vertex.z; }
+			//Find min points
+			if (min.x > vertex.x) { min.x = vertex.x; }
+			if (min.y > vertex.y) { min.y = vertex.y; }
+			if (min.z > vertex.z) { min.z = vertex.z; }
 		}
 	}
+
+	_center = (max + min) * 0.5;
+	_extents = (max - min) * 0.5;
 
 	// Set up indices
 	int stride = resolution + 1;
@@ -80,31 +103,34 @@ void Water::_setup() {
 	_setup_done = true;
 }
 
-void Water::_update_lod() {
-	if (_children.empty() && false) {
+void Water::_update_lod(double rho) {
+	if (_children.empty() && rho < 0.0 && _lod_level < WATER_MAX_LOD_LEVEL) {
 		glm::dmat4 translation, rotation, scale;
+		rotation = _rotation;
+		double lod_level = _lod_level + 1;
 		// XXX: Base scale seems to correspond entirely to water level as it is now
-		scale = glm::scale(glm::dvec3(_water_level * glm::pow(0.5, _lod_level)));
-		double offset = _water_level * glm::pow(0.25, _lod_level);
+		double dscale = _water_level * glm::pow(0.5, lod_level);
+		double offset = _water_level * glm::pow(0.5, lod_level+1);
 		glm::dvec3 origin = glm::dvec3(_translation[3]);
+		scale = glm::scale(glm::dvec3(dscale));
 
 		glm::dvec3 nw_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(offset, 0, -offset), 1.0));
 		translation = glm::translate(origin + nw_rotated_offset);
-		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, lod_level));
 
 		glm::dvec3 ne_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(-offset, 0, -offset), 1.0));
 		translation = glm::translate(origin + ne_rotated_offset);
-		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, lod_level));
 
 		glm::dvec3 sw_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(offset, 0, offset), 1.0));
 		translation = glm::translate(origin + sw_rotated_offset);
-		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, lod_level));
 
 		glm::dvec3 se_rotated_offset = glm::dvec3(_rotation * glm::dvec4(glm::dvec3(-offset, 0, offset), 1.0));
 		translation = glm::translate(origin + se_rotated_offset);
-		_children.emplace_back(new Water(_water_level, translation, rotation, scale, _lod_level+1));
+		_children.emplace_back(new Water(_water_level, translation, rotation, scale, lod_level));
 	}
-	else if (!_children.empty() && false) {
+	else if (!_children.empty() && rho > 0.0) {
 		_children.clear();
 	}
 }
@@ -131,6 +157,8 @@ void Water::_gl_setup() {
 		buffer[i * 6 + 5] = _normals[i].z;
 	}
 
+	glBindVertexArray(_VAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 	glBufferData(GL_ARRAY_BUFFER, buffer.size() * sizeof(GLfloat), buffer.data(), GL_STATIC_DRAW);
 
@@ -150,7 +178,9 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		return;
 	}
 
-	_update_lod();
+	glm::dvec3 middle_vec = _vertices[_vertices.size() / 2];
+	double rho = compute_level_metric(camera, distance_to_patch(camera, _center), _water_level * glm::pow(0.5, _lod_level));
+	_update_lod(rho);
 
 	if (_children_setup_done()) {
 		// Draw children
@@ -176,7 +206,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
 		glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
 		glUniform3fv(glGetUniformLocation(_shader->program, "wCameraPos"), 1, glm::value_ptr(glm::vec3(camera.get_deye())));
-		glUniform1f(glGetUniformLocation(_shader->program, "tessellationFactor"), 1024.0 / static_cast<double>(_base_resolution));
+		glUniform1f(glGetUniformLocation(_shader->program, "tessellationFactor"), 1024.0 / static_cast<double>(BASE_RESOLUTION));
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 
@@ -185,7 +215,8 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		}
 		// Tell OpenGL that every patch has 3 vertices
 		glPatchParameteri(GL_PATCH_VERTICES, 3);
-		glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+		if (_lod_level > 0.5)
+			glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glBindVertexArray(0);

@@ -13,6 +13,7 @@ Camera::Camera(const glm::dvec3 &eye, const glm::dvec3 &center, const glm::dvec3
 	_base_right = glm::cross(_base_forward, glm::normalize(world_up));
 	_base_up = glm::cross(_base_right, _base_forward);
 
+	TwAddSeparator(Input::_tw_bar, "Camera", nullptr);
 	TwAddVarRW(Input::_tw_bar, "Camera Speed", TW_TYPE_DOUBLE, &_movement_speed, " min=1.00 max=20000000.0 step=100.0 ");
 }
 

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <GLM/gtc/type_ptr.hpp>
 #include <GLM/gtx/transform.hpp>
+#include <Input/Input.h>
 
 class Water::WaterMessage : public Message {
 public:
@@ -12,6 +13,21 @@ public:
 	void virtual process() override { _ref->_setup(); }
 private:
 	Water *_ref;
+};
+
+// For some reason keeping this in class doesn't work...
+static double WATER_BASE_LOD_LEVEL = 32;
+static double WATER_MAX_LOD_LEVEL = 512;
+static double WATER_BASE_TESS_LEVEL = 128;
+static double WATER_TESS_CUTOFF_LEVEL = 3;
+
+static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
+	const double lod_factor = WATER_BASE_LOD_LEVEL;
+	return distance - lod_factor * glm::pow(extents, 0.98);
+};
+
+static inline double distance_to_patch(const Camera &camera, const glm::dvec3 &mid_point) {
+	return glm::distance(mid_point, camera.get_deye());
 };
 
 Water::~Water() {
@@ -39,6 +55,16 @@ void Water::draw_wireframe(const Camera& camera, double delta_time) {
 }
 
 void Water::_init() {
+	static bool gui_init_done = false;
+	if (!gui_init_done) {
+		TwAddSeparator(Input::_tw_bar, "Water", nullptr);
+		TwAddVarRW(Input::_tw_bar, "LOD level", TW_TYPE_DOUBLE, &WATER_BASE_LOD_LEVEL, "min=0.0 max=1024.0 step=1.0");
+		TwAddVarRW(Input::_tw_bar, "Max LOD level", TW_TYPE_DOUBLE, &WATER_MAX_LOD_LEVEL, "min=0.0 max=1024.0 step=1.0");
+		TwAddVarRW(Input::_tw_bar, "Tess level", TW_TYPE_DOUBLE, &WATER_BASE_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
+		TwAddVarRW(Input::_tw_bar, "Tess cutoff", TW_TYPE_DOUBLE, &WATER_TESS_CUTOFF_LEVEL, "min=1.0 max=10.0 step=0.01");
+		gui_init_done = true;
+	}
+
 	_setup_done = _gl_setup_done = false;
 
 	glGenVertexArrays(1, &_VAO);

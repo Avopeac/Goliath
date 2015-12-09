@@ -4,6 +4,7 @@
 
 class Water : public Drawable {
 public:
+	~Water();
 	Water(double radius, const glm::dmat4 &translation, const glm::dmat4 &rotation, const glm::dmat4 &scale);
 
 	Water() = delete;

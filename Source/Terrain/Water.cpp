@@ -23,6 +23,12 @@ static inline double distance_to_patch(const Camera &camera, const glm::dvec3 &m
 	return glm::distance(mid_point, camera.get_deye());
 };
 
+Water::~Water() {
+	glDeleteVertexArrays(1, &_VAO);
+	glDeleteBuffers(1, &_VBO);
+	glDeleteBuffers(1, &_EBO);
+}
+
 Water::Water(double radius, const glm::dmat4& translation, const glm::dmat4& rotation, const glm::dmat4& scale)
 	: _water_level(radius), _lod_level(0), _translation(translation), _rotation(rotation), _scale(scale) {
 	_init();
@@ -206,7 +212,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
 		glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
 		glUniform3fv(glGetUniformLocation(_shader->program, "wCameraPos"), 1, glm::value_ptr(glm::vec3(camera.get_deye())));
-		glUniform1f(glGetUniformLocation(_shader->program, "tessellationFactor"), 1024.0 / static_cast<double>(BASE_RESOLUTION));
+		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 
@@ -215,8 +221,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		}
 		// Tell OpenGL that every patch has 3 vertices
 		glPatchParameteri(GL_PATCH_VERTICES, 3);
-		if (_lod_level > 0.5)
-			glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glBindVertexArray(0);

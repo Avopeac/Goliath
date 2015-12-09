@@ -153,8 +153,8 @@ void main()
 	// Set proper height
 	tePosition *= length(tcPosition[0]);
 
-	float far = 100000000.0;
-	float c = 0.01;
+	float far = 1000000000.0;
+	float c = 0.1;
     gl_Position = mvp * vec4(tePosition, 1);
 	gl_Position.z = (2.0 * log(c * gl_Position.w + 1.0) / log(c * far +  1) - 1) * gl_Position.w;
 }

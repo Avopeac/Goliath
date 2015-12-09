@@ -14,15 +14,6 @@ private:
 	Water *_ref;
 };
 
-static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
-	const double lod_factor = 4.0;
-	return distance - lod_factor * glm::pow(extents, 0.98);
-};
-
-static inline double distance_to_patch(const Camera &camera, const glm::dvec3 &mid_point) {
-	return glm::distance(mid_point, camera.get_deye());
-};
-
 Water::~Water() {
 	glDeleteVertexArrays(1, &_VAO);
 	glDeleteBuffers(1, &_VBO);

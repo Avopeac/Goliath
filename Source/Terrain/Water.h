@@ -18,9 +18,10 @@ private:
 
 	class WaterMessage;
 
-	const double WATER_MAX_LOD_LEVEL = 16;
-	const double WATER_BASE_TESS_LEVEL = 32;
-	const unsigned int WATER_BASE_RESOLUTION = 64;
+	const double WATER_BASE_LOD_LEVEL = 32.0;
+	const double WATER_MAX_LOD_LEVEL = 512;
+	const double WATER_BASE_TESS_LEVEL = 64;
+	const unsigned int WATER_BASE_RESOLUTION = 4;
 
 	double _water_level;
 	double _lod_level;
@@ -47,4 +48,13 @@ private:
 	bool _children_setup_done();
 	void _gl_setup();
 	void _draw(const Camera &camera, double delta_time, bool wireframe);
+
+	inline double compute_level_metric(const Camera & camera, double distance, double extents) {
+		const double lod_factor = WATER_BASE_LOD_LEVEL;
+		return distance - lod_factor * glm::pow(extents, 0.98);
+	};
+
+	inline double distance_to_patch(const Camera &camera, const glm::dvec3 &mid_point) {
+		return glm::distance(mid_point, camera.get_deye());
+	};
 };

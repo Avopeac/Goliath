@@ -167,6 +167,7 @@
     <ClCompile Include="Source\Model\Mesh.cpp" />
     <ClCompile Include="Source\Model\Shader.cpp" />
     <ClCompile Include="Source\Terrain\AtmosphereObject.cpp" />
+    <ClCompile Include="Source\Terrain\DayNight.cpp" />
     <ClCompile Include="Source\Terrain\Noise3D.cpp" />
     <ClCompile Include="Source\Terrain\Planet.cpp" />
     <ClCompile Include="Source\Terrain\PlanetTile.cpp" />
@@ -182,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Model\Texture2DLoader.h" />
     <ClInclude Include="Source\Terrain\AtmosphereObject.h" />
+    <ClInclude Include="Source\Terrain\DayNight.h" />
     <ClInclude Include="Source\Terrain\Water.h" />
     <ClInclude Include="Source\Terrain\WaterQuadTree.h" />
     <ClInclude Include="Source\Terrain\WaterTile.h" />

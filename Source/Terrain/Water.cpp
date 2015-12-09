@@ -206,6 +206,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "far"), camera.get_far());
 		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
 		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
+		glUniform1f(glGetUniformLocation(_shader->program, "tessellationCutoffLevel"), WATER_TESS_CUTOFF_LEVEL);
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 

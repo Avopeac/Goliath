@@ -20,7 +20,8 @@ private:
 
 	const double WATER_BASE_LOD_LEVEL = 32.0;
 	const double WATER_MAX_LOD_LEVEL = 512;
-	const double WATER_BASE_TESS_LEVEL = 64;
+	const double WATER_BASE_TESS_LEVEL = 128;
+	const double WATER_TESS_CUTOFF_LEVEL = 3;
 	const unsigned int WATER_BASE_RESOLUTION = 4;
 
 	double _water_level;

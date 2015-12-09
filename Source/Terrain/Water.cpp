@@ -6,6 +6,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 #include <GLM/gtx/transform.hpp>
 #include <Input/Input.h>
+#include "DayNight.h"
 
 class Water::WaterMessage : public Message {
 public:
@@ -47,7 +48,7 @@ Water::Water(float radius, const glm::dmat4& translation, const glm::dmat4& rota
 }
 
 void Water::draw(const Camera& camera, double delta_time) {
-	_draw(camera, delta_time, true);
+	_draw(camera, delta_time, false);
 }
 
 void Water::draw_wireframe(const Camera& camera, double delta_time) {
@@ -61,7 +62,7 @@ void Water::_init() {
 		TwAddVarRW(Input::_tw_bar, "LOD level", TW_TYPE_DOUBLE, &WATER_BASE_LOD_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Max LOD level", TW_TYPE_DOUBLE, &WATER_MAX_LOD_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Tess level", TW_TYPE_DOUBLE, &WATER_BASE_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
-		TwAddVarRW(Input::_tw_bar, "Tess cutoff", TW_TYPE_DOUBLE, &WATER_TESS_CUTOFF_LEVEL, "min=1.0 max=10.0 step=0.01");
+		TwAddVarRW(Input::_tw_bar, "Tess cutoff", TW_TYPE_DOUBLE, &WATER_TESS_CUTOFF_LEVEL, "min=1.0 max=100.0 step=0.01");
 		gui_init_done = true;
 	}
 
@@ -227,6 +228,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		auto time_now = std::chrono::steady_clock::now();
 		std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
 		glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
+		glUniform3fv(glGetUniformLocation(_shader->program, "sunlightDir"), 1, glm::value_ptr(glm::vec3(DayNight::instance().get_sun())));
 		glUniform3fv(glGetUniformLocation(_shader->program, "wCameraPos"), 1, glm::value_ptr(glm::vec3(camera.get_deye())));
 		glUniform1f(glGetUniformLocation(_shader->program, "near"), camera.get_near());
 		glUniform1f(glGetUniformLocation(_shader->program, "far"), camera.get_far());

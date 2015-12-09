@@ -122,8 +122,8 @@ float snoise(vec3 v)
 float height(vec3 pos, float time) {
 	const float angle_offset = M_PI / 1.7;
 	const float anim_speed = 0.04;
-	const float alpha = 0.5;
-	const float freq_scale = 1000.0;
+	const float alpha = 0.3;
+	const float freq_scale = 100.0;
 	float sum = 0;
 	float angle = 0;
 

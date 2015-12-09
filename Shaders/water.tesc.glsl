@@ -8,6 +8,10 @@ out vec3 tcPosition[];
 
 uniform mat4 mvp;
 uniform float quadtree_level;
+uniform float baseTessellationLevel;
+
+uniform float far;
+uniform float near;
 
 #define ID gl_InvocationID
 
@@ -33,14 +37,11 @@ void main()
 		clipPos[1] = mvp * vec4(vPosition[1], 1.0);
 		clipPos[2] = mvp * vec4(vPosition[2], 1.0);
 
-		float far = 1000000000.0;
-        float c = 0.1;
-
 		// Using the Z buffer hack here as well to avoid float errors and
 		// is also probably a nicer value for tessellation
-        clipPos[0].z = (2.0 * log(c * clipPos[0].w + 1.0) / log(c * far +  1) - 1) * clipPos[0].w;
-        clipPos[1].z = (2.0 * log(c * clipPos[1].w + 1.0) / log(c * far +  1) - 1) * clipPos[1].w;
-        clipPos[2].z = (2.0 * log(c * clipPos[2].w + 1.0) / log(c * far +  1) - 1) * clipPos[2].w;
+        clipPos[0].z = (2.0 * log(near * clipPos[0].w + 1.0) / log(near * far +  1) - 1) * clipPos[0].w;
+        clipPos[1].z = (2.0 * log(near * clipPos[1].w + 1.0) / log(near * far +  1) - 1) * clipPos[1].w;
+        clipPos[2].z = (2.0 * log(near * clipPos[2].w + 1.0) / log(near * far +  1) - 1) * clipPos[2].w;
 
         // We'll get a value [0,1] when within frustum
         float cameraDist[3];
@@ -50,7 +51,6 @@ void main()
 
 		// Calculate tessellation level based on camera distance.
         float tessLevelOuter[3];
-		const float baseTessellationLevel = 32;
         tessLevelOuter[0] = clamp(baseTessellationLevel * (1 - (cameraDist[1] + cameraDist[2]) / 2.0) - 2 * quadtree_level, 0.0, baseTessellationLevel);
         tessLevelOuter[1] = clamp(baseTessellationLevel * (1 - (cameraDist[2] + cameraDist[0]) / 2.0) - 2 * quadtree_level, 0.0, baseTessellationLevel);
         tessLevelOuter[2] = clamp(baseTessellationLevel * (1 - (cameraDist[0] + cameraDist[1]) / 2.0) - 2 * quadtree_level, 0.0, baseTessellationLevel);

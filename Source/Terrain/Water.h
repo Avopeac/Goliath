@@ -19,7 +19,8 @@ private:
 	class WaterMessage;
 
 	const double WATER_MAX_LOD_LEVEL = 16;
-	const unsigned int BASE_RESOLUTION = 64;
+	const double WATER_BASE_TESS_LEVEL = 32;
+	const unsigned int WATER_BASE_RESOLUTION = 64;
 
 	double _water_level;
 	double _lod_level;

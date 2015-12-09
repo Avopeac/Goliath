@@ -61,7 +61,7 @@ void Water::_init() {
 }
 
 void Water::_setup() {
-	unsigned int resolution = BASE_RESOLUTION;
+	unsigned int resolution = WATER_BASE_RESOLUTION;
 	double step = 1.0 / resolution;
 	double offset = 0.5;
 	glm::dmat4 transform = _translation * _rotation * _scale;
@@ -184,7 +184,6 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		return;
 	}
 
-	glm::dvec3 middle_vec = _vertices[_vertices.size() / 2];
 	double rho = compute_level_metric(camera, distance_to_patch(camera, _center), _water_level * glm::pow(0.5, _lod_level));
 	_update_lod(rho);
 
@@ -212,7 +211,10 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		std::chrono::duration<float> time_now_float = std::chrono::duration_cast<std::chrono::duration<float>>(time_now.time_since_epoch());
 		glUniform1f(glGetUniformLocation(_shader->program, "globTime"), time_now_float.count());
 		glUniform3fv(glGetUniformLocation(_shader->program, "wCameraPos"), 1, glm::value_ptr(glm::vec3(camera.get_deye())));
+		glUniform1f(glGetUniformLocation(_shader->program, "near"), camera.get_near());
+		glUniform1f(glGetUniformLocation(_shader->program, "far"), camera.get_far());
 		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
+		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 

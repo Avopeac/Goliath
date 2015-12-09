@@ -8,8 +8,11 @@ out vec3 tePosition;
 out float teDisplacement;
 out vec3 teNormal;
 out vec3 tePatchDistance;
+
 uniform mat4 mvp;
 uniform float globTime;
+uniform float near;
+uniform float far;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -148,13 +151,11 @@ void main()
     tePatchDistance = gl_TessCoord;
 
 	// Displacement should be [0,1], applied to normalized position
-	teDisplacement = 0.00001 * height(tePosition, globTime);
+	teDisplacement = 0.00025 * height(tePosition, globTime);
 	tePosition += teDisplacement * teNormal;
 	// Set proper height
 	tePosition *= length(tcPosition[0]);
 
-	float far = 1000000000.0;
-	float c = 0.1;
     gl_Position = mvp * vec4(tePosition, 1);
-	gl_Position.z = (2.0 * log(c * gl_Position.w + 1.0) / log(c * far +  1) - 1) * gl_Position.w;
+	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1) - 1) * gl_Position.w;
 }

@@ -241,6 +241,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "tessellationCutoffLevel"), WATER_TESS_CUTOFF_LEVEL);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), WATER_WAVE_HEIGHT);
 		glUniform1i(glGetUniformLocation(_shader->program, "octets"), WATER_OCTETS);
+		// Uploaded vertices in world space already
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 

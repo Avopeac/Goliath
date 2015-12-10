@@ -11,6 +11,7 @@ uniform vec3 sunlightDir;
 void main()
 {
 	vec3 wNormal = normalize(gNormal);
-	vec3 light = max(0.0, dot(sunlightDir, wNormal)) * vec3(0.0, 0.3, 1.0);
+	vec3 lightDir = normalize(sunlightDir);
+	vec3 light = max(0.0, dot(lightDir, wNormal)) * vec3(0.0, 0.3, 1.0);
 	FragColor = vec4(light, 1.0);
 }

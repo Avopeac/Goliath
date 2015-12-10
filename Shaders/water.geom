@@ -9,14 +9,11 @@ in vec3 teNormal[];
 in vec3 tePatchDistance[];
 out float gDisplacement;
 out vec3 gNormal;
-out vec3 gFacetNormal;
 out vec3 gPatchDistance;
 out vec3 gTriDistance;
 
 void main()
 {
-    gFacetNormal = normalize(cross(tePosition[1] - tePosition[0], tePosition[2] - tePosition[0]));
-
 	gDisplacement = teDisplacement[0];
 	gNormal = teNormal[0];
     gPatchDistance = tePatchDistance[0];
@@ -31,7 +28,7 @@ void main()
     gl_Position = gl_in[1].gl_Position; EmitVertex();
 
 	gDisplacement = teDisplacement[2];
-	gNormal = teNormal[2];
+	gNormal = teNormal[2];//normalize(gFacetNormal + scaler * abs(teDisplacement[2]) * oppFacetNormal);
     gPatchDistance = tePatchDistance[2];
     gTriDistance = vec3(0, 0, 1);
     gl_Position = gl_in[2].gl_Position; EmitVertex();

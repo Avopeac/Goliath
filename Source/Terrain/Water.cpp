@@ -21,6 +21,8 @@ static double WATER_BASE_LOD_LEVEL = 32;
 static double WATER_MAX_LOD_LEVEL = 512;
 static double WATER_BASE_TESS_LEVEL = 128;
 static double WATER_TESS_CUTOFF_LEVEL = 3;
+static double WATER_WAVE_HEIGHT = 0.00025;
+static int32_t WATER_OCTETS = 3;
 
 static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
 	const double lod_factor = WATER_BASE_LOD_LEVEL;
@@ -63,6 +65,8 @@ void Water::_init() {
 		TwAddVarRW(Input::_tw_bar, "Max LOD level", TW_TYPE_DOUBLE, &WATER_MAX_LOD_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Tess level", TW_TYPE_DOUBLE, &WATER_BASE_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Tess cutoff", TW_TYPE_DOUBLE, &WATER_TESS_CUTOFF_LEVEL, "min=1.0 max=100.0 step=0.01");
+		TwAddVarRW(Input::_tw_bar, "Wave height", TW_TYPE_DOUBLE, &WATER_WAVE_HEIGHT, "min=0.0 max=1.0 step=0.00001");
+		TwAddVarRW(Input::_tw_bar, "# Octets", TW_TYPE_INT32, &WATER_OCTETS, "min=1 max=20 step=1");
 		gui_init_done = true;
 	}
 
@@ -235,6 +239,8 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
 		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
 		glUniform1f(glGetUniformLocation(_shader->program, "tessellationCutoffLevel"), WATER_TESS_CUTOFF_LEVEL);
+		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), WATER_WAVE_HEIGHT);
+		glUniform1i(glGetUniformLocation(_shader->program, "octets"), WATER_OCTETS);
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 

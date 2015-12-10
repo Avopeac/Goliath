@@ -13,6 +13,8 @@ uniform mat4 mvp;
 uniform float globTime;
 uniform float near;
 uniform float far;
+uniform float waveHeight;
+uniform int octets;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -120,14 +122,14 @@ float snoise(vec3 v)
   }
 
 float height(vec3 pos, float time) {
-	const float angle_offset = M_PI / 1.7;
+	const float angle_offset = M_PI / 1.7; // Just to introduce some randomness in animation
 	const float anim_speed = 0.04;
-	const float alpha = 0.3;
+	const float alpha = 0.25;
 	const float freq_scale = 100.0;
 	float sum = 0;
 	float angle = 0;
 
-	for (int oct = 1; oct <= 1; ++oct) {
+	for (int oct = 1; oct <= octets; ++oct) {
 		angle += angle_offset;
         vec3 anim_vec = anim_speed * vec3(cos(angle), sin(angle), tan(angle));
         pos.x += M_PI / 2.0;
@@ -146,15 +148,29 @@ void main()
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
 
-    tePosition = normalize(p0 + p1 + p2);
+	// Same length on all vertices
+	float waterLevel = length(tcPosition[0]);
+
+    vec3 flatPosition = normalize(p0 + p1 + p2);
     teNormal = normalize(n0 + n1 + n2);
     tePatchDistance = gl_TessCoord;
 
 	// Displacement should be [0,1], applied to normalized position
-	teDisplacement = 0.00025 * height(tePosition, globTime);
-	tePosition += teDisplacement * teNormal;
+	teDisplacement = height(flatPosition, globTime);
+	tePosition = flatPosition + waveHeight * teDisplacement * teNormal;
 	// Set proper height
-	tePosition *= length(tcPosition[0]);
+	tePosition *= waterLevel;
+
+	// Compute derivatives and adjust normal
+	const float eps = 1.0;
+	float xDer, yDer, zDer;
+	xDer = height(vec3(flatPosition.x + eps, flatPosition.y, flatPosition.z), globTime);
+	yDer = height(vec3(flatPosition.x, flatPosition.y + eps, flatPosition.z), globTime);
+	zDer = height(vec3(flatPosition.x, flatPosition.y, flatPosition.z + eps), globTime);
+	// XXX: I'm not sure about the scaling here. waveHeight scales the normalized position 
+	// so should work fine with normal adjustment.
+	vec3 gradient = waveHeight / eps * vec3(xDer - teDisplacement, yDer - teDisplacement, zDer - teDisplacement);
+	teNormal = normalize(teNormal - gradient);
 
     gl_Position = mvp * vec4(tePosition, 1);
 	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1) - 1) * gl_Position.w;

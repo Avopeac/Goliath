@@ -5,6 +5,7 @@ in vec3 vPosition[];
 in vec3 vNormal[];
 out vec3 tcNormal[];
 out vec3 tcPosition[];
+out float tcCameraDist[];
 
 uniform mat4 mvp;
 uniform float quadtree_level;

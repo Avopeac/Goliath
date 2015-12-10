@@ -19,8 +19,8 @@ private:
 // For some reason keeping this in class doesn't work...
 static double WATER_BASE_LOD_LEVEL = 32;
 static double WATER_MAX_LOD_LEVEL = 512;
-static double WATER_BASE_TESS_LEVEL = 128;
-static double WATER_TESS_CUTOFF_LEVEL = 3;
+static double WATER_BASE_TESS_LEVEL = 150;
+static double WATER_TESS_CUTOFF_LEVEL = 2.5;
 static double WATER_WAVE_HEIGHT = 0.00025;
 static int32_t WATER_OCTETS = 3;
 

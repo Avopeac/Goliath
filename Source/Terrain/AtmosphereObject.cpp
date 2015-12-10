@@ -1,5 +1,6 @@
 #include "AtmosphereObject.h"
 #include <GLM/gtc/type_ptr.hpp>
+#include "Terrain/DayNight.h"
 
 void AtmosphereObject::begin_draw(const Camera &camera) {
 	glEnable(GL_BLEND);
@@ -64,6 +65,7 @@ void AtmosphereObject::begin_draw(const Camera &camera) {
 	glUniform1f(glGetUniformLocation(_shader->program, "g"), g);
 	glUniform1f(glGetUniformLocation(_shader->program, "g2"), g * g);
 	glUniform3fv(glGetUniformLocation(_shader->program, "invWaveLength"), 1, glm::value_ptr(inv_wave_length));
+	glUniform3fv(glGetUniformLocation(_shader->program, "lightDir"), 1, glm::value_ptr(DayNight::instance().get_sun()));
 }
 
 void AtmosphereObject::end_draw() {

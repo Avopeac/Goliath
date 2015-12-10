@@ -18,6 +18,7 @@ uniform sampler2D groundNormalTex;
 uniform sampler2D grassNormalTex;
 uniform sampler2D rockNormalTex;
 uniform mat4 view;
+uniform vec3 lightDir;
 
 //Noise helper functions
 /*vec3 fade(vec3 t) { return t * t * t * (t * (t * 6 - 15) + 10); }
@@ -60,7 +61,6 @@ float noise(vec3 p){
 
 void main()
 {
-	vec3 lightDir = normalize(vec3(0,1,0));
 	vec3 normalDir = normalize(ourNormal);
 	vec3 groundNormals = 2.0 * texture(groundNormalTex, ourUv).rgb - 1.0;
 	vec3 grassNormals = 2.0 * texture(grassNormalTex, ourUv).rgb - 1.0;
@@ -94,9 +94,9 @@ void main()
 
 	//Light colors	
 	vec3 sunColor = vec3(1.64,1.27,0.99);
-	vec3 skyColor = vec3(0.16,0.20,0.28);
+	//vec3 skyColor = vec3(0.16,0.20,0.28);
 	vec3 lighting =  sunColor * ndotl;
-	lighting += skyColor * ndots;
+	//lighting += skyColor * ndots;
 	vec3 final = 0.5 * (texColor * lighting + 5.0 * lighting * specular);
 	vec3 atmosphereColor = c0 + 0.25 * c1;
 

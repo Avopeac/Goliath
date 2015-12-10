@@ -9,11 +9,11 @@ public:
 		return instance;
 	}
 
-	glm::dvec3 get_sun();
+	glm::vec3 get_sun();
 
 protected:
 	DayNight();
 
 private:
-	glm::dvec3 _sun;
+	glm::vec3 _sun;
 };

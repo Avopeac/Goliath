@@ -29,6 +29,7 @@ uniform float Kr4Pi;
 uniform float Km4Pi;
 uniform float KmEsun;
 uniform float KrEsun;
+uniform vec3 lightDir;
 
 uniform mat4 mv;
 uniform mat4 mvp;
@@ -59,7 +60,6 @@ void main()
 	ourColor = color;
 
 	//Atmosphere
-	vec3 lightDir = normalize(vec3(0, 1, 0));
     vec3 ray = scaledPosition - cameraPos;
     float far = length(ray);
     ray /= far;

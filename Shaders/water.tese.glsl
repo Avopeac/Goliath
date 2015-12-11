@@ -166,9 +166,7 @@ void main()
     teNormal = normalize(n0 + n1 + n2);
     tePatchDistance = gl_TessCoord;
 
-	//float cameraDist = length(wCameraPos - flatPosition);
-	//float octetsScale = pow((far - cameraDist) / far, 256.0);
-	int octets = maxOctets;
+	int octets = int(ceil(detail_norm * float(maxOctets)));
 
 	// Displacement should be [0,1], applied to normalized position
 	teDisplacement = height(flatPosition, globTime, octets);

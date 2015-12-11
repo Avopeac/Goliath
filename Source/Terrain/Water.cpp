@@ -24,7 +24,7 @@ static double WATER_BASE_TESS_LEVEL = 80;
 static double WATER_MAX_TESS_LEVEL = 32;
 static double WATER_WAVE_HEIGHT = 0.00005;
 static double WATER_WAVE_FREQ = 800;
-static int32_t WATER_OCTETS = 1;
+static int32_t WATER_OCTETS = 3;
 
 static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
 	const double lod_factor = WATER_BASE_LOD_LEVEL;

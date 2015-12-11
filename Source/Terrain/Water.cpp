@@ -17,7 +17,7 @@ private:
 };
 
 // For some reason keeping this in class doesn't work...
-static double WATER_BASE_LOD_LEVEL = 2.8;
+static double WATER_BASE_LOD_LEVEL = 3.2;
 static double WATER_MAX_LOD_LEVEL = 128;
 static double WATER_BASE_TESS_LEVEL = 550;
 static double WATER_TESS_CUTOFF_LEVEL = 256;

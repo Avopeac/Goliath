@@ -250,10 +250,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "far"), camera.get_far());
 		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
 		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
-		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), WATER_WAVE_HEIGHT);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveFreq"), WATER_WAVE_FREQ);
-		glUniform1i(glGetUniformLocation(_shader->program, "maxOctets"), WATER_OCTETS);
-		glUniform1f(glGetUniformLocation(_shader->program, "maxTessLevel"), WATER_MAX_TESS_LEVEL);
 		glUniform1i(glGetUniformLocation(_shader->program, "maxLODLevel"), WATER_MAX_LOD_LEVEL);
 		// Uploaded vertices in world space already
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
@@ -264,6 +261,17 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		}
 		// Tell OpenGL that every patch has 3 vertices
 		glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+		// First draw filler layer (fixes gaps)
+		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), 0.0);
+		glUniform1i(glGetUniformLocation(_shader->program, "maxOctets"), 0);
+		glUniform1f(glGetUniformLocation(_shader->program, "maxTessLevel"), 1.0);
+		glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+
+		// Then draw for real
+		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), WATER_WAVE_HEIGHT);
+		glUniform1i(glGetUniformLocation(_shader->program, "maxOctets"), WATER_OCTETS);
+		glUniform1f(glGetUniformLocation(_shader->program, "maxTessLevel"), WATER_MAX_TESS_LEVEL);
 		glDrawElements(GL_PATCHES, _indices.size(), GL_UNSIGNED_INT, nullptr);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

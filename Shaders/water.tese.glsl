@@ -138,7 +138,7 @@ float height(vec3 pos, float time, int octets) {
 		angle += angle_offset;
         vec3 anim_vec = anim_speed * vec3(cos(angle), sin(angle), tan(angle));
         pos.x += M_PI / 2.0;
-		sum += pow(alpha, oct) * snoise(pow(2, oct) * (freq_scale * pos + time * anim_vec));
+		sum += pow(alpha, oct) * (snoise(pow(2, oct) * (freq_scale * pos + time * anim_vec)) + 1.0) / 2.0;
 	}
 
 	return sum;

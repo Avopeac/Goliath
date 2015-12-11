@@ -89,7 +89,7 @@ void Water::_setup() {
 	double step = 1.0 / resolution;
 	double offset = 0.5;
 	glm::dmat4 transform = _translation * _rotation * _scale;
-	glm::dvec3 max(std::numeric_limits<double>::min()), min(std::numeric_limits<double>::max());
+	glm::dvec3 max(-std::numeric_limits<double>::max()), min(std::numeric_limits<double>::max());
 	for (int x = 0; x <= resolution; ++x) {
 		for (int z = 0; z <= resolution; ++z) {
 			double cx = x * step - offset;

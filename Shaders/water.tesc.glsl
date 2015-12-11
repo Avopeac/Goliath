@@ -8,6 +8,7 @@ out vec3 tcPosition[];
 out float tcCameraDist[];
 
 uniform mat4 mvp;
+uniform vec3 wCameraPos;
 uniform float quadtree_level;
 uniform float baseTessellationLevel;
 uniform float tessellationCutoffLevel;
@@ -33,23 +34,10 @@ void main()
 		 * (1,0,0) and gl_TessLevelOuter[2] is between (1,0,0) and (0,1,0).
 		 */
 
-		// Get world distance to camera from each vertex.
-		vec4 clipPos[3];
-		clipPos[0] = mvp * vec4(vPosition[0], 1.0);
-		clipPos[1] = mvp * vec4(vPosition[1], 1.0);
-		clipPos[2] = mvp * vec4(vPosition[2], 1.0);
-
-		// Using the Z buffer hack here as well to avoid float errors and
-		// is also probably a nicer value for tessellation
-        clipPos[0].z = (2.0 * log(near * clipPos[0].w + 1.0) / log(near * far +  1) - 1) * clipPos[0].w;
-        clipPos[1].z = (2.0 * log(near * clipPos[1].w + 1.0) / log(near * far +  1) - 1) * clipPos[1].w;
-        clipPos[2].z = (2.0 * log(near * clipPos[2].w + 1.0) / log(near * far +  1) - 1) * clipPos[2].w;
-
-        // We'll get a value [0,1] when within frustum
         float cameraDist[3];
-        cameraDist[0] = pow((clipPos[0].z / clipPos[0].w + 1.0) / 2.0, 1.0 / tessellationCutoffLevel);
-        cameraDist[1] = pow((clipPos[1].z / clipPos[1].w + 1.0) / 2.0, 1.0 / tessellationCutoffLevel);
-        cameraDist[2] = pow((clipPos[2].z / clipPos[2].w + 1.0) / 2.0, 1.0 / tessellationCutoffLevel);
+        cameraDist[0] = pow(length(wCameraPos - vPosition[0]) / far, 1.0 / tessellationCutoffLevel);
+        cameraDist[1] = pow(length(wCameraPos - vPosition[1]) / far, 1.0 / tessellationCutoffLevel);
+        cameraDist[2] = pow(length(wCameraPos - vPosition[2]) / far, 1.0 / tessellationCutoffLevel);
 
 		// Calculate tessellation level based on camera distance.
         float tessLevelOuter[3];

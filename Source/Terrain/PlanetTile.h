@@ -24,6 +24,7 @@
 //There are many tiles created at runtime, this class should be kept as small as possible
 class PlanetTile : public Drawable {
 public:
+	~PlanetTile();
 	PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii, std::shared_ptr<Shader> shader);
 	PlanetTile(const PlanetTile&) = delete;
 	void generate();

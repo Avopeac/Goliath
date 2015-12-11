@@ -18,7 +18,7 @@ private:
 
 	class WaterMessage;
 
-	const unsigned int WATER_BASE_RESOLUTION = 4;
+	const unsigned int WATER_BASE_RESOLUTION = 64;
 
 	double _water_level;
 	double _lod_level;

@@ -27,6 +27,12 @@ public:
 	bool edge = false;
 };
 
+PlanetTile::~PlanetTile() {
+	if (_message_ref != -1) {
+		MessageSystem::instance().wait_for(_message_ref);
+	}
+}
+
 PlanetTile::PlanetTile(const glm::dmat4 &translation, const glm::dmat4 &scale, const glm::dmat4 &rotation, double radii, std::shared_ptr<Shader> shader)
 	: Drawable(), _radii(radii), _transform(translation * rotation * scale), _inv_outer_radii(1.0 / (1.025 * _radii)) {
 	set_shader(shader);

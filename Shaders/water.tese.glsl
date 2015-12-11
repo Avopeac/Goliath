@@ -15,7 +15,9 @@ uniform float globTime;
 uniform float near;
 uniform float far;
 uniform float waveHeight;
+uniform float waveFreq;
 uniform int octets;
+uniform float tessellationCutoffLevel;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -126,7 +128,7 @@ float height(vec3 pos, float time) {
 	const float angle_offset = M_PI / 1.7; // Just to introduce some randomness in animation
 	const float anim_speed = 0.04;
 	const float alpha = 0.25;
-	const float freq_scale = 100.0;
+	const float freq_scale = waveFreq;
 	float sum = 0;
 	float angle = 0;
 
@@ -165,8 +167,11 @@ void main()
     gl_Position = mvp * vec4(tePosition, 1);
 	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1) - 1) * gl_Position.w;
 
-	// Compute derivatives and adjust normal
-	const float eps = 1.0;
+	float cameraDist = length(wCameraPos - tePosition);
+
+	// Compute derivatives and adjust normal, makes sense if eps depends on tessellation
+	// level in some way
+	const float eps = 0.001 * pow(cameraDist / far, 1.0 / tessellationCutoffLevel);
 	float xDer, yDer, zDer;
 	xDer = height(vec3(flatPosition.x + eps, flatPosition.y, flatPosition.z), globTime);
 	yDer = height(vec3(flatPosition.x, flatPosition.y + eps, flatPosition.z), globTime);
@@ -175,6 +180,6 @@ void main()
 	// so should work fine with normal adjustment, but looks awful when scaling gradient.
 	vec3 gradient = 1.0 / eps * vec3(xDer - teDisplacement, yDer - teDisplacement, zDer - teDisplacement);
 	// So let's do a hack on the hack and see if it hacks. Less normal change with distance for crude LOD.
-	gradient *= 1 / max(1.0, 1.0 / waveHeight / far * length(wCameraPos - tePosition));
+	gradient *= waveHeight * pow((far - cameraDist) / far, tessellationCutoffLevel);
 	teNormal = normalize(teNormal - gradient);
 }

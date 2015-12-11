@@ -90,12 +90,12 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	_hither->draw(camera, delta_time);
 	_yon->draw(camera, delta_time);
 
-	//_north_water->draw(camera, delta_time);
-	//_south_water->draw(camera, delta_time);
-	//_west_water->draw(camera, delta_time);
-	//_east_water->draw(camera, delta_time);
-	//_hither_water->draw(camera, delta_time);
-	//_yon_water->draw(camera, delta_time);
+	_north_water->draw(camera, delta_time);
+	_south_water->draw(camera, delta_time);
+	_west_water->draw(camera, delta_time);
+	_east_water->draw(camera, delta_time);
+	_hither_water->draw(camera, delta_time);
+	_yon_water->draw(camera, delta_time);
 	
 	_atmosphere->draw(camera, delta_time);
 }

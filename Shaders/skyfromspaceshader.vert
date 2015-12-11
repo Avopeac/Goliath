@@ -30,6 +30,7 @@ uniform float Kr4Pi;
 uniform float Km4Pi;
 uniform float KmEsun;
 uniform float KrEsun;
+uniform vec3 lightDir;
 
 float getNearIntersection(vec3 cPos, vec3 ray, float cHeight2, float oRadius2)
 {
@@ -56,7 +57,6 @@ void main(void)
     vec3 vertexPos = lowDifference + highDifference;
 	
 	//Atmosphere
-	vec3 lightDir = normalize(vec3(0, 1, 0));
     vec3 ray = scaledPosition - cameraPos;
     float far = length(ray);
     ray /= far;

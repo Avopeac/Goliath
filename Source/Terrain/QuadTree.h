@@ -18,6 +18,8 @@ private:
 	glm::dmat4 _rotation;
 	double _extents; //The axis aligned bounding box
 	double _radii;
+	double _lifetime = 0.0;
+	const double _max_lifetime = 6.0;
 	unsigned int _level = 0; //The current recursion level
 	const unsigned int _deepest_level = 32; // The deepest level we're allowed to go in the quadtree
 	const double _lod_factor = 16.0; // The higher _lod_factor the higher resolution / more lod

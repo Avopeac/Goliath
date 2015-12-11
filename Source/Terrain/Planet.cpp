@@ -6,6 +6,7 @@
 #include "Terrain/QuadTree.h"
 #include "Terrain/Noise3D.h"
 #include "Terrain/Water.h"
+#include "Terrain/DayNight.h"
 
 Planet::Planet(double radius) : Drawable(), _radius(radius), _factor(1.0 / (1.025 * _radius)) {
 	setup_cube();
@@ -164,6 +165,7 @@ void Planet::setup_atmosphere(const Camera &camera) {
 	glUniform1f(glGetUniformLocation(_ground_shader->program, "g"), g);
 	glUniform1f(glGetUniformLocation(_ground_shader->program, "g2"), g * g);
 	glUniform3fv(glGetUniformLocation(_ground_shader->program, "invWaveLength"), 1, glm::value_ptr(inv_wave_length));
+	glUniform3fv(glGetUniformLocation(_ground_shader->program, "lightDir"), 1, glm::value_ptr(DayNight::instance().get_sun()));
 }
 
 void Planet::draw_wireframe(const Camera & camera, double delta_time) {

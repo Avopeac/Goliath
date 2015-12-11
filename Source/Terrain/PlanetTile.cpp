@@ -45,7 +45,7 @@ void PlanetTile::generate() {
 	glm::dvec3 min(glm::dvec3(std::numeric_limits<double>().max()));
 	//Reserve vertex data
 	std::vector<VertexData> vertex_data;
-	vertex_data.reserve((2 + PLANET_TILE_RESOLUTION) * (2 + PLANET_TILE_RESOLUTION));
+	//vertex_data.reserve((2 + PLANET_TILE_RESOLUTION) * (2 + PLANET_TILE_RESOLUTION));
 	for (x = -1; x <= PLANET_TILE_RESOLUTION + 1; ++x) {
 		for (z = -1; z <= PLANET_TILE_RESOLUTION + 1; ++z) {
 			//Cx, cz are normalized coordinates with 0.5, 0.5 in the center

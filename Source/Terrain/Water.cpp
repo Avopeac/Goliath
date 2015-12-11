@@ -17,17 +17,16 @@ private:
 };
 
 // For some reason keeping this in class doesn't work...
-static double WATER_BASE_LOD_LEVEL = 3.2;
+static double WATER_BASE_LOD_LEVEL = 1.35;
 static double WATER_MAX_LOD_LEVEL = 128;
-static double WATER_BASE_TESS_LEVEL = 550;
-static double WATER_TESS_CUTOFF_LEVEL = 256;
+static double WATER_BASE_TESS_LEVEL = 64;
 static double WATER_WAVE_HEIGHT = 0.00005;
 static double WATER_WAVE_FREQ = 800;
 static int32_t WATER_OCTETS = 1;
 
 static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
 	const double lod_factor = WATER_BASE_LOD_LEVEL;
-	return distance - lod_factor * glm::pow(extents, 0.95);
+	return distance - lod_factor * extents;
 };
 
 static inline double distance_to_patch(const Camera &camera, const glm::dvec3 &mid_point) {
@@ -62,10 +61,9 @@ void Water::_init() {
 	static bool gui_init_done = false;
 	if (!gui_init_done) {
 		TwAddSeparator(Input::_tw_bar, "Water", nullptr);
-		TwAddVarRW(Input::_tw_bar, "LOD level", TW_TYPE_DOUBLE, &WATER_BASE_LOD_LEVEL, "min=0.0 max=1024.0 step=0.1");
+		TwAddVarRW(Input::_tw_bar, "LOD level", TW_TYPE_DOUBLE, &WATER_BASE_LOD_LEVEL, "min=0.0 max=1024.0 step=0.05");
 		TwAddVarRW(Input::_tw_bar, "Max LOD level", TW_TYPE_DOUBLE, &WATER_MAX_LOD_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Tess level", TW_TYPE_DOUBLE, &WATER_BASE_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
-		TwAddVarRW(Input::_tw_bar, "Tess cutoff", TW_TYPE_DOUBLE, &WATER_TESS_CUTOFF_LEVEL, "min=1.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Wave height", TW_TYPE_DOUBLE, &WATER_WAVE_HEIGHT, "min=0.0 max=1.0 step=0.000001");
 		TwAddVarRW(Input::_tw_bar, "Wave freq", TW_TYPE_DOUBLE, &WATER_WAVE_FREQ, "min=0.0 max=1000000.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "# Octets", TW_TYPE_INT32, &WATER_OCTETS, "min=1 max=20 step=1");
@@ -240,7 +238,6 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "far"), camera.get_far());
 		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
 		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
-		glUniform1f(glGetUniformLocation(_shader->program, "tessellationCutoffLevel"), WATER_TESS_CUTOFF_LEVEL);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), WATER_WAVE_HEIGHT);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveFreq"), WATER_WAVE_FREQ);
 		glUniform1i(glGetUniformLocation(_shader->program, "octets"), WATER_OCTETS);

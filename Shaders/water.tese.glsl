@@ -17,7 +17,6 @@ uniform float far;
 uniform float waveHeight;
 uniform float waveFreq;
 uniform int octets;
-uniform float tessellationCutoffLevel;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -171,7 +170,7 @@ void main()
 
 	// Compute derivatives and adjust normal, makes sense if eps depends on tessellation
 	// level in some way
-	const float eps = 0.001 * pow(cameraDist / far, 1.0 / tessellationCutoffLevel);
+	const float eps = 0.001 * pow(cameraDist / far, 1.0 / 256.0);
 	float xDer, yDer, zDer;
 	xDer = height(vec3(flatPosition.x + eps, flatPosition.y, flatPosition.z), globTime);
 	yDer = height(vec3(flatPosition.x, flatPosition.y + eps, flatPosition.z), globTime);
@@ -180,6 +179,6 @@ void main()
 	// so should work fine with normal adjustment, but looks awful when scaling gradient.
 	vec3 gradient = 1.0 / eps * vec3(xDer - teDisplacement, yDer - teDisplacement, zDer - teDisplacement);
 	// So let's do a hack on the hack and see if it hacks. Less normal change with distance for crude LOD.
-	gradient *= waveHeight * pow((far - cameraDist) / far, tessellationCutoffLevel);
+	gradient *= waveHeight * pow((far - cameraDist) / far, 256.0);
 	teNormal = normalize(teNormal - gradient);
 }

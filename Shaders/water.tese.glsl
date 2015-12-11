@@ -9,6 +9,14 @@ out float teDisplacement;
 out vec3 teNormal;
 out vec3 tePatchDistance;
 
+// Atmosphere variables
+in vec3 tc_c0[];
+in vec3 tc_c1[];
+in float tc_t0[];
+out vec3 te_c0;
+out vec3 te_c1;
+out float te_t0;
+
 uniform mat4 mvp;
 uniform vec3 wCameraPos;
 uniform float globTime;
@@ -20,6 +28,7 @@ uniform int maxOctets;
 uniform float quadtree_level;
 uniform float maxTessLevel;
 uniform int maxLODLevel;
+uniform float detailCutoff;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -146,6 +155,10 @@ float height(vec3 pos, float time, int octets) {
 
 void main()
 {
+	te_c0 = gl_TessCoord.x * tc_c0[0] + gl_TessCoord.y * tc_c0[1] + gl_TessCoord.z * tc_c0[2]; 
+	te_c1 = gl_TessCoord.x * tc_c1[0] + gl_TessCoord.y * tc_c1[1] + gl_TessCoord.z * tc_c1[2]; 
+    te_t0 = gl_TessCoord.x * tc_t0[0] + gl_TessCoord.y * tc_t0[1] + gl_TessCoord.z * tc_t0[2]; 
+
     vec3 p0 = gl_TessCoord.x * tcPosition[0];
     vec3 p1 = gl_TessCoord.y * tcPosition[1];
     vec3 p2 = gl_TessCoord.z * tcPosition[2];
@@ -159,7 +172,7 @@ void main()
 	float detail = gl_TessLevelInner[0] * pow(2.0, quadtree_level);
 	// Guaranteed max, but might overshoot in practice
 	float detail_max = maxTessLevel * pow(2.0, maxLODLevel);
-	float detail_cutoff = 1.0 / 128.0;
+	float detail_cutoff = detailCutoff;
 	float detail_norm = pow(detail / detail_max, detail_cutoff);
 
     vec3 flatPosition = normalize(p0 + p1 + p2);

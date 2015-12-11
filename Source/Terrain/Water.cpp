@@ -2,7 +2,6 @@
 
 #include <Thread/Message.h>
 #include <Thread/MessageSystem.h>
-#include <iostream>
 #include <GLM/gtc/type_ptr.hpp>
 #include <GLM/gtx/transform.hpp>
 #include <Input/Input.h>
@@ -12,18 +11,21 @@
 class Water::WaterMessage : public Message {
 public:
 	WaterMessage(Water *ref) : _ref(ref) {}
-	void virtual process() override { _ref->_setup(); }
+	void virtual process() override {
+		_ref->_setup();
+	}
 private:
 	Water *_ref;
 };
 
 // For some reason keeping this in class doesn't work...
 static double WATER_BASE_LOD_LEVEL = 2.75;
-static double WATER_MAX_LOD_LEVEL = 12;
-static double WATER_BASE_TESS_LEVEL = 80;
-static double WATER_MAX_TESS_LEVEL = 32;
-static double WATER_WAVE_HEIGHT = 0.00005;
-static double WATER_WAVE_FREQ = 800;
+static double WATER_MAX_LOD_LEVEL = 15;
+static double WATER_BASE_TESS_LEVEL = 128;
+static double WATER_MAX_TESS_LEVEL = 24;
+static double WATER_WAVE_HEIGHT = 0.00001;
+static double WATER_WAVE_FREQ = 10000;
+static double WATER_DETAIL_CUTOFF = 128;
 static int32_t WATER_OCTETS = 3;
 
 static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
@@ -36,6 +38,9 @@ static inline double distance_to_patch(const Camera &camera, const glm::dvec3 &m
 };
 
 Water::~Water() {
+	if (_message_ref != -1) {
+		MessageSystem::instance().wait_for(_message_ref);
+	}
 	glDeleteVertexArrays(1, &_VAO);
 	glDeleteBuffers(1, &_VBO);
 	glDeleteBuffers(1, &_EBO);
@@ -68,7 +73,8 @@ void Water::_init() {
 		TwAddVarRW(Input::_tw_bar, "Tess level", TW_TYPE_DOUBLE, &WATER_BASE_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Max tess level", TW_TYPE_DOUBLE, &WATER_MAX_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Wave height", TW_TYPE_DOUBLE, &WATER_WAVE_HEIGHT, "min=0.0 max=1.0 step=0.000001");
-		TwAddVarRW(Input::_tw_bar, "Wave freq", TW_TYPE_DOUBLE, &WATER_WAVE_FREQ, "min=0.0 max=1000000.0 step=1.0");
+		TwAddVarRW(Input::_tw_bar, "Wave freq", TW_TYPE_DOUBLE, &WATER_WAVE_FREQ, "min=0.0 max=1000000.0 step=10.0");
+		TwAddVarRW(Input::_tw_bar, "Detail cutoff", TW_TYPE_DOUBLE, &WATER_DETAIL_CUTOFF, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "# Octets", TW_TYPE_INT32, &WATER_OCTETS, "min=1 max=20 step=1");
 		gui_init_done = true;
 	}
@@ -82,7 +88,7 @@ void Water::_init() {
 	set_shader(ShaderStore::instance().get_shader_from_store(A_LITTLE_COOLER_WATER_SHADER_PATH));
 	glm::dvec3 vec = _vertices[_vertices.size() / 2];
 
-	MessageSystem::instance().post_noreturn(std::make_shared<WaterMessage>(this));
+	_message_ref = MessageSystem::instance().post(std::make_shared<WaterMessage>(this));
 }
 
 void Water::_setup() {
@@ -235,6 +241,15 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 			_gl_setup();
 			_gl_setup_done = true;
 		}
+		if (_message_ref != -1) {
+			auto message(MessageSystem::instance().get(_message_ref));
+			if (!message) {
+				std::cerr << "Water: No return message from MessageSystem" << std::endl;
+			}
+			else {
+				_message_ref = -1;
+			}
+		}
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
@@ -251,6 +266,7 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
 		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveFreq"), WATER_WAVE_FREQ);
+		glUniform1f(glGetUniformLocation(_shader->program, "detailCutoff"), 1.0 / WATER_DETAIL_CUTOFF);
 		glUniform1i(glGetUniformLocation(_shader->program, "maxLODLevel"), WATER_MAX_LOD_LEVEL);
 		// Uploaded vertices in world space already
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
@@ -261,6 +277,9 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		}
 		// Tell OpenGL that every patch has 3 vertices
 		glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+		// Setup atmosphere parameters
+		Planet::setup_atmosphere(camera, _shader, _water_level);
 
 		// First draw filler layer (fixes gaps)
 		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), 0.0);

@@ -8,6 +8,10 @@ in vec3 gNormal;
 in vec3 gTriDistance;
 in vec3 gPatchDistance;
 
+in vec3 g_c0;
+in vec3 g_c1;
+in float g_t0;
+
 uniform vec3 sunlightDir;
 uniform vec3 wCameraPos;
 
@@ -28,5 +32,13 @@ void main()
 	float specularLight = specularStrength * pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 	float diffuseLight = diffuseStrength * max(0.0, dot(lightDir, wNormal));
 
-	FragColor = (ambient + diffuseLight + specularLight) * color;
+	vec4 final = (ambient + diffuseLight + specularLight) * color;
+
+	vec3 atmosphereColor = g_c0 + 0.25 * g_c1;
+	float falloff = pow(g_t0, 0.19);
+	atmosphereColor = 1.0 - exp(atmosphereColor * -0.9);
+
+	final *= 1.0 + atmosphereColor.b;
+
+	FragColor = vec4(final.xyz + falloff * atmosphereColor, 1.0);
 }

@@ -7,6 +7,14 @@ out vec3 tcNormal[];
 out vec3 tcPosition[];
 out float tcCameraDist[];
 
+// Atmosphere variables
+in vec3 v_c0[];
+in vec3 v_c1[];
+in float v_t0[];
+out vec3 tc_c0[];
+out vec3 tc_c1[];
+out float tc_t0[];
+
 uniform mat4 mvp;
 uniform vec3 wCameraPos;
 uniform float quadtree_level;
@@ -22,6 +30,9 @@ void main()
 {
     tcPosition[ID] = vPosition[ID];
     tcNormal[ID] = vNormal[ID];
+	tc_c0[ID] = v_c0[ID];
+	tc_c1[ID] = v_c1[ID];
+	tc_t0[ID] = v_t0[ID];
 
     if (ID == 0) {
 		/**

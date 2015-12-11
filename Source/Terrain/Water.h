@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <View/Drawable.h>
 #include <GLM/detail/type_mat.hpp>
+#include <mutex>
 
 class Water : public Drawable {
 public:
@@ -23,6 +24,7 @@ private:
 	double _water_level;
 	double _lod_level;
 
+	int _message_ref;
 	std::vector<std::unique_ptr<Water>> _children;
 
 	const glm::dmat4 _translation;

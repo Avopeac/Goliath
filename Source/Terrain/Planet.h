@@ -13,6 +13,7 @@ public:
 	virtual void draw(const Camera & camera, double delta_time) override;
 	virtual void draw_wireframe(const Camera & camera, double delta_time) override;
 
+	static void setup_atmosphere(const Camera &camera, std::shared_ptr<Shader> shader, double radius);
 	inline static bool horizon_culling(const glm::dvec3 &v, const glm::dvec3 &o, double ro, const glm::dvec3 &b, double rb) {
 		double ob_sqr(glm::distance2(o,b));
 		double vo_sqr(glm::distance2(v, o));
@@ -52,7 +53,6 @@ private:
 	void setup_cube();
 	void setup_skybox();
 	void setup_terrain_textures();
-	void setup_atmosphere(const Camera &camera);
 
 	void create_color_ramp_texture();
 	GLuint _color_ramp_id;
@@ -61,5 +61,4 @@ private:
 	GLuint _rock_n_id;
 
 	double _radius;
-	double _factor;
 };

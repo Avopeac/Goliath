@@ -8,7 +8,7 @@
 #include "Terrain/Water.h"
 #include "Terrain/DayNight.h"
 
-Planet::Planet(double radius) : Drawable(), _radius(radius), _factor(1.0 / (1.025 * _radius)) {
+Planet::Planet(double radius) : Drawable(), _radius(radius) {
 	setup_cube();
 	setup_skybox();
 	create_color_ramp_texture();
@@ -81,7 +81,7 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	//Some predraw stuff
 	_ground_shader->use();
 	setup_terrain_textures();
-	setup_atmosphere(camera);
+	setup_atmosphere(camera, _ground_shader, _radius);
 
 	//Draw stuff
 	_north->draw(camera, delta_time);
@@ -126,17 +126,18 @@ void Planet::setup_terrain_textures() {
 	glUniform1i(glGetUniformLocation(_ground_shader->program, "rockNormalTex"), 5);
 }
 
-void Planet::setup_atmosphere(const Camera &camera) {
+void Planet::setup_atmosphere(const Camera &camera, std::shared_ptr<Shader> shader, double radius) {
 
-	glm::dvec3 cam_pos = camera.get_deye() * _factor;
+	double factor = 1.0 / (1.025 * radius);
+	glm::dvec3 cam_pos = camera.get_deye() * factor;
 	double h = length(cam_pos);
 	double h2 = h * h;
 
-	glUniform3fv(glGetUniformLocation(_ground_shader->program, "cameraPos"), 1, glm::value_ptr(glm::vec3(cam_pos)));
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "cameraHeight"), h);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "cameraHeight2"), h2);
+	glUniform3fv(glGetUniformLocation(shader->program, "cameraPos"), 1, glm::value_ptr(glm::vec3(cam_pos)));
+	glUniform1f(glGetUniformLocation(shader->program, "cameraHeight"), h);
+	glUniform1f(glGetUniformLocation(shader->program, "cameraHeight2"), h2);
 
-	double ir_scaled = _radius * _factor;
+	double ir_scaled = radius * factor;
 	double or_scaled = 1.0;
 	double or_scaled2 = 1.0;
 
@@ -152,20 +153,20 @@ void Planet::setup_atmosphere(const Camera &camera) {
 
 	glm::vec3 inv_wave_length = glm::vec3(0.65, 0.57, 0.475);
 	inv_wave_length = 1.0f / glm::pow(inv_wave_length, glm::vec3(4.0f));
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "innerRadius"), ir_scaled);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "outerRadius"), or_scaled);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "outerRadius2"), or_scaled2);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "scale"), scale);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "scaleDepth"), scale_depth);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "scaleOverDepth"), scale_over_depth);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "Kr4Pi"), kr * f_pi);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "Km4Pi"), km * f_pi);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "KmEsun"), km * e_sun);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "KrEsun"), kr * e_sun);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "g"), g);
-	glUniform1f(glGetUniformLocation(_ground_shader->program, "g2"), g * g);
-	glUniform3fv(glGetUniformLocation(_ground_shader->program, "invWaveLength"), 1, glm::value_ptr(inv_wave_length));
-	glUniform3fv(glGetUniformLocation(_ground_shader->program, "lightDir"), 1, glm::value_ptr(DayNight::instance().get_sun()));
+	glUniform1f(glGetUniformLocation(shader->program, "innerRadius"), ir_scaled);
+	glUniform1f(glGetUniformLocation(shader->program, "outerRadius"), or_scaled);
+	glUniform1f(glGetUniformLocation(shader->program, "outerRadius2"), or_scaled2);
+	glUniform1f(glGetUniformLocation(shader->program, "scale"), scale);
+	glUniform1f(glGetUniformLocation(shader->program, "scaleDepth"), scale_depth);
+	glUniform1f(glGetUniformLocation(shader->program, "scaleOverDepth"), scale_over_depth);
+	glUniform1f(glGetUniformLocation(shader->program, "Kr4Pi"), kr * f_pi);
+	glUniform1f(glGetUniformLocation(shader->program, "Km4Pi"), km * f_pi);
+	glUniform1f(glGetUniformLocation(shader->program, "KmEsun"), km * e_sun);
+	glUniform1f(glGetUniformLocation(shader->program, "KrEsun"), kr * e_sun);
+	glUniform1f(glGetUniformLocation(shader->program, "g"), g);
+	glUniform1f(glGetUniformLocation(shader->program, "g2"), g * g);
+	glUniform3fv(glGetUniformLocation(shader->program, "invWaveLength"), 1, glm::value_ptr(inv_wave_length));
+	glUniform3fv(glGetUniformLocation(shader->program, "lightDir"), 1, glm::value_ptr(DayNight::instance().get_sun()));
 }
 
 void Planet::draw_wireframe(const Camera & camera, double delta_time) {

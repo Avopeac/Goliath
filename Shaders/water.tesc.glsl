@@ -11,6 +11,7 @@ uniform mat4 mvp;
 uniform vec3 wCameraPos;
 uniform float quadtree_level;
 uniform float baseTessellationLevel;
+uniform float maxTessLevel;
 
 uniform float far;
 uniform float near;
@@ -46,13 +47,13 @@ void main()
 
 		// Calculate tessellation level based on camera distance.
         float tessLevelOuter[3];
-        tessLevelOuter[0] = baseTessellationLevel * edgeScreenLength[0];
-        tessLevelOuter[1] = baseTessellationLevel * edgeScreenLength[1];
-        tessLevelOuter[2] = baseTessellationLevel * edgeScreenLength[2];
+        tessLevelOuter[0] = min(maxTessLevel, baseTessellationLevel * edgeScreenLength[0]);
+        tessLevelOuter[1] = min(maxTessLevel, baseTessellationLevel * edgeScreenLength[1]);
+        tessLevelOuter[2] = min(maxTessLevel, baseTessellationLevel * edgeScreenLength[2]);
 		// Cull away too large values (somewhere outside screen or just way too large anyway)
-		tessLevelOuter[0] *= sign(0.5 - edgeScreenLength[0]);
-		tessLevelOuter[1] *= sign(0.5 - edgeScreenLength[1]);
-		tessLevelOuter[2] *= sign(0.5 - edgeScreenLength[2]);
+		tessLevelOuter[0] *= sign(1.0 - edgeScreenLength[0]);
+		tessLevelOuter[1] *= sign(1.0 - edgeScreenLength[1]);
+		tessLevelOuter[2] *= sign(1.0 - edgeScreenLength[2]);
 
         gl_TessLevelOuter[0] = tessLevelOuter[0];
         gl_TessLevelOuter[1] = tessLevelOuter[1];

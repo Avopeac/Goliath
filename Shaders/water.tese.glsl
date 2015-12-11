@@ -16,7 +16,10 @@ uniform float near;
 uniform float far;
 uniform float waveHeight;
 uniform float waveFreq;
-uniform int octets;
+uniform int maxOctets;
+uniform float quadtree_level;
+uniform float maxTessLevel;
+uniform int maxLODLevel;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -123,7 +126,7 @@ float snoise(vec3 v)
                                 dot(p2,x2), dot(p3,x3) ) );
   }
 
-float height(vec3 pos, float time) {
+float height(vec3 pos, float time, int octets) {
 	const float angle_offset = M_PI / 1.7; // Just to introduce some randomness in animation
 	const float anim_speed = 0.04;
 	const float alpha = 0.25;
@@ -152,13 +155,23 @@ void main()
 
 	// Same length on all vertices
 	float waterLevel = length(tcPosition[0]);
+	// Total quadtree + tessellation level
+	float detail = gl_TessLevelInner[0] * pow(2.0, quadtree_level);
+	// Guaranteed max, but might overshoot in practice
+	float detail_max = maxTessLevel * pow(2.0, maxLODLevel);
+	float detail_cutoff = 1.0 / 128.0;
+	float detail_norm = pow(detail / detail_max, detail_cutoff);
 
     vec3 flatPosition = normalize(p0 + p1 + p2);
     teNormal = normalize(n0 + n1 + n2);
     tePatchDistance = gl_TessCoord;
 
+	//float cameraDist = length(wCameraPos - flatPosition);
+	//float octetsScale = pow((far - cameraDist) / far, 256.0);
+	int octets = maxOctets;
+
 	// Displacement should be [0,1], applied to normalized position
-	teDisplacement = height(flatPosition, globTime);
+	teDisplacement = height(flatPosition, globTime, octets);
 	tePosition = flatPosition + waveHeight * teDisplacement * teNormal;
 	// Set proper height
 	tePosition *= waterLevel;
@@ -166,19 +179,17 @@ void main()
     gl_Position = mvp * vec4(tePosition, 1);
 	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1) - 1) * gl_Position.w;
 
-	float cameraDist = length(wCameraPos - tePosition);
-
 	// Compute derivatives and adjust normal, makes sense if eps depends on tessellation
 	// level in some way
-	const float eps = 0.001 * pow(cameraDist / far, 1.0 / 256.0);
+	const float eps = 1.0 / detail;
 	float xDer, yDer, zDer;
-	xDer = height(vec3(flatPosition.x + eps, flatPosition.y, flatPosition.z), globTime);
-	yDer = height(vec3(flatPosition.x, flatPosition.y + eps, flatPosition.z), globTime);
-	zDer = height(vec3(flatPosition.x, flatPosition.y, flatPosition.z + eps), globTime);
+	xDer = height(vec3(flatPosition.x + eps, flatPosition.y, flatPosition.z), globTime, octets);
+	yDer = height(vec3(flatPosition.x, flatPosition.y + eps, flatPosition.z), globTime, octets);
+	zDer = height(vec3(flatPosition.x, flatPosition.y, flatPosition.z + eps), globTime, octets);
 	// XXX: I'm not sure about the scaling here. waveHeight scales the normalized position 
 	// so should work fine with normal adjustment, but looks awful when scaling gradient.
 	vec3 gradient = 1.0 / eps * vec3(xDer - teDisplacement, yDer - teDisplacement, zDer - teDisplacement);
 	// So let's do a hack on the hack and see if it hacks. Less normal change with distance for crude LOD.
-	gradient *= waveHeight * pow((far - cameraDist) / far, 256.0);
+	gradient *= waveHeight * detail_norm, 0.5;
 	teNormal = normalize(teNormal - gradient);
 }

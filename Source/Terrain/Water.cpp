@@ -7,6 +7,7 @@
 #include <GLM/gtx/transform.hpp>
 #include <Input/Input.h>
 #include "DayNight.h"
+#include "Planet.h"
 
 class Water::WaterMessage : public Message {
 public:
@@ -17,9 +18,10 @@ private:
 };
 
 // For some reason keeping this in class doesn't work...
-static double WATER_BASE_LOD_LEVEL = 1.35;
-static double WATER_MAX_LOD_LEVEL = 128;
-static double WATER_BASE_TESS_LEVEL = 64;
+static double WATER_BASE_LOD_LEVEL = 2.75;
+static double WATER_MAX_LOD_LEVEL = 12;
+static double WATER_BASE_TESS_LEVEL = 80;
+static double WATER_MAX_TESS_LEVEL = 32;
 static double WATER_WAVE_HEIGHT = 0.00005;
 static double WATER_WAVE_FREQ = 800;
 static int32_t WATER_OCTETS = 1;
@@ -64,6 +66,7 @@ void Water::_init() {
 		TwAddVarRW(Input::_tw_bar, "LOD level", TW_TYPE_DOUBLE, &WATER_BASE_LOD_LEVEL, "min=0.0 max=1024.0 step=0.05");
 		TwAddVarRW(Input::_tw_bar, "Max LOD level", TW_TYPE_DOUBLE, &WATER_MAX_LOD_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Tess level", TW_TYPE_DOUBLE, &WATER_BASE_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
+		TwAddVarRW(Input::_tw_bar, "Max tess level", TW_TYPE_DOUBLE, &WATER_MAX_TESS_LEVEL, "min=0.0 max=1024.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "Wave height", TW_TYPE_DOUBLE, &WATER_WAVE_HEIGHT, "min=0.0 max=1.0 step=0.000001");
 		TwAddVarRW(Input::_tw_bar, "Wave freq", TW_TYPE_DOUBLE, &WATER_WAVE_FREQ, "min=0.0 max=1000000.0 step=1.0");
 		TwAddVarRW(Input::_tw_bar, "# Octets", TW_TYPE_INT32, &WATER_OCTETS, "min=1 max=20 step=1");
@@ -206,8 +209,17 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		return;
 	}
 
-	double rho = compute_level_metric(camera, distance_to_patch(camera, _center), _water_level * glm::pow(0.5, _lod_level));
+	double extents = _water_level * glm::pow(0.5, _lod_level);
+	double rho = compute_level_metric(camera, distance_to_patch(camera, _center), extents);
 	_update_lod(rho);
+
+	if (Planet::horizon_culling(camera.get_deye(), glm::dvec3(0, 0, 0), _water_level, _center, extents)) {
+		return;
+	}
+
+	if (!camera.intersects_box(_center, _extents * 1.1)) {
+		return;
+	}
 
 	if (_children_setup_done()) {
 		// Draw children
@@ -240,7 +252,9 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveHeight"), WATER_WAVE_HEIGHT);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveFreq"), WATER_WAVE_FREQ);
-		glUniform1i(glGetUniformLocation(_shader->program, "octets"), WATER_OCTETS);
+		glUniform1i(glGetUniformLocation(_shader->program, "maxOctets"), WATER_OCTETS);
+		glUniform1f(glGetUniformLocation(_shader->program, "maxTessLevel"), WATER_MAX_TESS_LEVEL);
+		glUniform1i(glGetUniformLocation(_shader->program, "maxLODLevel"), WATER_MAX_LOD_LEVEL);
 		// Uploaded vertices in world space already
 		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));

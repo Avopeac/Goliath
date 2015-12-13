@@ -29,6 +29,8 @@ public:
 	}
 
 private:
+	void draw(const Camera & camera, double delta_time, bool wireframe);
+
 	Noise3D noise_maker;
 	std::vector<glm::vec3> gradients;
 	std::vector<unsigned char> permutations;

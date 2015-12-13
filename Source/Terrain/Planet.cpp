@@ -75,6 +75,15 @@ void Planet::setup_skybox() {
 }
 
 void Planet::draw(const Camera & camera, double delta_time) {
+	draw(camera, delta_time, false);
+}
+
+void Planet::draw_wireframe(const Camera & camera, double delta_time) {
+	draw(camera, delta_time, true);
+}
+
+
+void Planet::draw(const Camera & camera, double delta_time, bool wireframe) {
 	//Draw skybox
 	_skybox->draw(camera, delta_time);
 
@@ -83,20 +92,38 @@ void Planet::draw(const Camera & camera, double delta_time) {
 	setup_terrain_textures();
 	setup_atmosphere(camera, _ground_shader, _radius);
 
-	//Draw stuff
-	_north->draw(camera, delta_time);
-	_south->draw(camera, delta_time);
-	_west->draw(camera, delta_time);
-	_east->draw(camera, delta_time);
-	_hither->draw(camera, delta_time);
-	_yon->draw(camera, delta_time);
+	if (wireframe) {
+		//Draw stuff
+		_north->draw_wireframe(camera, delta_time);
+		_south->draw_wireframe(camera, delta_time);
+		_west->draw_wireframe(camera, delta_time);
+		_east->draw_wireframe(camera, delta_time);
+		_hither->draw_wireframe(camera, delta_time);
+		_yon->draw_wireframe(camera, delta_time);
 
-	_north_water->draw(camera, delta_time);
-	_south_water->draw(camera, delta_time);
-	_west_water->draw(camera, delta_time);
-	_east_water->draw(camera, delta_time);
-	_hither_water->draw(camera, delta_time);
-	_yon_water->draw(camera, delta_time);
+		_north_water->draw_wireframe(camera, delta_time);
+		_south_water->draw_wireframe(camera, delta_time);
+		_west_water->draw_wireframe(camera, delta_time);
+		_east_water->draw_wireframe(camera, delta_time);
+		_hither_water->draw_wireframe(camera, delta_time);
+		_yon_water->draw_wireframe(camera, delta_time);
+	}
+	else {
+		//Draw stuff
+		_north->draw(camera, delta_time);
+		_south->draw(camera, delta_time);
+		_west->draw(camera, delta_time);
+		_east->draw(camera, delta_time);
+		_hither->draw(camera, delta_time);
+		_yon->draw(camera, delta_time);
+
+		_north_water->draw(camera, delta_time);
+		_south_water->draw(camera, delta_time);
+		_west_water->draw(camera, delta_time);
+		_east_water->draw(camera, delta_time);
+		_hither_water->draw(camera, delta_time);
+		_yon_water->draw(camera, delta_time);
+	}
 	
 	_atmosphere->draw(camera, delta_time);
 }
@@ -167,8 +194,4 @@ void Planet::setup_atmosphere(const Camera &camera, std::shared_ptr<Shader> shad
 	glUniform1f(glGetUniformLocation(shader->program, "g2"), g * g);
 	glUniform3fv(glGetUniformLocation(shader->program, "invWaveLength"), 1, glm::value_ptr(inv_wave_length));
 	glUniform3fv(glGetUniformLocation(shader->program, "lightDir"), 1, glm::value_ptr(DayNight::instance().get_sun()));
-}
-
-void Planet::draw_wireframe(const Camera & camera, double delta_time) {
-	draw(camera, delta_time);
 }

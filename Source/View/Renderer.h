@@ -29,4 +29,5 @@ private:
 	std::mutex _render_queue_mutex;
 	std::queue<std::shared_ptr<Drawable>> _render_queue;
 	PostProcessing _post_processing;
+	bool wireframe;
 };

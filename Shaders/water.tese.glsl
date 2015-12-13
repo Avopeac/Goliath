@@ -17,7 +17,6 @@ out vec3 te_c0;
 out vec3 te_c1;
 out float te_t0;
 
-uniform mat4 mvp;
 uniform vec3 wCameraPos;
 uniform float globTime;
 uniform float near;
@@ -184,15 +183,10 @@ void main()
 	// Displacement should be [0,1], applied to normalized position
 	teDisplacement = height(flatPosition, globTime, octets);
 	tePosition = flatPosition + waveHeight * teDisplacement * teNormal;
-	// Set proper height
-	tePosition *= waterLevel;
 
-    gl_Position = mvp * vec4(tePosition, 1);
-	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1) - 1) * gl_Position.w;
-
-	// Compute derivatives and adjust normal, makes sense if eps depends on tessellation
+	// Compute derivatives and adjust normal, makes sense if eps depends on detail
 	// level in some way
-	const float eps = 1.0 / detail;
+	float eps = 1.0 / detail;
 	float xDer, yDer, zDer;
 	xDer = height(vec3(flatPosition.x + eps, flatPosition.y, flatPosition.z), globTime, octets);
 	yDer = height(vec3(flatPosition.x, flatPosition.y + eps, flatPosition.z), globTime, octets);
@@ -201,6 +195,6 @@ void main()
 	// so should work fine with normal adjustment, but looks awful when scaling gradient.
 	vec3 gradient = 1.0 / eps * vec3(xDer - teDisplacement, yDer - teDisplacement, zDer - teDisplacement);
 	// So let's do a hack on the hack and see if it hacks. Less normal change with distance for crude LOD.
-	gradient *= waveHeight * detail_norm, 0.5;
+	gradient *= waveHeight * detail_norm;
 	teNormal = normalize(teNormal - gradient);
 }

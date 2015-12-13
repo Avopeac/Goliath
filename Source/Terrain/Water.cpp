@@ -20,12 +20,12 @@ private:
 
 // For some reason keeping this in class doesn't work...
 static double WATER_BASE_LOD_LEVEL = 2.75;
-static double WATER_MAX_LOD_LEVEL = 15;
+static double WATER_MAX_LOD_LEVEL = 16;
 static double WATER_BASE_TESS_LEVEL = 128;
 static double WATER_MAX_TESS_LEVEL = 24;
-static double WATER_WAVE_HEIGHT = 0.00001;
-static double WATER_WAVE_FREQ = 10000;
-static double WATER_DETAIL_CUTOFF = 128;
+static double WATER_WAVE_HEIGHT = 0.00002;
+static double WATER_WAVE_FREQ = 5000;
+static double WATER_DETAIL_CUTOFF = 32;
 static int32_t WATER_OCTETS = 3;
 
 static inline double compute_level_metric(const Camera & camera, double distance, double extents) {
@@ -102,12 +102,11 @@ void Water::_setup() {
 			double cx = x * step - offset;
 			double cz = z * step - offset;
 			// Apply transform to base position
-			glm::dvec3 vertex(transform *  glm::vec4(cx, 0, cz, 1.0));
+			glm::dvec4 temp(transform *  glm::dvec4(cx, 0, cz, 1.0));
+			glm::dvec3 vertex(temp / temp.w);
 			// Add normal while we're at it
 			vertex = glm::normalize(vertex);
 			_normals.push_back(vertex);
-			// Set length to water level
-			vertex = _water_level * vertex;
 			_vertices.push_back(vertex);
 
 			//Find max points
@@ -122,7 +121,7 @@ void Water::_setup() {
 	}
 
 	_center = glm::normalize((max + min) * 0.5) * _water_level;
-	_extents = (max - min) * 0.5;
+	_extents = (max - min) * 0.5 * _water_level;
 
 	// Set up indices
 	int stride = resolution + 1;
@@ -264,12 +263,13 @@ void Water::_draw(const Camera& camera, double delta_time, bool wireframe) {
 		glUniform1f(glGetUniformLocation(_shader->program, "near"), camera.get_near());
 		glUniform1f(glGetUniformLocation(_shader->program, "far"), camera.get_far());
 		glUniform1f(glGetUniformLocation(_shader->program, "quadtree_level"), _lod_level);
+		glUniform1f(glGetUniformLocation(_shader->program, "waterLevel"), _water_level);
 		glUniform1f(glGetUniformLocation(_shader->program, "baseTessellationLevel"), WATER_BASE_TESS_LEVEL);
 		glUniform1f(glGetUniformLocation(_shader->program, "waveFreq"), WATER_WAVE_FREQ);
 		glUniform1f(glGetUniformLocation(_shader->program, "detailCutoff"), 1.0 / WATER_DETAIL_CUTOFF);
 		glUniform1i(glGetUniformLocation(_shader->program, "maxLODLevel"), WATER_MAX_LOD_LEVEL);
 		// Uploaded vertices in world space already
-		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview());
+		glm::mat4 mvp_gpu(camera.get_dprojection() * camera.get_dview() * glm::scale(glm::dvec3(_water_level)));
 		glUniformMatrix4fv(glGetUniformLocation(_shader->program, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp_gpu));
 
 		if (wireframe) {

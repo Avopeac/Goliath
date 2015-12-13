@@ -14,19 +14,21 @@ in float g_t0;
 
 uniform vec3 sunlightDir;
 uniform vec3 wCameraPos;
+uniform float waterLevel;
 
 void main()
 {
 	const vec4 color = vec4(0.0, 0.2, 0.3, 1.0);
 	const float ambient = 0.05;
 	const float diffuseStrength = 1.0;
-	const float specularStrength = 5.0;
-	const int shininess = 128;
+	const float specularStrength = 3.0;
+	const int shininess = 256;
 
 	vec3 wNormal = normalize(gNormal);
 	vec3 lightDir = normalize(sunlightDir);
 
-	vec3 viewDir = normalize(wCameraPos - gPosition);
+	// Adjusting wCameraPos instead of gPosition for better precision
+	vec3 viewDir = normalize(wCameraPos / waterLevel - gPosition);
 	vec3 reflectDir = reflect(-lightDir, wNormal);
 
 	float specularLight = specularStrength * pow(max(dot(viewDir, reflectDir), 0.0), shininess);

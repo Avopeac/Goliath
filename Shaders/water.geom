@@ -21,8 +21,12 @@ out vec3 g_c0;
 out vec3 g_c1;
 out float g_t0;
 
+uniform mat4 mvp;
+uniform float near;
+uniform float far;
+
 void main()
-{
+{	
 	g_c0 = te_c0[0];
 	g_c1 = te_c1[0];
 	g_t0 = te_t0[0];
@@ -32,7 +36,9 @@ void main()
 	gNormal = teNormal[0];
     gPatchDistance = tePatchDistance[0];
     gTriDistance = vec3(1, 0, 0);
-    gl_Position = gl_in[0].gl_Position; EmitVertex();
+    gl_Position = mvp * vec4(gPosition, 1.0);
+	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1.0) - 1.0) * gl_Position.w;
+	EmitVertex();
 
 	g_c0 = te_c0[1];
 	g_c1 = te_c1[1];
@@ -43,7 +49,9 @@ void main()
 	gNormal = teNormal[1];
     gPatchDistance = tePatchDistance[1];
     gTriDistance = vec3(0, 1, 0);
-    gl_Position = gl_in[1].gl_Position; EmitVertex();
+    gl_Position = mvp * vec4(gPosition, 1.0);
+	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1.0) - 1.0) * gl_Position.w;
+	EmitVertex();
 
 	g_c0 = te_c0[2];
 	g_c1 = te_c1[2];
@@ -54,7 +62,7 @@ void main()
 	gNormal = teNormal[2];
     gPatchDistance = tePatchDistance[2];
     gTriDistance = vec3(0, 0, 1);
-    gl_Position = gl_in[2].gl_Position; EmitVertex();
-
-    EndPrimitive();
+    gl_Position = mvp * vec4(gPosition, 1.0);
+	gl_Position.z = (2.0 * log(near * gl_Position.w + 1.0) / log(near * far +  1.0) - 1.0) * gl_Position.w;
+	EmitVertex();
 }

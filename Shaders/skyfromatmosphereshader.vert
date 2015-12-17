@@ -89,7 +89,7 @@ void main(void)
 	
 	gl_Position = mvp * vec4(vertexPos, 1.0);
 	//Depth buffer tricking
-	float c = 0.1;
+	float c = 0.001;
 	float fPlane = 1000000000.0;
 	gl_Position.z = (2.0 * log(c * gl_Position.w + 1.0) / log(c * fPlane +  1) - 1) * gl_Position.w;
 	//float fCoeff = 2.0 / log2(fPlane + 1.0);

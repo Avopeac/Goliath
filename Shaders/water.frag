@@ -20,6 +20,7 @@ void main()
 {
 	const vec4 color = vec4(0.0, 0.2, 0.3, 1.0);
 	const float ambient = 0.00;
+	//const float ambient = 0.01;
 	const float diffuseStrength = 1.0;
 	const float specularStrength = 3.0;
 	const int shininess = 60;

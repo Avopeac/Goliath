@@ -95,7 +95,7 @@ void main()
 	t0 = length(cameraPos - scaledPosition);
 	
 	float fPlane = 1000000000.0;
-	float c = 0.1;
+	float c = 0.001;
     gl_Position = mvp * vec4(position, 1);
 	gl_Position.z = (2.0 * log(c * gl_Position.w + 1.0) / log(c * fPlane +  1) - 1) * gl_Position.w;
 }

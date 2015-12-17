@@ -92,6 +92,10 @@ void Planet::draw(const Camera & camera, double delta_time, bool wireframe) {
 	setup_terrain_textures();
 	setup_atmosphere(camera, _ground_shader, _radius);
 
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
+
 	if (wireframe) {
 		//Draw stuff
 		_north->draw_wireframe(camera, delta_time);
@@ -101,12 +105,16 @@ void Planet::draw(const Camera & camera, double delta_time, bool wireframe) {
 		_hither->draw_wireframe(camera, delta_time);
 		_yon->draw_wireframe(camera, delta_time);
 
+		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		_north_water->draw_wireframe(camera, delta_time);
 		_south_water->draw_wireframe(camera, delta_time);
 		_west_water->draw_wireframe(camera, delta_time);
 		_east_water->draw_wireframe(camera, delta_time);
 		_hither_water->draw_wireframe(camera, delta_time);
 		_yon_water->draw_wireframe(camera, delta_time);
+		glDisable(GL_BLEND);
 	}
 	else {
 		//Draw stuff
@@ -116,13 +124,16 @@ void Planet::draw(const Camera & camera, double delta_time, bool wireframe) {
 		_east->draw(camera, delta_time);
 		_hither->draw(camera, delta_time);
 		_yon->draw(camera, delta_time);
-
+		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		_north_water->draw(camera, delta_time);
 		_south_water->draw(camera, delta_time);
 		_west_water->draw(camera, delta_time);
 		_east_water->draw(camera, delta_time);
 		_hither_water->draw(camera, delta_time);
 		_yon_water->draw(camera, delta_time);
+		glDisable(GL_BLEND);
 	}
 	
 	_atmosphere->draw(camera, delta_time);

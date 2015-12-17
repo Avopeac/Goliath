@@ -247,8 +247,6 @@
     <None Include="Shaders\water.tesc.glsl" />
     <None Include="Shaders\water.tese.glsl" />
     <None Include="Shaders\water.vert" />
-    <None Include="Shaders\watershader.frag" />
-    <None Include="Shaders\watershader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -108,10 +108,11 @@ void WaterTile::predraw(const Camera &camera) {
 		}
 	}
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glEnable(GL_DEPTH_TEST);
-	_shader->use();
+//	glEnable(GL_CULL_FACE);
+//	glCullFace(GL_BACK);
+//	glEnable(GL_DEPTH_TEST);
+//	_shader->use();
+
 	glm::dmat4 relative_to_center(camera.get_dview());
 	glm::dvec4 center_eye(relative_to_center * glm::dvec4(_center, 1));
 	relative_to_center[3] = center_eye;

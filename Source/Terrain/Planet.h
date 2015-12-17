@@ -37,6 +37,7 @@ private:
 	std::shared_ptr<Skybox> _skybox;
 
 	std::shared_ptr<Shader> _ground_shader;
+	std::shared_ptr<Shader> _water_shader;
 	std::shared_ptr<QuadTree> _north;
 	std::shared_ptr<QuadTree> _south;
 	std::shared_ptr<QuadTree> _west;

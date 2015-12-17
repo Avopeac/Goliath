@@ -256,8 +256,6 @@
     <None Include="Shaders\thresholdshader.vert">
       <Filter>Resource Files\Shader Files\Post Processing</Filter>
     </None>
-    <None Include="Shaders\watershader.frag" />
-    <None Include="Shaders\watershader.vert" />
     <None Include="Shaders\fxaashader.frag" />
     <None Include="Shaders\fxaashader.vert" />
     <None Include="Shaders\skyfromspaceshader.frag" />
